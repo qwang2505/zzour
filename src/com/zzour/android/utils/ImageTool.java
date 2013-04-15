@@ -34,6 +34,11 @@ public class ImageTool {
 		return scaleImage(bmp, width, height);
 	}
 	
+	public static Bitmap getBitmapByStream(InputStream input, int width, int height){
+		Bitmap bmp = BitmapFactory.decodeStream(input);
+		return scaleImage(bmp, width, height);
+	}
+	
 	public static Bitmap scaleImage(Bitmap bmp, int width, int height){
     	int w = bmp.getWidth();
     	int h = bmp.getHeight();

@@ -38,6 +38,20 @@ public class HorizontalImageScrollView extends HorizontalScrollView {
     public HorizontalImageScrollView(Context context) {
         super(context);
     }
+    
+    public boolean dispatchTouchEvent(MotionEvent ev)
+    {
+      boolean ret = super.dispatchTouchEvent(ev);
+      if(ret) 
+      {
+        requestDisallowInterceptTouchEvent(true);
+      }
+      return ret;
+    }
+    
+    public ArrayList<Bitmap> getFeatureItems(){
+    	return this.mItems;
+    }
  
     public void setFeatureItems(ArrayList<Bitmap> items){
         LinearLayout internalWrapper = new LinearLayout(getContext());

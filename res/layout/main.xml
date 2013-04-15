@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:gravity="center">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello"
+        android:textColor="@android:color/black"/>
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:text="@string/exit"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exitText"
+        android:textColor="@android:color/black"/>
+    <Button
+        android:id="@+id/finish_button"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:text="@string/finish"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/finishText"
+        android:textColor="@android:color/black"/>
+</LinearLayout>

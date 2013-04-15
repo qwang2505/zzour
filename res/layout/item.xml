@@ -9,7 +9,11 @@
 		android:id="@+id/item_image"
 		android:layout_alignParentRight="true"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"/>
+		android:layout_height="wrap_content"
+		android:paddingTop="10px"
+		android:paddingBottom="10px"
+		android:paddingLeft="5px"
+		android:paddingRight="5px"/>
 	
 	<LinearLayout xmlns:andoird="http://schemas.android.com/apk/res/android"
 	    android:layout_width="wrap_content"
@@ -20,13 +24,18 @@
 			android:id="@+id/item_title"
 			android:layout_alignParentLeft="true"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:paddingTop="5px"/>
 		
 		<TextView	
 			android:id="@+id/item_desc"
 			android:layout_alignParentLeft="true"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			andoird:paddingTop="10px"
+			android:maxLines="2"
+			android:ellipsize="end"/>
 		
 	</LinearLayout>
 </LinearLayout>

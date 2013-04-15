@@ -3,6 +3,7 @@ package com.zzour.android.views.adapters;
 import java.util.ArrayList;
 
 import com.zzour.android.R;
+import com.zzour.android.models.ShopSummaryContent;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,9 +16,7 @@ import android.widget.TextView;
 
 public class ListItemsAdapter extends BaseAdapter{
 	
-	// TODO read these data from api
-	ArrayList<String> mTitles = new ArrayList<String>();
-	ArrayList<String> mDescs = new ArrayList<String>();
+	ArrayList<ShopSummaryContent> shops = new ArrayList<ShopSummaryContent>();
 	ArrayList<Bitmap> mImages = new ArrayList<Bitmap>();
 	
 	private Context mContext;
@@ -26,7 +25,7 @@ public class ListItemsAdapter extends BaseAdapter{
 	}
 
 	public int getCount() {
-		return mTitles.size();
+		return shops.size();
 	}
 
 	public Object getItem(int position) {
@@ -34,13 +33,19 @@ public class ListItemsAdapter extends BaseAdapter{
 	}
 
 	public long getItemId(int position) {
-		return 0;
+		return position;
 	}
 	
-	public void addItem(String title, String desc, Bitmap image){
-		mTitles.add(title);
-		mDescs.add(desc);
+	public void addItem(ShopSummaryContent shop, Bitmap image){
+		shops.add(shop);
 		mImages.add(image);
+	}
+	
+	public ShopSummaryContent getShopSummaryAtPosition(int position){
+		if (shops.size() < position + 1){
+			return null;
+		}
+		return shops.get(position);
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -55,8 +60,8 @@ public class ListItemsAdapter extends BaseAdapter{
 		}
 		ItemViewCache cache=(ItemViewCache)convertView.getTag();
 		
-		cache.mTitleView.setText(mTitles.get(position));
-		cache.mDescView.setText(mDescs.get(position));
+		cache.mTitleView.setText(shops.get(position).getName());
+		cache.mDescView.setText(shops.get(position).getDescription());
 		cache.mImageView.setImageBitmap(mImages.get(position));
 		return convertView;
 	}

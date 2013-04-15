@@ -1,41 +1,44 @@
 package com.zzour.android;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.zzour.andoird.base.BaseActivity;
+import com.zzour.andoird.base.SysApplication;
 import com.zzour.android.R;
+import com.zzour.android.cache.GlobalMemoryCache;
+import com.zzour.android.models.ShopList;
+import com.zzour.android.models.ShopSummaryContent;
+import com.zzour.android.network.api.DataApi;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.HorizontalImageScrollView;
 import com.zzour.android.views.adapters.ListItemsAdapter;
+import com.zzour.android.views.tab.MyTabHostProvider;
+import com.zzour.android.views.tab.TabHostProvider;
+import com.zzour.android.views.tab.TabView;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 	
-	final static String TAG = "ZZOUR";
 	Spinner mSearchCategory = null;
 	int mSearchCategoryValue = 0;
 	Timer mScrollTimer = null;
@@ -47,7 +50,13 @@ public class MainActivity extends Activity {
 	int mScreenWidth = 0;
 	
 	ListItemsAdapter mAdapterTemp = null;
-	private Handler mHandler = null;
+	private Handler mHandler = new Handler();
+	private Handler mLoadMoreHandler = new Handler();
+		
+	private View mLoadMoreView = null;
+	private Button mLoadMoreButton = null;
+	
+	private View mContentView = null;
 	
 	// TODO read categories from api, or at least from xml file.
 	final CharSequence[] mSearchCategories = new CharSequence[] {	
@@ -62,7 +71,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        
+    	TabHostProvider tabProvider = new MyTabHostProvider(MainActivity.this);
+    	TabView tabView = tabProvider.getTabHost("Home");
+    	tabView.setCurrentView(R.layout.activity_main);
+    	mContentView = tabView.render(0);
+    	setContentView(mContentView);
         
         mSearchCategory = (Spinner)findViewById(R.id.search_category);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
@@ -84,18 +98,117 @@ public class MainActivity extends Activity {
         
         // TODO get search initial text from api, and reset. Here just reset.
         EditText searchText = (EditText)findViewById(R.id.search);
-        String text = new String("≈£»‚√Ê");
+        String text = getString(R.string.search_initial_text);
         searchText.setText(text);
         
+        ListView list = (ListView)findViewById(R.id.list);
         this.initScrollImageView();
-        
-        mHandler = new Handler();
+        // init adapter and set scroll view to list.
         new Thread(initList).start();
+    
+        // add load more to list view
+        mLoadMoreView = getLayoutInflater().inflate(R.layout.loadmore, null);
+        mLoadMoreButton = (Button)mLoadMoreView.findViewById(R.id.loadMoreButton);
+        mLoadMoreButton.setOnClickListener(new View.OnClickListener() { 
+            @Override
+            public void onClick(View v) {
+            	mLoadMoreButton.setText(getString(R.string.loading_text));
+        	    new Thread(new Runnable() {
+        	       @Override
+        	       public void run() {
+        	    	   loadMoreData();
+        	    	   mLoadMoreHandler.post(new Runnable(){
+        	    		   public void run(){
+        	    			   mAdapterTemp.notifyDataSetChanged();
+        	    			   mLoadMoreButton.setText(getString(R.string.load_more_button_text));
+        	    		   }
+        	    	   });
+        	       }
+        	    }).start();
+        	}
+        });
+        list.addFooterView(mLoadMoreView);
+        
+        this.addListItemClickListener();
+    }
+    
+    private void addListItemClickListener(){
+    	ListView lv = (ListView)findViewById(R.id.list);
+    	lv.setOnItemClickListener(new OnItemClickListener()
+    	{
+    	    @Override 
+    	    public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
+    	    { 
+    	    	//Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+    	    	if (mAdapterTemp == null){
+    	    		Log.e(TAG, "list adapter is null, something happende");
+    	    		return;
+    	    	}
+    	    	ShopSummaryContent shop = mAdapterTemp.getShopSummaryAtPosition(position-1);
+    	    	if (shop == null){
+    	    		Log.e(TAG, "strange! shop can't be found in list adapter! at position: " + (position-1));
+    	    		return;
+    	    	}
+    	    	Intent intent = new Intent(MainActivity.this, ShopDetailActivity.class);
+    	    	intent.putExtra("shop_id", shop.getId());
+    	    	Log.d(TAG, "start shop detail activty for shop: " + shop.getId());
+    	    	startActivity(intent);
+    	    }
+    	});
+    }
+    
+	@Override
+	public void onResume() {
+	    super.onResume();
+	    overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+	}
+    
+    @Override
+    protected void onDestroy(){
+    	if (this.mScrollTimer != null){
+    		this.mScrollTimer.cancel();
+    		this.mScrollTimer = null;
+    	}
+    	if (this.mScrollScheduler != null){
+    		this.mScrollScheduler.cancel();
+    		this.mScrollScheduler = null;
+    	}
+    	this.mLoadMoreView = null;
+    	this.mLoadMoreButton = null;
+    	super.onDestroy();
+    }
+    
+    @Override
+    public void onBackPressed(){
+    	SysApplication.getInstance().exit();
+    }
+    
+    private void loadMoreData(){
+    	
+    	ShopList shopList = DataApi.getShopList();
+    	
+    	if (mAdapterTemp == null){
+    		mAdapterTemp = new ListItemsAdapter(this);
+    	}
+    	for (int i=0; i < shopList.size(); i++){
+    		ShopSummaryContent shop = shopList.get(i);
+    		// TODO do not get bitmap here. use default bitmap, and start new thread to load bitmap
+    		//Bitmap b = ImageTool.getBitmapByUrl(shop.getImage(), (int)getResources().getDimension(R.dimen.list_image_width), 
+    		//		(int)getResources().getDimension(R.dimen.list_image_height));
+    		Bitmap b = ImageTool.getBitmapByStream(getResources().openRawResource(R.drawable.scroll_image_1), 
+    				(int)getResources().getDimension(R.dimen.list_image_width), 
+    				(int)getResources().getDimension(R.dimen.list_image_height));
+    		if (b == null){
+    			continue;
+    		}
+    		mAdapterTemp.addItem(shop, b);
+    	}
     }
     
     private void initScrollImageView(){
         // TODO get images and set to HorizontalImageScrollView
-        mImageScrollView = (HorizontalImageScrollView)findViewById(R.id.image_scroll);
+        //mImageScrollView = (HorizontalImageScrollView)findViewById(R.id.image_scroll);
+    	mImageScrollView = new HorizontalImageScrollView(this.getApplicationContext());
         // get device size, and calculate image size.
         DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -111,7 +224,8 @@ public class MainActivity extends Activity {
     	items.add(newBmp);
     	mImageScrollView.setFeatureItems(items);
     	mScreenWidth = metrics.widthPixels;
-    	// start auto scrolling
+    	ListView list = (ListView)findViewById(R.id.list);
+    	list.addHeaderView(mImageScrollView);
     	this.startAutoScrolling();
     }
     
@@ -120,7 +234,15 @@ public class MainActivity extends Activity {
             mScrollTimer =   new Timer();
             final Runnable Timer_Tick = new Runnable() {
                 public void run() {
-                    moveScrollView();
+                	if (mCurrentImageIndex >= mMaxImageIndex){
+                		mCurrentImageIndex = 0;
+                	}else{
+                		mCurrentImageIndex++;
+                	}
+                	
+                	int scrollPos = mCurrentImageIndex * mScreenWidth;
+                	
+                	mImageScrollView.smoothScrollTo(scrollPos, 0);
                 }
             };
 
@@ -138,74 +260,17 @@ public class MainActivity extends Activity {
             mScrollTimer.schedule(mScrollScheduler, 5 * 1000, 5 * 1000);
         }
     }
-
-    private void moveScrollView(){
-    	if (mCurrentImageIndex >= mMaxImageIndex){
-    		mCurrentImageIndex = 0;
-    	}else{
-    		mCurrentImageIndex++;
-    	}
-    	
-    	int scrollPos = mCurrentImageIndex * mScreenWidth;
-    	mImageScrollView.smoothScrollTo(scrollPos, 0);
-    }
-    
-    Runnable updateList = new Runnable(){
-    	public void run(){
-    		ListView list = (ListView)findViewById(R.id.list);
-    		list.setAdapter(mAdapterTemp);
-    	}
-    };
     
     Runnable initList = new Runnable(){
-
 		@Override
 		public void run() {
-			initList();
-			mHandler.post(updateList);
+			loadMoreData();
+			mHandler.post(new Runnable(){
+				public void run(){
+					ListView list = (ListView)findViewById(R.id.list);
+					list.setAdapter(mAdapterTemp);
+				}
+			});
 		}
-    	
     };
-    
-    private void initList(){
-    	ListView list = (ListView)findViewById(R.id.list);
-    	
-    	String[] titles = new String[]{
-    			"first item",
-    			"second item",
-    			"third item",
-    			"i hope you not bored",
-    			"but i am",
-    			"we need more",
-    			"ok last one"
-    	};
-    	String[] descs = new String[]{
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it.",
-    			"i don't know what to say, i hate this complicated example, but... deal with it."
-    	};
-    	String[] images = new String[]{
-    			"http://www.zzour.com/data/files/store_8/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_14/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_10/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_7/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_15/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_11/other/store_logo.jpg",
-    			"http://www.zzour.com/data/files/store_16/other/store_logo.jpg",
-    	};
-    	
-    	mAdapterTemp = new ListItemsAdapter(this);
-    	for (int i=0; i < titles.length; i++){
-    		Bitmap b = ImageTool.getBitmapByUrl(images[i], 100, 100);
-    		if (b == null){
-    			continue;
-    		}
-    		mAdapterTemp.addItem(titles[i], descs[i], b);
-    	}
-    	//list.setAdapter(adapter);
-    }
 }
