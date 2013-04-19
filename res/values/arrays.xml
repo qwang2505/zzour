@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<resources>  
+    <string-array name="times">  
+        <item>随时配送</item>  
+        <item>上课中，12点后配送</item>  
+        <item>上课中，17点半后配送</item>  
+    </string-array>  
+</resources>  

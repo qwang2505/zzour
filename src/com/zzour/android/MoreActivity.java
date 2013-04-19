@@ -17,8 +17,7 @@ public class MoreActivity extends BaseActivity
 {
 	private final String TAG = MoreActivity.class.getSimpleName();
 	private ListView moreList = null;
-	private final String[] moreItems = { "Blog", "Specials", "Coupons", "Gift Certificate", "Table Reservation",
-			"Pickup Orders", "Book Event", "Catering", "Calendar", "Barcode"};
+	private final String[] moreItems = {"登陆", "注册", "设置", "关于宅宅", "反馈意见"};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

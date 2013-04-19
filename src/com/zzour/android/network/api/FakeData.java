@@ -166,4 +166,9 @@ public class FakeData {
 						"}";
 		return result;
 	}
+	
+	public static String getFakeSchool(){
+		String result = "华侨大学,厦门校区;珠海校区,凤凰苑2#栋:凤凰苑3#栋:凤凰苑4#栋:凤凰苑5#栋;紫荆苑2#栋:紫荆苑3#栋:紫荆苑4#栋:紫荆苑5#栋|厦门大学,东校区;海边校区,;新楼1栋:新楼2栋";
+		return result;
+	}
 }

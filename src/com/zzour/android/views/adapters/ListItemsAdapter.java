@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.zzour.android.R;
 import com.zzour.android.models.ShopSummaryContent;
+import com.zzour.android.utils.ImageTool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,12 +18,23 @@ import android.widget.TextView;
 public class ListItemsAdapter extends BaseAdapter{
 	
 	ArrayList<ShopSummaryContent> shops = new ArrayList<ShopSummaryContent>();
-	ArrayList<Bitmap> mImages = new ArrayList<Bitmap>();
 	
 	private Context mContext;
-    public ListItemsAdapter(Context context) {
+	private int mImageWidth;
+	private int mImageHeight;
+	private int mDefaultBitmapId;
+	
+    public ListItemsAdapter(Context context, int defaultBitmapId) {
 		this.mContext=context;
+		this.mImageWidth = (int)mContext.getResources().getDimension(R.dimen.list_image_width);
+		this.mImageHeight = (int)mContext.getResources().getDimension(R.dimen.list_image_height);
+		this.mDefaultBitmapId = defaultBitmapId;
 	}
+    
+    public void updateShopBitmap(int position, Bitmap bitmap){
+    	ShopSummaryContent s = shops.get(position);
+    	s.setBitmap(bitmap);
+    }
 
 	public int getCount() {
 		return shops.size();
@@ -36,9 +48,11 @@ public class ListItemsAdapter extends BaseAdapter{
 		return position;
 	}
 	
-	public void addItem(ShopSummaryContent shop, Bitmap image){
+	// add shop item and return the position of newly added item.
+	public int addItem(ShopSummaryContent shop){
+		int position = shops.size();
 		shops.add(shop);
-		mImages.add(image);
+		return position;
 	}
 	
 	public ShopSummaryContent getShopSummaryAtPosition(int position){
@@ -55,14 +69,21 @@ public class ListItemsAdapter extends BaseAdapter{
 			ItemViewCache viewCache=new ItemViewCache();
 			viewCache.mTitleView=(TextView)convertView.findViewById(R.id.item_title);
 			viewCache.mDescView = (TextView)convertView.findViewById(R.id.item_desc);
-			viewCache.mImageView=(ImageView)convertView.findViewById(R.id.item_image);
+			viewCache.mImageView = (ImageView)convertView.findViewById(R.id.item_image);
 			convertView.setTag(viewCache);
 		}
 		ItemViewCache cache=(ItemViewCache)convertView.getTag();
 		
 		cache.mTitleView.setText(shops.get(position).getName());
 		cache.mDescView.setText(shops.get(position).getDescription());
-		cache.mImageView.setImageBitmap(mImages.get(position));
+		Bitmap bmp = shops.get(position).getBitmap();
+		if (bmp == null){
+			cache.mImageView.setImageBitmap(ImageTool.getBitmapByStream(mDefaultBitmapId, 
+					mContext.getResources().openRawResource(R.drawable.scroll_image_1), 
+					mImageWidth, mImageHeight));
+		} else {
+			cache.mImageView.setImageBitmap(bmp);
+		}
 		return convertView;
 	}
 

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:layout_width="match_parent"
+        android:background="@drawable/title_bar"
+        android:paddingBottom="3dp"
+        android:layout_height="wrap_content">
+        
+        <include layout="@layout/back_button"/>
+        
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textColor="#eeeeee"
+            android:layout_marginTop="6dp"
+            android:text="@string/order_detail_title"/>
+        
+    </RelativeLayout>
+	    
+	<ScrollView 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+	    
+	    <LinearLayout android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+		    
+		    <TextView android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:paddingLeft="3dp"
+		        android:textColor="@color/text_color"
+		        android:text="@string/product_info_text" />
+		    
+		    <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/dotted" />
+		    
+		    <LinearLayout android:id="@+id/order_detail_products"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" 
+		        android:orientation="vertical">
+		        
+		        <!-- for test -->
+		        <include layout="@layout/order_detail_food_item" />
+		        <include layout="@layout/order_detail_food_item" />
+		    </LinearLayout>
+		        
+		    <RelativeLayout android:id="@+id/order_detail_price_info"
+		        android:layout_width="match_parent"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:layout_height="wrap_content">
+		        <TextView android:id="@+id/order_detail_box_price_info"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="3dp"
+		            android:text="@string/box_price_text" />
+		        <TextView android:id="@+id/box_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_toRightOf="@id/order_detail_box_price_info"
+		            android:text="0" />
+		        <TextView android:id="@+id/order_detail_total_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_alignParentRight="true"
+		            android:paddingRight="5dp"
+		            android:text="0" />
+		        <TextView android:id="@+id/order_detail_total_price_info"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="3dp"
+		            android:layout_toLeftOf="@id/order_detail_total_price"
+		            android:text="@string/total_price_text" />
+		        
+		    </RelativeLayout>
+		    
+		    <LinearLayout android:id="@+id/order_detail_address_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/address_info_text" />
+		        
+		     	<ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		
+		    	<!-- old address here -->
+		    	<!-- for test -->
+		    	<include layout="@layout/order_detail_address_info"/>
+		    	    
+		    </LinearLayout>
+		    
+		    <LinearLayout android:id="@+id/order_detail_time_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		    	
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/order_detail_time_info_text" />
+		        <ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		        
+		        <TextView android:id="@+id/order_detail_time_info"   
+		           	android:layout_width="wrap_content"  
+		           	android:layout_height="wrap_content"
+		           	android:layout_marginTop="3dp"
+		           	android:layout_marginBottom="3dp"
+		           	android:layout_marginLeft="5dp"
+		           	android:text="随时配送">
+		            
+		        </TextView>  
+		        
+		    </LinearLayout>
+		    
+		    <LinearLayout android:id="@+id/message_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		        
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/message_info_text" />
+		        
+		        <ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		        
+		        <TextView android:id="@+id/order_detail_message"
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:layout_marginTop="5dp"
+		    		android:text="@string/message_hint_text"
+		    		android:textSize="14sp"
+		    		android:paddingLeft="3dp"
+		    		android:paddingRight="3dp"
+		    		android:layout_marginLeft="3dp"
+		    		android:layout_marginRight="3dp" />
+		        
+		    </LinearLayout>
+		    
+	    </LinearLayout>
+	    
+	</ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:background="@drawable/title_bar"
+    	android:orientation="vertical">
+    	<TextView android:id="@+id/cart_title_text"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_centerHorizontal="true"
+    	    android:textSize="25sp"
+    	    android:paddingTop="3dp"
+    	    android:paddingBottom="3dp"
+    	    android:textColor="#eeeeee"
+    	    android:text="@string/cart_title"/>
+    </RelativeLayout>
+
+	<ScrollView
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+	
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical">
+		    
+		    <TextView android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:paddingLeft="3dp"
+		        android:textColor="@color/text_color"
+		        android:text="@string/product_info_text" />
+		    <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/dotted" />
+		    
+		    <LinearLayout android:id="@+id/products"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" 
+		        android:orientation="vertical"/>
+		        
+		    <RelativeLayout android:id="@+id/price_info"
+		        android:layout_width="match_parent"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:layout_height="wrap_content">
+		        <TextView android:id="@+id/box_price_info"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="3dp"
+		            android:text="@string/box_price_text" />
+		        <TextView android:id="@+id/box_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_toRightOf="@id/box_price_info"
+		            android:text="0" />
+		        <TextView android:id="@+id/total_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_alignParentRight="true"
+		            android:paddingRight="5dp"
+		            android:text="0" />
+		        <TextView android:id="@+id/total_price_info"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="3dp"
+		            android:layout_toLeftOf="@id/total_price"
+		            android:text="@string/total_price_text" />
+		        
+		    </RelativeLayout>
+		    
+		    <LinearLayout android:id="@+id/address_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/address_info_text" />
+		        
+		     	<ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		
+		    	<!-- old address here -->
+		    	<RadioButton
+		            android:id="@+id/new_address_button"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/new_address_button_text" 
+		            android:checked="false" />
+		    	    
+		    </LinearLayout>
+		    
+		    <LinearLayout android:id="@+id/time_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		    	
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/time_info_text" />
+		        <ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		        
+		        <Spinner android:id="@+id/time_spinner"   
+		           	android:layout_width="wrap_content"  
+		           	android:layout_height="wrap_content"
+		           	android:layout_marginTop="3dp"
+		           	android:layout_marginBottom="3dp"
+		           	android:entries="@array/times">
+		            
+		        </Spinner>  
+		        
+		    </LinearLayout>
+		    
+		    <LinearLayout android:id="@+id/message_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
+		        
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="14sp"
+		            android:paddingTop="5dp"
+		            android:paddingBottom="5dp"
+		            android:paddingLeft="3dp"
+		            android:textColor="@color/text_color"
+		            android:text="@string/message_info_text" />
+		        
+		        <ImageView
+		    		android:layout_width="match_parent"
+		    		android:layout_height="wrap_content"
+		    		android:contentDescription="@string/dot_line_desc"
+		    		android:src="@drawable/dotted" />
+		        
+		        <EditText android:id="@+id/message"
+		    		android:layout_width="fill_parent"
+		    		android:layout_height="wrap_content"
+		    		android:layout_marginTop="5dp"
+		    		android:singleLine="false"
+		    		android:lines="3"
+		    		android:background="@drawable/bg_edittext"
+		    		android:hint="@string/message_hint_text"
+		    		android:textSize="14sp"
+		    		android:paddingLeft="3dp"
+		    		android:paddingRight="3dp"
+		    		android:layout_marginLeft="3dp"
+		    		android:layout_marginRight="3dp" />
+		        
+		    </LinearLayout>
+		    
+		    <Button android:id="@+id/deal" 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:layout_marginTop="10dp"
+		        android:background="@drawable/button"
+		        android:text="@string/order_text" />
+		    
+		</LinearLayout>
+		
+		    
+	</ScrollView>
+
+</LinearLayout>

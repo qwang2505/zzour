@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        android:paddingBottom="3dp"
+        android:background="@drawable/title_bar">
+        
+        <include layout="@layout/back_button" />
+        
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textColor="#ffffff"
+            android:layout_centerVertical="true"
+            android:text="@string/settings_title" />
+        
+	</RelativeLayout>
+	
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <TextView android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:paddingLeft="5dp"
+		        android:layout_marginTop="10dp"
+		        android:textColor="@color/text_color"
+		        android:text="@string/settings_alert_title_text" />
+		    
+		    <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/dotted" />
+            
+            <CheckedTextView android:id="@+id/settings_daily_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" 
+                android:padding="5dp"
+                android:textSize="18sp"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_alert_text" />
+            
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/settings_alert_time_text"/>
+                
+                <ImageView android:id="@+id/settings_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+                <TextView android:id="@+id/settings_current_alert_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/settings_arrow"
+                    android:layout_centerVertical="true"
+                    android:text="@string/settings_default_alert_time" />
+                
+            </RelativeLayout>
+            
+            <TextView android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:paddingLeft="5dp"
+		        android:layout_marginTop="10dp"
+		        android:textColor="@color/text_color"
+		        android:text="@string/settings_pic_quality_text" />
+		    
+		    <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/dotted" />
+            
+            <CheckedTextView android:id="@+id/settings_pic_quality_smart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textSize="18sp"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_pic_quality_smart_text" />
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/settings_pic_quality_smart_text_1" />
+            
+            <CheckedTextView android:id="@+id/settings_pic_quality_high"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textSize="18sp"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_pic_quality_high_text" />
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/settings_pic_quality_high_text_1" />
+            
+            <CheckedTextView android:id="@+id/settings_pic_quality_low"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textSize="18sp"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_pic_quality_low_text" />
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/settings_pic_quality_low_text_1" />
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#eeeeee" />
+            
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+                
+                <TextView android:id="@+id/settings_clear_cache"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/settings_clear_cache_text"/>
+                
+                <ImageView android:id="@+id/settings_arrow_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+                <TextView android:id="@+id/settings_clear_cache_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/settings_clear_cache"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignBottom="@id/settings_clear_cache"
+                    android:textSize="12sp"
+                    android:text="@string/settings_clear_cache_desc_text" />
+                
+            </RelativeLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+    
+</LinearLayout>

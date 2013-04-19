@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusable="false"
+    android:paddingBottom="10dp"
     android:clickable="false">
     
     <!-- set image of this view in java code with bitmap -->
@@ -26,10 +27,13 @@
                 android:textStyle="bold"/>
             
         	<RatingBar android:id="@+id/shop_rating"
-            	style="?android:attr/ratingBarStyleSmall"
+            	style="@style/foodRatingBar"
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
             	android:layout_marginRight="10px"
+            	android:numStars="5"
+            	android:rating="3.5"
+            	android:isIndicator="false"
             	android:layout_alignParentRight="true"/>
             
         </RelativeLayout>

@@ -3,6 +3,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/white">
+    
+    <TextView android:id="@+id/moreactivity_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:textSize="25sp"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp"
+        android:background="@drawable/title_bar"
+        android:textColor="#ffffff"
+        android:text="@string/more_title"/>
+    
     <ListView
         android:id="@+id/moreactivity_list"
         android:layout_width="fill_parent"

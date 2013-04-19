@@ -12,6 +12,8 @@ import org.json.JSONTokener;
 import android.util.Log;
 
 import com.zzour.android.models.Food;
+import com.zzour.android.models.School;
+import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShopList;
 import com.zzour.android.models.ShopSummaryContent;
@@ -20,10 +22,10 @@ import com.zzour.android.models.ShopSummaryContent;
  * Data api, for get data that need to be displayed in client.
  */
 public class DataApi {
-	
+	private static final String TAG = "ZZOUR";
 	private static ShopList mShopList;
-	
 	private static HashMap<Integer, ShopDetailContent> mShopDetailMap = new HashMap<Integer, ShopDetailContent>();
+	private static ArrayList<School> mSchools = new ArrayList<School>();
 
 	public static ShopList getShopList(){
 		// TODO get json/xml data from server, and format into a list content.
@@ -54,6 +56,50 @@ public class DataApi {
 		// if not in local cache, get from server
 		String data = FakeData.getFakeShopDetailById(id);
 		return DataApi.parseShopDetailData(data);
+	}
+	
+	public static ArrayList<School> getSchoolList(){
+		if (!mSchools.isEmpty() /* && not expired*/){
+			return mSchools;
+		}
+		
+		// TODO get from cache
+		
+		// TODO get from server
+		// for demo, get from fake data
+		String data = FakeData.getFakeSchool();
+		return DataApi.parseSchoolData(data);
+	}
+	
+	private static ArrayList<School> parseSchoolData(String data){
+		ArrayList<School> schools = new ArrayList<School>();
+		String[] ss = data.split("\\|");
+		for (int i=0; i < ss.length; i++){
+			if (ss[i].length() == 0){
+				continue;
+			}
+			String[] words = ss[i].split(",");
+			if (words.length != 3){
+				Log.e(TAG, "error in school data: " + ss[i]);
+				return mSchools;
+			}
+			School school = new School(words[0]);
+			String[] areas = words[1].split(";");
+			String[] details = words[2].split(";");
+			ArrayList<SchoolArea> l = new ArrayList<SchoolArea>();
+			for (int j=0; j < areas.length; j++){
+				if (areas[j].length() == 0){
+					continue;
+				}
+				SchoolArea area = new SchoolArea(areas[j]);
+				area.setDetails(details[j].split(":"));
+				l.add(area);
+			}
+			school.setArea(l);
+			schools.add(school);
+		}
+		mSchools = schools;
+		return mSchools;
 	}
 	
 	private static ShopDetailContent parseShopDetailData(String data){

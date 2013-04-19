@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/product_food_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="5dp"
+    android:paddingLeft="3dp">
+    
+    <TextView android:id="@+id/product_food_item_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+    
+    <TextView android:id="@+id/product_food_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp"
+        android:maxLength="11"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:text="一种食品一种食品一种食品一种食品"/>
+    
+    <TextView android:id="@+id/product_food_item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:maxLength="6"
+        android:layout_marginTop="2dp"
+        android:ellipsize="marquee"
+        android:layout_alignParentRight="true"
+        android:paddingRight="5dp"
+        android:text="80.0￥"/>
+    
+    <TextView android:id="@+id/product_food_item_count"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:maxLength="5"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:paddingRight="2dp"
+        android:editable="false"
+        android:focusableInTouchMode="false"
+        android:layout_alignParentRight="true"
+        android:text="50份"/>
+    
+</RelativeLayout>

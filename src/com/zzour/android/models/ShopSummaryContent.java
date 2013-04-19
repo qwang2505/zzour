@@ -1,5 +1,7 @@
 package com.zzour.android.models;
 
+import android.graphics.Bitmap;
+
 public class ShopSummaryContent extends BaseDataModel{
 	// required
 	private int id;
@@ -12,6 +14,9 @@ public class ShopSummaryContent extends BaseDataModel{
 	private String description;
 	// optional, default rate is 0
 	private int rate;
+	
+	// bitmap for image.
+	private Bitmap bitmap = null;
 	
 	public ShopSummaryContent(int id, boolean isNew, String image, String name,
 			String description, int rate) {
@@ -58,6 +63,12 @@ public class ShopSummaryContent extends BaseDataModel{
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public Bitmap getBitmap() {
+		return bitmap;
+	}
+	public void setBitmap(Bitmap bitmap) {
+		this.bitmap = bitmap;
 	}
 	@Override
 	public boolean expired() {

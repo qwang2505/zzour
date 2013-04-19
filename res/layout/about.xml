@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        android:paddingBottom="3dp"
+        android:background="@drawable/title_bar">
+        
+        <include layout="@layout/back_button" />
+        
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textColor="#ffffff"
+            android:layout_centerVertical="true"
+            android:text="@string/about_title" />
+        
+	</RelativeLayout>
+	
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <ImageView android:id="@+id/about_logo"
+                android:layout_width="match_parent"
+                android:contentDescription="@string/logo_desc"
+                android:layout_height="100dp" />
+            
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+                
+                <TextView android:id="@+id/about_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/about_version_text"/>
+                
+                <ImageView android:id="@+id/settings_arrow_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+                <TextView android:id="@+id/about_version_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/about_version"
+                    android:textSize="18sp"
+                    android:text="@string/about_version_number_text" />
+                
+            </RelativeLayout>
+            
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+                
+                <TextView android:id="@+id/about_protocol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/about_protocol_text"/>
+                
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+            </RelativeLayout>
+            
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+                
+                <TextView android:id="@+id/about_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/about_help_text"/>
+                
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+            </RelativeLayout>
+            
+            <Button android:id="@+id/about_call"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:drawableLeft="@drawable/phone"
+		        android:text="@string/about_call_text"></Button>
+            
+        </LinearLayout>
+    </ScrollView>
+    
+</LinearLayout>

@@ -1,31 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:orientation="horizontal"
-        android:background="@color/main_style_background_color" >
-        
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back_button_text"/>
-        
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="分享"/>
-        
-    </RelativeLayout>
     
    	<ExpandableListView android:id="@+id/shop_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:clickable="true"
+        android:paddingBottom="50dp"
         />
+   	
+   	<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="5dp"
+        android:background="@color/main_style_background_color" >
+        
+   	    <TextView android:id="@+id/money_symbol"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="42dp" 
+   	        android:gravity="bottom"
+   	        android:paddingBottom="2dp"
+   	        android:paddingLeft="5dp"
+   	        android:textColor="#bb6008"
+   	        android:visibility="gone"
+   	        android:text="￥" />
+        
+   	    <TextView android:id="@+id/total_money"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="42dp"
+   	        android:textSize="25sp"
+   	        android:layout_toRightOf="@id/money_symbol"
+   	        android:gravity="bottom"
+   	        android:textColor="#bb6008"
+   	        android:text=""/>
+        
+        <Button android:id="@+id/go_to_cart"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/button"
+            android:includeFontPadding="false"
+            android:layout_centerVertical="true"
+            android:text="结算"/>
+        
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

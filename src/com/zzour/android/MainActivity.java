@@ -1,6 +1,8 @@
 package com.zzour.android;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,6 +59,8 @@ public class MainActivity extends BaseActivity {
 	private Button mLoadMoreButton = null;
 	
 	private View mContentView = null;
+	
+	private HashMap<Integer, String> mImages = new HashMap<Integer, String>();
 	
 	// TODO read categories from api, or at least from xml file.
 	final CharSequence[] mSearchCategories = new CharSequence[] {	
@@ -188,20 +192,31 @@ public class MainActivity extends BaseActivity {
     	ShopList shopList = DataApi.getShopList();
     	
     	if (mAdapterTemp == null){
-    		mAdapterTemp = new ListItemsAdapter(this);
+    		mAdapterTemp = new ListItemsAdapter(this, R.drawable.scroll_image_1);
     	}
     	for (int i=0; i < shopList.size(); i++){
     		ShopSummaryContent shop = shopList.get(i);
-    		// TODO do not get bitmap here. use default bitmap, and start new thread to load bitmap
-    		//Bitmap b = ImageTool.getBitmapByUrl(shop.getImage(), (int)getResources().getDimension(R.dimen.list_image_width), 
-    		//		(int)getResources().getDimension(R.dimen.list_image_height));
-    		Bitmap b = ImageTool.getBitmapByStream(getResources().openRawResource(R.drawable.scroll_image_1), 
-    				(int)getResources().getDimension(R.dimen.list_image_width), 
-    				(int)getResources().getDimension(R.dimen.list_image_height));
-    		if (b == null){
-    			continue;
-    		}
-    		mAdapterTemp.addItem(shop, b);
+    		int p = mAdapterTemp.addItem(shop);
+    		mImages.put(p, shop.getImage());
+    	}
+    	// TODO start new thread to download image and update
+    	Iterator<Integer> it = mImages.keySet().iterator();
+		final int width = (int)getResources().getDimension(R.dimen.list_image_width);
+		final int height = (int)getResources().getDimension(R.dimen.list_image_height);
+    	while (it.hasNext()){
+    		final int position = (Integer)it.next();
+	    	new Thread(new Runnable() {
+	 	       @Override
+	 	       public void run() {
+	 	    	   Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height);
+	 	    	   mAdapterTemp.updateShopBitmap(position, bmp);
+	 	    	   mLoadMoreHandler.post(new Runnable(){
+	 	    		   public void run(){
+	 	    			   mAdapterTemp.notifyDataSetChanged();
+	 	    		   }
+	 	    	   });
+	 	       }
+	 	    }).start();
     	}
     }
     
@@ -216,12 +231,12 @@ public class MainActivity extends BaseActivity {
         int height = 160;
         
         ArrayList<Bitmap> items = new ArrayList<Bitmap>();
-        Bitmap bmp = BitmapFactory.decodeStream(getResources().openRawResource(R.drawable.scroll_image_1));
-    	Bitmap newBmp = ImageTool.scaleImage(bmp, width, height);
-    	items.add(newBmp);
-    	bmp = BitmapFactory.decodeStream(getResources().openRawResource(R.drawable.scroll_image_2));
-    	newBmp = ImageTool.scaleImage(bmp, width, height);
-    	items.add(newBmp);
+        Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_1, 
+        		getResources().openRawResource(R.drawable.scroll_image_1), width, height);
+    	items.add(bmp);
+    	bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_2, 
+    			getResources().openRawResource(R.drawable.scroll_image_2), width, height);
+    	items.add(bmp);
     	mImageScrollView.setFeatureItems(items);
     	mScreenWidth = metrics.widthPixels;
     	ListView list = (ListView)findViewById(R.id.list);

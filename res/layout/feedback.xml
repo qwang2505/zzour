@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        android:paddingBottom="3dp"
+        android:background="@drawable/title_bar">
+        
+        <include layout="@layout/back_button" />
+        
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textColor="#ffffff"
+            android:layout_centerVertical="true"
+            android:text="@string/feedback_title" />
+        
+        <Button android:id="@+id/feedback_send"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:layout_alignParentRight="true"
+		    android:background="@drawable/back_button"
+		    android:textColor="#ffffff"
+		    android:text="@string/feedback_send_btn_text" />
+        
+	</RelativeLayout>
+	
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingLeft="5dp"
+                android:text="@string/feedback_info_text" />
+            
+            <EditText android:id="@+id/feedback_message"
+	    		android:layout_width="match_parent"
+	    		android:layout_height="wrap_content"
+	    		android:layout_marginTop="5dp"
+	    		android:singleLine="false"
+	    		android:lines="7"
+	    		android:background="@drawable/bg_edittext"
+	    		android:hint="@string/feedback_message_hint_text"
+	    		android:textSize="14sp"
+	    		android:paddingLeft="3dp"
+	    		android:paddingRight="3dp"
+	    		android:layout_marginLeft="3dp"
+	    		android:layout_marginRight="3dp" />
+            
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingLeft="5dp"
+                android:text="@string/feedback_contact_info_text" />
+            
+            <EditText android:id="@+id/feedback_contact_info"
+	    		android:layout_width="match_parent"
+	    		android:layout_height="wrap_content"
+	    		android:layout_marginTop="5dp"
+	    		android:singleLine="true"
+	    		android:background="@drawable/bg_edittext"
+	    		android:hint="@string/feedback_contact_info_hint_text"
+	    		android:textSize="14sp"
+	    		android:paddingLeft="3dp"
+	    		android:paddingRight="3dp"
+	    		android:paddingTop="5dp"
+	    		android:paddingBottom="5dp"
+	    		android:layout_marginLeft="3dp"
+	    		android:layout_marginRight="3dp" />
+            
+            <Button android:id="@+id/feedback_call"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:layout_gravity="center"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:drawableLeft="@drawable/phone"
+		        android:text="@string/about_call_text"></Button>
+            
+        </LinearLayout>
+        
+    </ScrollView>
+    
+</LinearLayout>
