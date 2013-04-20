@@ -49,33 +49,36 @@ public class TabView {
 	}
 
 	public View renderBOTTOM() {
+		// get tab size
 		int tabsize = tabSet.size();
-		FrameLayout.LayoutParams pTable = new FrameLayout.LayoutParams(
-				TableRow.LayoutParams.FILL_PARENT,
-				TableRow.LayoutParams.FILL_PARENT);
 
+		// new table layout
 		TableLayout table = new TableLayout(context);
-		table.setLayoutParams(pTable);
+		// set layout params for table layout
+		table.setLayoutParams(new FrameLayout.LayoutParams(
+				TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.MATCH_PARENT));
 
+		// this is the content row
 		TableRow rowTop = new TableRow(context);
 
-		TableLayout.LayoutParams pRowTop = new TableLayout.LayoutParams(
-				TableLayout.LayoutParams.FILL_PARENT,
-				TableLayout.LayoutParams.FILL_PARENT);
-		pRowTop.weight = 1;
+		TableLayout.LayoutParams rowTopParams = new TableLayout.LayoutParams(
+				TableLayout.LayoutParams.MATCH_PARENT,
+				TableLayout.LayoutParams.MATCH_PARENT);
+		rowTopParams.weight = 1;
 
-		TableRow.LayoutParams pSpan = new TableRow.LayoutParams(
-				TableRow.LayoutParams.FILL_PARENT,
-				TableRow.LayoutParams.FILL_PARENT);
-		pSpan.span = tabsize;
-		pSpan.weight = 1;
+		TableRow.LayoutParams spanParams = new TableRow.LayoutParams(
+				TableRow.LayoutParams.MATCH_PARENT,
+				TableRow.LayoutParams.MATCH_PARENT);
+		spanParams.span = tabsize;
+		spanParams.weight = 1;
 
-		rowTop.addView(currentView, pSpan);
+		rowTop.addView(currentView, spanParams);
 
+		// this is the real tab menu
 		TableRow rowBottom = new TableRow(context);
 		rowBottom.setBackgroundResource(backgroundID);
-		TableLayout.LayoutParams pRowBottom = new TableLayout.LayoutParams(
-				TableLayout.LayoutParams.FILL_PARENT,
+		TableLayout.LayoutParams rowBottomParams = new TableLayout.LayoutParams(
+				TableLayout.LayoutParams.MATCH_PARENT,
 				TableLayout.LayoutParams.WRAP_CONTENT);
 		
 		for (int i = 0; i < tabsize; i++) {
@@ -83,13 +86,13 @@ public class TabView {
 			if (i == selectedTabId)
 				tab.setSelected(true);
 			final View view = tab.getView();
-			TableRow.LayoutParams pCol = new TableRow.LayoutParams();
-			pCol.weight = 1;
-			rowBottom.addView(view, pCol);
+			TableRow.LayoutParams colParams = new TableRow.LayoutParams();
+			colParams.weight = 1;
+			rowBottom.addView(view, colParams);
 		}
 
-		table.addView(rowTop, pRowTop);
-		table.addView(rowBottom, pRowBottom);
+		table.addView(rowTop, rowTopParams);
+		table.addView(rowBottom, rowBottomParams);
 
 		return table;
 	}
@@ -98,8 +101,8 @@ public class TabView {
 		int tabsize = tabSet.size();
 
 		FrameLayout.LayoutParams pTable = new FrameLayout.LayoutParams(
-				TableRow.LayoutParams.FILL_PARENT,
-				TableRow.LayoutParams.FILL_PARENT);
+				TableRow.LayoutParams.MATCH_PARENT,
+				TableRow.LayoutParams.MATCH_PARENT);
 
 		TableLayout table = new TableLayout(context);
 		table.setLayoutParams(pTable);
@@ -107,13 +110,13 @@ public class TabView {
 		TableRow rowContent = new TableRow(context);
 		TableRow.LayoutParams pRowContent = new TableRow.LayoutParams();
 		pRowContent.span = tabsize;
-		pRowContent.width = TableRow.LayoutParams.FILL_PARENT;
+		pRowContent.width = TableRow.LayoutParams.MATCH_PARENT;
 		pRowContent.height = TableRow.LayoutParams.WRAP_CONTENT;
 		pRowContent.weight = 1;
 
 		ViewGroup.LayoutParams scrollerParams = new ViewGroup.LayoutParams(
-				ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT);
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT);
 
 		ScrollView scroller = new ScrollView(context);
 		scroller.setLayoutParams(scrollerParams);
@@ -155,11 +158,13 @@ public class TabView {
 		setCurrentView(view);
 	}
 
+	// more like set position, bottom of screen or bottom
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
 
 	public void setBackgroundID(int backgroundID) {
+		// background resource id.
 		this.backgroundID = backgroundID;
 	}
 

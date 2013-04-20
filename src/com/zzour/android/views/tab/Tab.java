@@ -1,11 +1,8 @@
 package com.zzour.android.views.tab;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,13 +40,11 @@ public class Tab {
 	private int textColor;
 	// button text color?
 	private int selectedTextColor;
-//	private int btnColor;
-//	private int selectedBtnColor;
 	// what's gradient?
 	private GradientDrawable btnGradient;
 	private GradientDrawable selectedBtnGradient;
 	// tab button text size?
-	private float btnTextSize;
+	private float btnTextSize = 14;
 
 	// init tab with activity instance and tag
 	public Tab(BaseActivity context, String tabTag) {
@@ -62,20 +57,14 @@ public class Tab {
 	}
 
 	public void setIcon(int resourceIcon) {
+		// set icon of tab
 		this.resourceIcon = resourceIcon;
 	}
 
 	public void setIconSelected(int resourceIcon) {
+		// set selected resource icon.
 		this.resourceIconSelected = resourceIcon;
 	}
-	
-//	public void setBtnColor(int btnColor) {
-//		this.btnColor = btnColor;
-//	}
-//	
-//	public void setSelectedBtnColor(int btnColor) {
-//		this.selectedBtnColor = btnColor;
-//	}
 	
 	public void setBtnGradient(GradientDrawable btnGradient) {
 		this.btnGradient = btnGradient;
@@ -104,7 +93,9 @@ public class Tab {
 	}
 
 	public void setIntent(Intent intent, Class cls) {
+		// TODO class parameter is useless?
 		this.intent = intent;
+		// use reorder to front, do not create if already existed.
 		this.intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	}
 
@@ -142,12 +133,10 @@ public class Tab {
 		btn = (Button)(context.getLayoutInflater().inflate(R.layout.bizbutton, null));
 
 		int iconId = resourceIcon;
-//		int btnBackColor = btnColor;
 		GradientDrawable btnBackGrad = btnGradient;
 		int btnTextColor = textColor;
 		if (isSelected && resourceIconSelected != 0) {
 			iconId = resourceIconSelected;
-//			btnBackColor = selectedBtnColor;
 			btnBackGrad = selectedBtnGradient;
 			btnTextColor = selectedTextColor;
 		}
@@ -157,10 +146,9 @@ public class Tab {
 		btn.setText(btnText);
 		btn.setTextColor(btnTextColor);
 		btn.setTextSize(btnTextSize);
-//		btn.setBackgroundColor(btnBackColor);
-		btn.setBackgroundDrawable(btnBackGrad);
+		//btn.setBackgroundDrawable(btnBackGrad);
 		btn.setMinimumHeight(preferedHeight);
-		btn.setPadding(0, 15, 0, 0);
+		//btn.setPadding(0, 15, 0, 0);
 		
 		bindListeners();
 		// view is the button? interesting.
