@@ -55,7 +55,7 @@ public class MyTabHostProvider extends TabHostProvider
 		// set icon selected, it is the same with icon.
 		homeTab.setIconSelected(R.drawable.home_sel);
 		// set button text? I don't this has been shown
-		homeTab.setBtnText("Home");
+		homeTab.setBtnText(this.context.getResources().getString(R.string.order_tab_text));
 		// set button text color
 		homeTab.setBtnTextColor(Color.WHITE);
 		// set selected button text color
@@ -71,7 +71,7 @@ public class MyTabHostProvider extends TabHostProvider
 		contactTab = new Tab(context, category);
 		contactTab.setIcon(R.drawable.menu_sel);
 		contactTab.setIconSelected(R.drawable.menu_sel);
-		contactTab.setBtnText("Contact");
+		contactTab.setBtnText(this.context.getResources().getString(R.string.store_tab_text));
 		contactTab.setBtnTextColor(Color.WHITE);
 		contactTab.setSelectedBtnTextColor(Color.BLACK);
 		contactTab.setBtnGradient(transGradientDrawable);
@@ -81,7 +81,7 @@ public class MyTabHostProvider extends TabHostProvider
 		shareTab = new Tab(context, category);
 		shareTab.setIcon(R.drawable.home_sel);
 		shareTab.setIconSelected(R.drawable.home_sel);
-		shareTab.setBtnText("Share");
+		shareTab.setBtnText(this.context.getResources().getString(R.string.my_order_tab_text));
 		shareTab.setBtnTextColor(Color.WHITE);
 		shareTab.setSelectedBtnTextColor(Color.BLACK);
 		shareTab.setBtnGradient(transGradientDrawable);
@@ -91,7 +91,7 @@ public class MyTabHostProvider extends TabHostProvider
 		moreTab = new Tab(context, category);
 		moreTab.setIcon(R.drawable.more_sel);
 		moreTab.setIconSelected(R.drawable.more_sel);
-		moreTab.setBtnText("More");
+		moreTab.setBtnText(this.context.getResources().getString(R.string.more_tab_text));
 		moreTab.setBtnTextColor(Color.WHITE);
 		moreTab.setSelectedBtnTextColor(Color.BLACK);
 		moreTab.setBtnGradient(transGradientDrawable);

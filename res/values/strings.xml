@@ -7,6 +7,10 @@
     
     <!-- values for zzour client -->
     <string name="logo_desc"></string>
+    <string name="order_tab_text">订餐</string>
+    <string name="store_tab_text">便利店</string>
+    <string name="my_order_tab_text">我的订单</string>
+    <string name="more_tab_text">更多</string>
     
     <!-- search categories -->
     <string name="search_category_shop">商家</string>

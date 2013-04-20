@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
     	TabHostProvider tabProvider = new MyTabHostProvider(MainActivity.this);
-    	TabView tabView = tabProvider.getTabHost("Home");
+    	TabView tabView = tabProvider.getTabHost("¶©²Í");
     	tabView.setCurrentView(R.layout.activity_main);
     	mContentView = tabView.render(0);
     	setContentView(mContentView);

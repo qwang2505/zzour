@@ -146,7 +146,7 @@ public class Tab {
 		btn.setText(btnText);
 		btn.setTextColor(btnTextColor);
 		btn.setTextSize(btnTextSize);
-		//btn.setBackgroundDrawable(btnBackGrad);
+		btn.setBackgroundDrawable(btnBackGrad);
 		btn.setMinimumHeight(preferedHeight);
 		//btn.setPadding(0, 15, 0, 0);
 		

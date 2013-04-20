@@ -23,7 +23,7 @@ public class MoreActivity extends BaseActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TabHostProvider tabProvider = new MyTabHostProvider(MoreActivity.this);
-		TabView tabView = tabProvider.getTabHost("More");
+		TabView tabView = tabProvider.getTabHost("¸ü¶à");
 		tabView.setCurrentView(R.layout.more);
 		setContentView(tabView.render(3));
 		

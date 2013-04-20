@@ -14,7 +14,7 @@ public class ShareActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TabHostProvider tabProvider = new MyTabHostProvider(ShareActivity.this);
-		TabView tabView = tabProvider.getTabHost("Share");
+		TabView tabView = tabProvider.getTabHost("ÎÒµÄ¶©µ¥");
 		tabView.setCurrentView(R.layout.share);
 		setContentView(tabView.render(2));
 	}

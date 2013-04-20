@@ -14,7 +14,7 @@ public class ContactActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TabHostProvider tabProvider = new MyTabHostProvider(ContactActivity.this);
-		TabView tabView = tabProvider.getTabHost("Contact");
+		TabView tabView = tabProvider.getTabHost("±ãÀûµê");
 		tabView.setCurrentView(R.layout.contact);
 		setContentView(tabView.render(1));
 	}
