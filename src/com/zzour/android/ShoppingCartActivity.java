@@ -13,6 +13,7 @@ import com.zzour.android.models.Order;
 import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShoppingCart;
+import com.zzour.android.models.dao.AddressDAO;
 import com.zzour.android.network.api.DataApi;
 import com.zzour.android.utils.ActivityTool;
 
@@ -226,7 +227,7 @@ public class ShoppingCartActivity extends BaseActivity{
 				showNewAddressDialog();
 			}
 		});
-		// TODO add order finish button click listener.
+		// add order finish button click listener.
 		Button finishOrder = (Button)findViewById(R.id.deal);
 		finishOrder.setOnClickListener(new OnClickListener(){
 			@Override
@@ -274,8 +275,52 @@ public class ShoppingCartActivity extends BaseActivity{
 					ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
 				}
 			}
-			
 		});
+		
+		loadAddress();
+	}
+	
+	private void loadAddress(){
+		ArrayList<Address> addrs = (new AddressDAO(this)).get();
+		if (addrs == null || addrs.size() == 0){
+			return;
+		}
+		Iterator<Address> it = addrs.iterator();
+		while (it.hasNext()){
+			Address addr = it.next();
+			// add new address into view
+			View view = LayoutInflater.from(ShoppingCartActivity.this).inflate(R.layout.address_info, null);
+			((TextView)view.findViewById(R.id.address_name)).setText(addr.getName());
+			((TextView)view.findViewById(R.id.address_phone)).setText(addr.getPhone());
+			((TextView)view.findViewById(R.id.address_detail)).setText(addr.getAddr());
+			LinearLayout parent = (LinearLayout)ShoppingCartActivity.this.findViewById(R.id.address_info);
+			parent.addView(view, parent.getChildCount() - 1);
+			RadioButton rb = (RadioButton)view.findViewById(R.id.address_radio_button);
+			rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+				@Override
+				public void onCheckedChanged(CompoundButton button,
+						boolean status) {
+					if (!status){
+						return;
+					}
+					Iterator<RadioButton> it = mAddrMap.keySet().iterator();
+					while (it.hasNext()){
+						RadioButton a = it.next();
+						if (a != button){
+							Log.d(TAG, "unset check status of others.");
+							a.setChecked(false);
+						}
+					}
+					Log.d(TAG, "set current addr and uncheck new addre button.");
+					mCurrentAddr = mAddrMap.get(button);
+					mNewAddrBtn.setChecked(false);
+				}
+			});
+			mAddrMap.put(rb, addr);
+			if (!it.hasNext()){
+				rb.setChecked(true);
+			}
+		}
 	}
 	
 	private void showNewAddressDialog(){
@@ -357,7 +402,8 @@ public class ShoppingCartActivity extends BaseActivity{
 				// set current checked, and set current address
 				rb.setChecked(true);
 				mCurrentAddr = address1;
-				// TODO save new address to cache.
+				// save new address to cache.
+				(new AddressDAO(ShoppingCartActivity.this)).insert(address1);
 			}
 		});
 		builder.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {

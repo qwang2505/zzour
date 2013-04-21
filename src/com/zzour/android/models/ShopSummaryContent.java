@@ -13,13 +13,13 @@ public class ShopSummaryContent extends BaseDataModel{
 	// optional, default is empty
 	private String description;
 	// optional, default rate is 0
-	private int rate;
+	private float rate;
 	
 	// bitmap for image.
 	private Bitmap bitmap = null;
 	
 	public ShopSummaryContent(int id, boolean isNew, String image, String name,
-			String description, int rate) {
+			String description, float rate) {
 		super();
 		this.id = id;
 		this.isNew = isNew;
@@ -46,10 +46,10 @@ public class ShopSummaryContent extends BaseDataModel{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getRate() {
+	public float getRate() {
 		return rate;
 	}
-	public void setRate(int rate) {
+	public void setRate(float rate) {
 		this.rate = rate;
 	}
 	public boolean isNew() {

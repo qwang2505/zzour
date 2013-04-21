@@ -4,6 +4,8 @@ package com.zzour.android.models;
 public class Food extends BaseDataModel{
 	
 	private int id;
+	private int shopId;
+	private String category;
 	private String name;
 	private float price;
 	private int soldCount;
@@ -14,6 +16,20 @@ public class Food extends BaseDataModel{
 	// set default value for test
 	private float boxPrice = 0.5f;
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public int getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(int shopId) {
+		this.shopId = shopId;
+	}
 	public float getBoxPrice() {
 		return boxPrice;
 	}

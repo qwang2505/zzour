@@ -129,6 +129,7 @@ public class DataApi {
 				f.setId(obj.getInt("id"));
 				f.setName(obj.getString("name"));
 				f.setImage(obj.getString("image"));
+				f.setShopId(shop.getId());
 				recommends.add(f);
 			}
 			shop.setRecommends(recommends);
@@ -147,6 +148,8 @@ public class DataApi {
 					food.setName(obj.getString("name"));
 					food.setPrice((float)obj.getDouble("price"));
 					food.setSoldCount(obj.getInt("soldCount"));
+					food.setShopId(shop.getId());
+					food.setCategory(cat);
 					foods.add(food);
 				}
 				foodsMap.put(cat, foods);
@@ -182,7 +185,7 @@ public class DataApi {
 				String name = obj.getString("name");
 				String desc = obj.optString("desc", "");
 				String image = obj.getString("img");
-				int rate = obj.optInt("rate", 0);
+				float rate = (float)obj.optDouble("rate", 0.0);
 				boolean isNew = obj.optBoolean("new", false);
 				
 				ShopSummaryContent shop = new ShopSummaryContent(id, isNew, image, name, desc, rate);

@@ -4,6 +4,9 @@ import java.util.HashMap;
 
 public class Order {
 
+	// TODO uuid for order
+	private String id;
+	// TODO time for order
 	private HashMap<Integer, Integer> foods = new HashMap<Integer,Integer>();
 	// add price here to make sure the price is right.
 	private float totalBoxPrice;
