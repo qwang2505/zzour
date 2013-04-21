@@ -12,6 +12,7 @@ import org.json.JSONTokener;
 import android.util.Log;
 
 import com.zzour.android.models.Food;
+import com.zzour.android.models.Order;
 import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShopDetailContent;
@@ -69,6 +70,11 @@ public class DataApi {
 		// for demo, get from fake data
 		String data = FakeData.getFakeSchool();
 		return DataApi.parseSchoolData(data);
+	}
+	
+	public static boolean order(Order order){
+		// TODO save order to local cache, and send request to make a order.
+		return true;
 	}
 	
 	private static ArrayList<School> parseSchoolData(String data){

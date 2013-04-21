@@ -2,6 +2,7 @@ package com.zzour.android.views.tab;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.R;
 import com.zzour.android.cache.GlobalMemoryCache;
+import com.zzour.android.utils.ActivityTool;
 
 public class Tab {
 	private int resourceIcon;
@@ -20,6 +22,7 @@ public class Tab {
 
 	private final BaseActivity context;
 	private Intent intent;
+	private Class<?> cls;
 
 	private View view;
 	// what's this button?
@@ -89,14 +92,12 @@ public class Tab {
 	public void setIntent(Intent intent, int requestForResult, Class cls) {
 		this.intent = intent;
 		this.requestCode = requestForResult;
-		this.intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		this.cls = cls;
 	}
 
 	public void setIntent(Intent intent, Class cls) {
-		// TODO class parameter is useless?
 		this.intent = intent;
-		// use reorder to front, do not create if already existed.
-		this.intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		this.cls = cls;
 	}
 
 	public Intent getIntent() {
@@ -148,7 +149,7 @@ public class Tab {
 		btn.setTextSize(btnTextSize);
 		btn.setBackgroundDrawable(btnBackGrad);
 		btn.setMinimumHeight(preferedHeight);
-		//btn.setPadding(0, 15, 0, 0);
+		btn.setPadding(0, 10, 0, 0);
 		
 		bindListeners();
 		// view is the button? interesting.
@@ -174,8 +175,7 @@ public class Tab {
 						if (requestCode != -1) {
 							// This will start activity for result
 						} else {
-							context.startActivity(intent);
-							context.overridePendingTransition(R.anim.right_slide_in, R.anim.left_slide_out);
+							ActivityTool.startActivity(context, cls, intent);
 							//context.finish();
 						}
 					} else if (dialog != null) {
@@ -188,7 +188,7 @@ public class Tab {
 		btn.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View view, MotionEvent e) {
 				if (e.getAction() == MotionEvent.ACTION_DOWN) {
-					btn.setBackgroundColor(0x400000FF);
+					btn.setBackgroundColor(Color.rgb(255, 186, 82));
 				} else if (e.getAction() == MotionEvent.ACTION_UP) {
 					btn.setBackgroundColor(0x00000000);
 				}

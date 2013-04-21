@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 
 import com.zzour.andoird.base.BaseActivity;
-import com.zzour.android.ContactActivity;
+import com.zzour.android.StoreActivity;
 import com.zzour.android.MainActivity;
 import com.zzour.android.MoreActivity;
 import com.zzour.android.R;
-import com.zzour.android.ShareActivity;
+import com.zzour.android.OrderListActivity;
 
 public class MyTabHostProvider extends TabHostProvider 
 {
@@ -46,12 +46,14 @@ public class MyTabHostProvider extends TabHostProvider
 	            new int[] {0x00000000, 0x00000000});
 	    transGradientDrawable.setCornerRadius(0f);
 	    transGradientDrawable.setDither(true);
+	    
+	    int selectedBtnTextColor = Color.rgb(255, 186, 82);
 
 	    // new home tab
 	    // TODO where use category? also set button text bellow
 		homeTab = new Tab(context, category);
 		// home sel is a white icon with transparent background
-		homeTab.setIcon(R.drawable.home_sel);
+		homeTab.setIcon(R.drawable.home);
 		// set icon selected, it is the same with icon.
 		homeTab.setIconSelected(R.drawable.home_sel);
 		// set button text? I don't this has been shown
@@ -59,43 +61,43 @@ public class MyTabHostProvider extends TabHostProvider
 		// set button text color
 		homeTab.setBtnTextColor(Color.WHITE);
 		// set selected button text color
-		homeTab.setSelectedBtnTextColor(Color.BLACK);
+		homeTab.setSelectedBtnTextColor(selectedBtnTextColor);
 		// set button gradient, use gradient for button background
 		homeTab.setBtnGradient(transGradientDrawable);
 		// set selected gradient button background
-		homeTab.setSelectedBtnGradient(gradientDrawable);
+		//homeTab.setSelectedBtnGradient(gradientDrawable);
 		// set intent
 		homeTab.setIntent(new Intent(context, MainActivity.class), MainActivity.class);
 
 		// it's all the same
 		contactTab = new Tab(context, category);
-		contactTab.setIcon(R.drawable.menu_sel);
-		contactTab.setIconSelected(R.drawable.menu_sel);
+		contactTab.setIcon(R.drawable.home);
+		contactTab.setIconSelected(R.drawable.home_sel);
 		contactTab.setBtnText(this.context.getResources().getString(R.string.store_tab_text));
 		contactTab.setBtnTextColor(Color.WHITE);
-		contactTab.setSelectedBtnTextColor(Color.BLACK);
+		contactTab.setSelectedBtnTextColor(selectedBtnTextColor);
 		contactTab.setBtnGradient(transGradientDrawable);
-		contactTab.setSelectedBtnGradient(gradientDrawable);
-		contactTab.setIntent(new Intent(context, ContactActivity.class), ContactActivity.class);
+		//contactTab.setSelectedBtnGradient(gradientDrawable);
+		contactTab.setIntent(new Intent(context, StoreActivity.class), StoreActivity.class);
 
 		shareTab = new Tab(context, category);
-		shareTab.setIcon(R.drawable.home_sel);
+		shareTab.setIcon(R.drawable.home);
 		shareTab.setIconSelected(R.drawable.home_sel);
 		shareTab.setBtnText(this.context.getResources().getString(R.string.my_order_tab_text));
 		shareTab.setBtnTextColor(Color.WHITE);
-		shareTab.setSelectedBtnTextColor(Color.BLACK);
+		shareTab.setSelectedBtnTextColor(selectedBtnTextColor);
 		shareTab.setBtnGradient(transGradientDrawable);
-		shareTab.setSelectedBtnGradient(gradientDrawable);
-		shareTab.setIntent(new Intent(context, ShareActivity.class), ShareActivity.class);
+		//shareTab.setSelectedBtnGradient(gradientDrawable);
+		shareTab.setIntent(new Intent(context, OrderListActivity.class), OrderListActivity.class);
 		
 		moreTab = new Tab(context, category);
-		moreTab.setIcon(R.drawable.more_sel);
-		moreTab.setIconSelected(R.drawable.more_sel);
+		moreTab.setIcon(R.drawable.home);
+		moreTab.setIconSelected(R.drawable.home_sel);
 		moreTab.setBtnText(this.context.getResources().getString(R.string.more_tab_text));
 		moreTab.setBtnTextColor(Color.WHITE);
-		moreTab.setSelectedBtnTextColor(Color.BLACK);
+		moreTab.setSelectedBtnTextColor(selectedBtnTextColor);
 		moreTab.setBtnGradient(transGradientDrawable);
-		moreTab.setSelectedBtnGradient(gradientDrawable);
+		//moreTab.setSelectedBtnGradient(gradientDrawable);
 		moreTab.setIntent(new Intent(context, MoreActivity.class), MoreActivity.class);
 
 		// add tabs to tab view.

@@ -1,9 +1,10 @@
 package com.zzour.android;
 
-import android.app.Activity;
+import com.zzour.andoird.base.BaseActivity;
+
 import android.os.Bundle;
 
-public class NumberPickerActivity extends Activity
+public class NumberPickerActivity extends BaseActivity
 {
     /** Called when the activity is first created. */
     @Override

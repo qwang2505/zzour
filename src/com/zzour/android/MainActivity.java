@@ -13,6 +13,7 @@ import com.zzour.android.cache.GlobalMemoryCache;
 import com.zzour.android.models.ShopList;
 import com.zzour.android.models.ShopSummaryContent;
 import com.zzour.android.network.api.DataApi;
+import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.HorizontalImageScrollView;
 import com.zzour.android.views.adapters.ListItemsAdapter;
@@ -155,8 +156,7 @@ public class MainActivity extends BaseActivity {
     	    	}
     	    	Intent intent = new Intent(MainActivity.this, ShopDetailActivity.class);
     	    	intent.putExtra("shop_id", shop.getId());
-    	    	Log.d(TAG, "start shop detail activty for shop: " + shop.getId());
-    	    	startActivity(intent);
+    	    	ActivityTool.startActivity(MainActivity.this, ShopDetailActivity.class, intent);
     	    }
     	});
     }

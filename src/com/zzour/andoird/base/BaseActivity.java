@@ -3,6 +3,7 @@ package com.zzour.andoird.base;
 import com.zzour.android.MainActivity;
 import com.zzour.android.R;
 import com.zzour.android.cache.GlobalMemoryCache;
+import com.zzour.android.utils.ActivityTool;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +16,12 @@ public class BaseActivity extends Activity{
 	
 	@Override
 	public void onBackPressed(){
+		// not all back to main
+		if (!ActivityTool.shouldBackToMain(this)){
+			super.onBackPressed();
+			overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+			return;
+		}
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		this.startActivity(intent);
@@ -22,9 +29,10 @@ public class BaseActivity extends Activity{
 	}
 	
 	@Override
-	public void onResume() {
-	    super.onResume();
-	    overridePendingTransition(R.anim.right_slide_in, R.anim.left_slide_out);
+	protected void onNewIntent(Intent intent) {
+	    super.onNewIntent(intent);
+	    ActivityTool.overridePendingTransition(this);
+	    //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 	}
 	
 	@Override

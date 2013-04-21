@@ -3,20 +3,22 @@ package com.zzour.android;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
+import com.zzour.android.models.Order;
 import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
-import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.network.api.DataApi;
-import com.zzour.android.views.adapters.ShopDetailAdapter;
+import com.zzour.android.utils.ActivityTool;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,10 +26,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -39,7 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ShoppingCartActivity extends Activity{
+public class ShoppingCartActivity extends BaseActivity{
 	
 	private static final String TAG = "ZZOUR";
 	
@@ -61,7 +63,9 @@ public class ShoppingCartActivity extends Activity{
 	// button handler
 	private ButtonHandler bHandler; 
 	
-	private Address mNewAddr = null;
+	private Address mCurrentAddr = null;
+	
+	private HashMap<RadioButton, Address> mAddrMap = new HashMap<RadioButton, Address>();
 	
 	class  ButtonHandler  extends  Handler { 
 
@@ -122,7 +126,8 @@ public class ShoppingCartActivity extends Activity{
 		
 		// if no shops, means no food, toast
 		if (ShoppingCart.getShopsCount() == 0){
-			// TODO give some advice
+			// give some advice
+			Toast.makeText(getApplicationContext(), "购物车还是空的，赶快去选购吧！", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
@@ -161,7 +166,7 @@ public class ShoppingCartActivity extends Activity{
 							LinearLayout grandgrandParent = (LinearLayout)grandParent.getParent();
 							grandgrandParent.removeView(grandParent);
 						}
-						// TODO reset total price and total box price.
+						// reset total price and total box price.
 						float oriTotalPrice = Float.valueOf(totalPriceView.getText().toString());
 						float oriTotalBoxPrice = Float.valueOf(totalBoxPriceView.getText().toString());
 						oriTotalPrice -= food.getPrice() * food.getBuyCount();
@@ -221,6 +226,56 @@ public class ShoppingCartActivity extends Activity{
 				showNewAddressDialog();
 			}
 		});
+		// TODO add order finish button click listener.
+		Button finishOrder = (Button)findViewById(R.id.deal);
+		finishOrder.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				// get and valid information first.
+				// if no shop or food in shopping cart, give advice
+				if (ShoppingCart.getShopsCount() == 0){
+					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				// add foods into order.
+				Iterator<Integer> shopIds = ShoppingCart.getShops();
+				Order order = new Order();
+				while (shopIds.hasNext()){
+					int shopId = shopIds.next();
+					Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
+					while (foodIds.hasNext()){
+						int foodId = foodIds.next();
+						Food food = ShoppingCart.getFood(shopId, foodId);
+						order.addFood(foodId, food.getBuyCount());
+					}
+				}
+				if (order.getFoodCount() == 0){
+					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_LONG).show();
+					return;
+				}
+				if (mCurrentAddr == null){
+					Toast.makeText(getApplicationContext(), "请选择收货地址！", Toast.LENGTH_LONG).show();
+					return;
+				}
+				order.setAddress(mCurrentAddr);
+				order.setTotalPrice(Float.valueOf(totalPriceView.getText().toString()));
+				order.setTotalBoxPrice(Float.valueOf(totalBoxPriceView.getText().toString()));
+				Spinner timeInfo = (Spinner)findViewById(R.id.time_spinner);
+				order.setSendTime(timeInfo.getSelectedItem().toString());
+				EditText m = (EditText)findViewById(R.id.message);
+				order.setMessage(m.getText().toString());
+				// all information ok, make the order.
+				// TODO send order request in new thread, and show loading image while doing it.
+				boolean result = DataApi.order(order);
+				if (!result){
+					// TODO do something?
+				} else {
+					// to the order succeed page.
+					ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
+				}
+			}
+			
+		});
 	}
 	
 	private void showNewAddressDialog(){
@@ -262,15 +317,47 @@ public class ShoppingCartActivity extends Activity{
 					Toast.makeText(getApplicationContext(), "地址不能为空！", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				mNewAddr = new Address(name.getText().toString(), phone.getText().toString(), addr);
+				Address address1 = new Address(name.getText().toString(), phone.getText().toString(), addr);
 				dialog.dismiss();
-				// TODO add new address into view
+				// add new address into view
 				View view = LayoutInflater.from(ShoppingCartActivity.this).inflate(R.layout.address_info, null);
-				((TextView)view.findViewById(R.id.address_name)).setText(mNewAddr.getName());
-				((TextView)view.findViewById(R.id.address_phone)).setText(mNewAddr.getPhone());
-				((TextView)view.findViewById(R.id.address_detail)).setText(mNewAddr.getAddr());
+				((TextView)view.findViewById(R.id.address_name)).setText(address1.getName());
+				((TextView)view.findViewById(R.id.address_phone)).setText(address1.getPhone());
+				((TextView)view.findViewById(R.id.address_detail)).setText(address1.getAddr());
 				LinearLayout parent = (LinearLayout)ShoppingCartActivity.this.findViewById(R.id.address_info);
 				parent.addView(view, parent.getChildCount() - 1);
+				RadioButton rb = (RadioButton)view.findViewById(R.id.address_radio_button);
+				if (!mAddrMap.containsKey(rb)){
+					// if radio button and address info not in map, add it.
+					Log.d(TAG, "add new address into map: " + address1.getName());
+					mAddrMap.put(rb, address1);
+				}
+				mNewAddrBtn.setChecked(false);
+				// add address radio button status change listener
+				rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+					@Override
+					public void onCheckedChanged(CompoundButton button,
+							boolean status) {
+						if (!status){
+							return;
+						}
+						Iterator<RadioButton> it = mAddrMap.keySet().iterator();
+						while (it.hasNext()){
+							RadioButton a = it.next();
+							if (a != button){
+								Log.d(TAG, "unset check status of others.");
+								a.setChecked(false);
+							}
+						}
+						Log.d(TAG, "set current addr and uncheck new addre button.");
+						mCurrentAddr = mAddrMap.get(button);
+						mNewAddrBtn.setChecked(false);
+					}
+				});
+				// set current checked, and set current address
+				rb.setChecked(true);
+				mCurrentAddr = address1;
+				// TODO save new address to cache.
 			}
 		});
 		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

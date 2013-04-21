@@ -9,7 +9,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="5dp"
-        android:src="@android:drawable/ic_media_play"
+        android:src="@drawable/arrow"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"/>
     <TextView android:id="@+id/moreListItem"

@@ -3,35 +3,29 @@ package com.zzour.android;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.network.api.DataApi;
+import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.ShopDetailAdapter;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class ShopDetailActivity extends Activity{
+public class ShopDetailActivity extends BaseActivity{
 	
 	private static final String TAG = "ZZOUR";
 	
@@ -88,8 +82,7 @@ public class ShopDetailActivity extends Activity{
 				// TODO if do not log in, redirect to login activity, but save food info.
 				// TODO if already log in, go to shopping cart.
 				ShoppingCart.saveFoods(mShop, foods);
-				Intent intent = new Intent(ShopDetailActivity.this, ShoppingCartActivity.class);
-				startActivity(intent);
+				ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
 			}
 		});
 	}
