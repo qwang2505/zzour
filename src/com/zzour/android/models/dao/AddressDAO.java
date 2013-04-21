@@ -29,6 +29,7 @@ public class AddressDAO extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		// TODO add a id to dedup
 		String sql = "CREATE TABLE "+TABLE_NAME +" ( "+ 
 				FIELD_NAME +" TEXT, " +
 				FIELD_ADDR + " TEXT, " +

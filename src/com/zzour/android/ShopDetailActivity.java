@@ -7,7 +7,7 @@ import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
-import com.zzour.android.network.api.DataApi;
+import com.zzour.android.network.api.ShopDetailApi;
 import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.ShopDetailAdapter;
@@ -55,7 +55,7 @@ public class ShopDetailActivity extends BaseActivity{
 		
 		setContentView(R.layout.shop_detail);
 		
-		mShop = DataApi.getShopDetailById(shopId);
+		mShop = ShopDetailApi.getShopDetailById(shopId);
 		ExpandableListView list = (ExpandableListView)findViewById(R.id.shop_detail);
 		// show shop detail
 		mAdapter = new ShopDetailAdapter(this);

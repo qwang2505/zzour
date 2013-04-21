@@ -35,7 +35,7 @@ public class FoodDAO  extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "CREATE TABLE "+TABLE_NAME +" ( "+ 
-				FIELD_ID +" INT, "+ 
+				FIELD_ID +" INT PRIMARY KEY, "+ 
 				FIELD_SHOP_ID +" INT, " +
 				FIELD_CATEGORY + " TEXT, " +
 				FIELD_NAME + " TEXT, " +
@@ -74,7 +74,7 @@ public class FoodDAO  extends SQLiteOpenHelper {
 		cv.put(FIELD_IMAGE, food.getImage());
 		cv.put(FIELD_BOX_PRICE, food.getBoxPrice());
 		cv.put(FIELD_ORDER, order);
-		this.getWritableDatabase().insert(TABLE_NAME, null, cv);
+		this.getWritableDatabase().replace(TABLE_NAME, null, cv);
 		this.getWritableDatabase().close();
 	}
 	

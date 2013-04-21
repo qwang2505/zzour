@@ -14,7 +14,9 @@ import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.models.dao.AddressDAO;
-import com.zzour.android.network.api.DataApi;
+import com.zzour.android.network.api.OrderApi;
+import com.zzour.android.network.api.SchoolApi;
+import com.zzour.android.network.api.ShopListApi;
 import com.zzour.android.utils.ActivityTool;
 
 import android.app.AlertDialog;
@@ -267,7 +269,7 @@ public class ShoppingCartActivity extends BaseActivity{
 				order.setMessage(m.getText().toString());
 				// all information ok, make the order.
 				// TODO send order request in new thread, and show loading image while doing it.
-				boolean result = DataApi.order(order);
+				boolean result = OrderApi.order(order);
 				if (!result){
 					// TODO do something?
 				} else {
@@ -422,7 +424,7 @@ public class ShoppingCartActivity extends BaseActivity{
 		builder.setView(view);
 		// init schools
 		if (mSchools == null){
-			mSchools = DataApi.getSchoolList();
+			mSchools = SchoolApi.getSchoolList();
 		}
 		String[] names = getSchoolNames();
 		Spinner schoolSpinner = (Spinner)view.findViewById(R.id.new_address_school);

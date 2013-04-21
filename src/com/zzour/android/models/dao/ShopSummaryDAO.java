@@ -33,7 +33,7 @@ public class ShopSummaryDAO extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "CREATE TABLE "+TABLE_NAME +" ( "+ 
-						FIELD_ID +" INT, "+ 
+						FIELD_ID +" INT PRIMARY KEY, "+ 
 						FIELD_NAME +" TEXT, " +
 						FIELD_IS_NEW + " INT, " +
 						FIELD_IMAGE + " TEXT, " +
@@ -51,6 +51,7 @@ public class ShopSummaryDAO extends SQLiteOpenHelper {
 	}
 	
 	public void insert(ShopSummaryContent summary, int order){
+		// TODO should be safe insert, if already in db, update instead of insert
 		ContentValues cv = new ContentValues();
 		cv.put(FIELD_ID, summary.getId());
 		cv.put(FIELD_NAME, summary.getName());
@@ -59,7 +60,7 @@ public class ShopSummaryDAO extends SQLiteOpenHelper {
 		cv.put(FIELD_DESC, summary.getDescription());
 		cv.put(FIELD_RATE, summary.getRate());
 		cv.put(FIELD_ORDER, order);
-		this.getWritableDatabase().insert(TABLE_NAME, null, cv);
+		this.getWritableDatabase().replace(TABLE_NAME, null, cv);
 		this.getWritableDatabase().close();
 	}
 	
@@ -108,7 +109,6 @@ public class ShopSummaryDAO extends SQLiteOpenHelper {
 			String image = cursor.getString(cursor.getColumnIndex(FIELD_IMAGE));
 			String desc = cursor.getString(cursor.getColumnIndex(FIELD_DESC));
 			int rate = cursor.getInt(cursor.getColumnIndex(FIELD_RATE));
-			int order = cursor.getInt(cursor.getColumnIndex("o"));
 			ShopSummaryContent shop = new ShopSummaryContent(id, isNew, image, name, desc, rate);
 			shops.add(shop);
 		}

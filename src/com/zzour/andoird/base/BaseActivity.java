@@ -2,7 +2,6 @@ package com.zzour.andoird.base;
 
 import com.zzour.android.MainActivity;
 import com.zzour.android.R;
-import com.zzour.android.cache.GlobalMemoryCache;
 import com.zzour.android.utils.ActivityTool;
 
 import android.app.Activity;

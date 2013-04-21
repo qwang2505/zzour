@@ -9,10 +9,9 @@ import java.util.TimerTask;
 import com.zzour.andoird.base.BaseActivity;
 import com.zzour.andoird.base.SysApplication;
 import com.zzour.android.R;
-import com.zzour.android.cache.GlobalMemoryCache;
 import com.zzour.android.models.ShopList;
 import com.zzour.android.models.ShopSummaryContent;
-import com.zzour.android.network.api.DataApi;
+import com.zzour.android.network.api.ShopListApi;
 import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.HorizontalImageScrollView;
@@ -188,8 +187,8 @@ public class MainActivity extends BaseActivity {
     }
     
     private void loadMoreData(){
-    	
-    	ShopList shopList = DataApi.getShopList();
+    	// pass in activity instance to get preference
+    	ShopList shopList = ShopListApi.getShopList(this);
     	
     	if (mAdapterTemp == null){
     		mAdapterTemp = new ListItemsAdapter(this, R.drawable.scroll_image_1);

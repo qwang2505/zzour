@@ -10,6 +10,18 @@ public class ShopList extends BaseDataModel{
 		this.mBanners = mBanners;
 		this.mShops = mShops;
 	}
+	public ShopList(String mSearchKeyword, String[] banners,
+			ArrayList<ShopSummaryContent> mShops) {
+		super();
+		this.mSearchKeyword = mSearchKeyword;
+		this.mShops = mShops;
+		if (this.mBanners == null){
+			this.mBanners = new ArrayList<String>();
+		}
+		for (int i=0; i < banners.length; i++){
+			this.mBanners.add(banners[i]);
+		}
+	}
 	private String mSearchKeyword;
 	public String getmSearchKeyword() {
 		return mSearchKeyword;

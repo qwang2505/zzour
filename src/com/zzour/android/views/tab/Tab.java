@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.R;
-import com.zzour.android.cache.GlobalMemoryCache;
 import com.zzour.android.utils.ActivityTool;
 
 public class Tab {
