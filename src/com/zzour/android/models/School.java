@@ -2,6 +2,7 @@ package com.zzour.android.models;
 
 import java.util.ArrayList;
 
+// TODO add save school information to local storage logic.
 public class School {
 	private int id;
 	private String name;

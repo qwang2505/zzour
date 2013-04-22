@@ -1,5 +1,6 @@
 package com.zzour.android.models;
 
+// TODO add save to local storage logic.
 public class SchoolArea {
 	private int id;
 	private String name;

@@ -8,6 +8,7 @@ import java.util.Iterator;
  * This class is for save and get shopping cart information. Also include save cart information
  * to storage, and load from storage.
  */
+// TODO add pending foods information into local storage logic.
 public class ShoppingCart {
 
 	private static HashMap<Integer, HashMap<Integer, Food>> mProductMap = new HashMap<Integer, HashMap<Integer, Food>>();

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class AddressDAO extends SQLiteOpenHelper {
 	
@@ -30,12 +31,13 @@ public class AddressDAO extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO add a id to dedup
-		String sql = "CREATE TABLE "+TABLE_NAME +" ( "+ 
+		String sql = "CREATE TABLE "+ TABLE_NAME +" ( "+ 
 				FIELD_NAME +" TEXT, " +
 				FIELD_ADDR + " TEXT, " +
 				FIELD_PHONE + " TEXT " +
 			");";  
-		db.execSQL(sql);  
+		db.execSQL(sql);
+		Log.d("ZZOUR", "create table " + TABLE_NAME);
 	}
 
 	@Override
