@@ -83,8 +83,7 @@ public class ShoppingCartActivity extends BaseActivity{
                  case DialogInterface.BUTTON_POSITIVE: 
                  case DialogInterface.BUTTON_NEGATIVE: 
                  case DialogInterface.BUTTON_NEUTRAL: 
-                    ((DialogInterface.OnClickListener) msg.obj).onClick(mDialog 
-                            .get(), msg.what); 
+                    ((DialogInterface.OnClickListener) msg.obj).onClick(mDialog.get(), msg.what); 
                      break ; 
             } 
         } 
@@ -283,7 +282,8 @@ public class ShoppingCartActivity extends BaseActivity{
 	}
 	
 	private void loadAddress(){
-		ArrayList<Address> addrs = (new AddressDAO(this)).get();
+		AddressDAO dao = new AddressDAO(this);
+		ArrayList<Address> addrs = dao.get();
 		if (addrs == null || addrs.size() == 0){
 			return;
 		}
@@ -405,7 +405,8 @@ public class ShoppingCartActivity extends BaseActivity{
 				rb.setChecked(true);
 				mCurrentAddr = address1;
 				// save new address to cache.
-				(new AddressDAO(ShoppingCartActivity.this)).insert(address1);
+				AddressDAO dao = new AddressDAO(ShoppingCartActivity.this);
+				dao.insert(address1);
 			}
 		});
 		builder.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {

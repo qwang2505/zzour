@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class AddressDAO extends SQLiteOpenHelper {
+public class AddressDAO extends CustomSqliteHelper {
 	
 	// TODO database name and version should in settings file, so if upgrade, will read and re-craete table.
 	private static final String DATABASE_NAME = "zzour";
@@ -25,25 +25,7 @@ public class AddressDAO extends SQLiteOpenHelper {
 	private static final String FIELD_PHONE = "phone";
 	
 	public AddressDAO(Context context){
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
-
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		// TODO add a id to dedup
-		String sql = "CREATE TABLE "+ TABLE_NAME +" ( "+ 
-				FIELD_NAME +" TEXT, " +
-				FIELD_ADDR + " TEXT, " +
-				FIELD_PHONE + " TEXT " +
-			");";  
-		db.execSQL(sql);
-		Log.d("ZZOUR", "create table " + TABLE_NAME);
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-		this.onCreate(db);
+		super(context, DATABASE_NAME, DATABASE_VERSION);
 	}
 	
 	public void insert(Address address){

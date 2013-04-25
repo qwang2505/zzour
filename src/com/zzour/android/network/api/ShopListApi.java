@@ -84,6 +84,7 @@ public class ShopListApi {
 			banner += it.next();
 		}
 		LocalStorage.setHomePageBanners(activity, banner);
+		// save shop summary to database
 		ShopSummaryDAO m = new ShopSummaryDAO(activity);
 		Iterator<ShopSummaryContent> it1 = shopList.getmShops().iterator();
 		int order = 0;

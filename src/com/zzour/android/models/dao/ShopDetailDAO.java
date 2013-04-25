@@ -13,7 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class ShopDetailDAO  extends SQLiteOpenHelper{
+public class ShopDetailDAO  extends CustomSqliteHelper{
 	
 	// TODO database name and version should in settings file, so if upgrade, will read and re-craete table.
 	private static final String DATABASE_NAME = "zzour";
@@ -32,29 +32,8 @@ public class ShopDetailDAO  extends SQLiteOpenHelper{
 	private Context context = null;
 	
 	public ShopDetailDAO(Context context){
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		super(context, DATABASE_NAME, DATABASE_VERSION);
 		this.context = context;
-	}
-
-
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		String sql = "CREATE TABLE "+ TABLE_NAME +" ( "+ 
-				FIELD_ID +" INT PRIMARY KEY, "+ 
-				FIELD_NAME +" TEXT, " +
-				FIELD_BANNER + " TEXT, " +
-				FIELD_RATE + " FLOAT, " +
-				FIELD_ADDR + " TEXT, " +
-				FIELD_DESC + " TEXT, " +
-				FIELD_CATS + " TEXT " +
-			");";  
-		db.execSQL(sql);
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int version) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-		this.onCreate(db);
 	}
 	
 	public void clean(int id){

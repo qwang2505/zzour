@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class RecommendFoodDAO  extends SQLiteOpenHelper {
+public class RecommendFoodDAO  extends CustomSqliteHelper {
 	
 	// TODO database name and version should in settings file, so if upgrade, will read and re-craete table.
 	private static final String DATABASE_NAME = "zzour";
@@ -29,23 +29,7 @@ public class RecommendFoodDAO  extends SQLiteOpenHelper {
 	private static final String FIELD_ORDER = "o";
 	
 	public RecommendFoodDAO(Context context){
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
-
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		String sql = "CREATE TABLE "+TABLE_NAME +" ( "+ 
-				FIELD_ID +" INT PRIMARY KEY, "+ 
-				FIELD_SHOP_ID +" INT, " +
-				FIELD_CATEGORY + " TEXT, " +
-				FIELD_NAME + " TEXT, " +
-				FIELD_PRICE + " FLOAT, " +
-				FIELD_SOLD_COUNT + " INT, " +
-				FIELD_IMAGE + " TEXT, " +
-				FIELD_BOX_PRICE + " FLOAT, " +
-				FIELD_ORDER + " INT " +
-			");";  
-		db.execSQL(sql); 
+		super(context, DATABASE_NAME, DATABASE_VERSION);
 	}
 	
 	public void clean(){
@@ -55,12 +39,6 @@ public class RecommendFoodDAO  extends SQLiteOpenHelper {
 	public void clean(int shopId){
 		// clean food by shop id.
 		this.getWritableDatabase().execSQL("DELETE FROM " + TABLE_NAME + "WHERE shopId = ?", new Object[]{shopId});
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-		this.onCreate(db);
 	}
 	
 	public void insert(Food food, int order){

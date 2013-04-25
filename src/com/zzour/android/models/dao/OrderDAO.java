@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class OrderDAO extends SQLiteOpenHelper {
+public class OrderDAO extends CustomSqliteHelper {
 	
 	private static final String DATABASE_NAME = "zzour";
 	private static final int DATABASE_VERSION = 1;
@@ -12,7 +12,7 @@ public class OrderDAO extends SQLiteOpenHelper {
 	private static final String TABLE_NAME = "order";
 	
 	public OrderDAO(Context context){
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		super(context, DATABASE_NAME, DATABASE_VERSION);
 	}
 
 
