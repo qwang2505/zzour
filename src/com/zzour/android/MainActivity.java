@@ -191,14 +191,15 @@ public class MainActivity extends BaseActivity {
     	ShopList shopList = ShopListApi.getShopList(this);
     	
     	if (mAdapterTemp == null){
-    		mAdapterTemp = new ListItemsAdapter(this, R.drawable.scroll_image_1);
+    		// TODO for image in cache, do not need start new thread for it.
+    		mAdapterTemp = new ListItemsAdapter(this, R.drawable.logo);
     	}
     	for (int i=0; i < shopList.size(); i++){
     		ShopSummaryContent shop = shopList.get(i);
     		int p = mAdapterTemp.addItem(shop);
     		mImages.put(p, shop.getImage());
     	}
-    	// TODO start new thread to download image and update
+    	// start new thread to download image and update
     	Iterator<Integer> it = mImages.keySet().iterator();
 		final int width = (int)getResources().getDimension(R.dimen.list_image_width);
 		final int height = (int)getResources().getDimension(R.dimen.list_image_height);
@@ -207,7 +208,7 @@ public class MainActivity extends BaseActivity {
 	    	new Thread(new Runnable() {
 	 	       @Override
 	 	       public void run() {
-	 	    	   Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height);
+	 	    	   Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height, MainActivity.this);
 	 	    	   mAdapterTemp.updateShopBitmap(position, bmp);
 	 	    	   mLoadMoreHandler.post(new Runnable(){
 	 	    		   public void run(){

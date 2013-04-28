@@ -10,18 +10,18 @@ import com.zzour.andoird.base.BaseActivity;
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.Order;
+import com.zzour.android.models.OrderResult;
 import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.models.dao.AddressDAO;
 import com.zzour.android.network.api.OrderApi;
 import com.zzour.android.network.api.SchoolApi;
-import com.zzour.android.network.api.ShopListApi;
-import com.zzour.android.utils.ActivityTool;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -67,6 +67,7 @@ public class ShoppingCartActivity extends BaseActivity{
 	private ButtonHandler bHandler; 
 	
 	private Address mCurrentAddr = null;
+	private Order mOrder = null;
 	
 	private HashMap<RadioButton, Address> mAddrMap = new HashMap<RadioButton, Address>();
 	
@@ -241,17 +242,17 @@ public class ShoppingCartActivity extends BaseActivity{
 				}
 				// add foods into order.
 				Iterator<Integer> shopIds = ShoppingCart.getShops();
-				Order order = new Order();
+				mOrder = new Order();
 				while (shopIds.hasNext()){
 					int shopId = shopIds.next();
 					Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
 					while (foodIds.hasNext()){
 						int foodId = foodIds.next();
 						Food food = ShoppingCart.getFood(shopId, foodId);
-						order.addFood(foodId, food.getBuyCount());
+						mOrder.addFood(shopId, ShoppingCart.getShopName(shopId), food);
 					}
 				}
-				if (order.getFoodCount() == 0){
+				if (mOrder.getFoodCount() == 0){
 					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_LONG).show();
 					return;
 				}
@@ -259,22 +260,17 @@ public class ShoppingCartActivity extends BaseActivity{
 					Toast.makeText(getApplicationContext(), "请选择收货地址！", Toast.LENGTH_LONG).show();
 					return;
 				}
-				order.setAddress(mCurrentAddr);
-				order.setTotalPrice(Float.valueOf(totalPriceView.getText().toString()));
-				order.setTotalBoxPrice(Float.valueOf(totalBoxPriceView.getText().toString()));
+				mOrder.setAddress(mCurrentAddr);
+				mOrder.setTotalPrice(Float.valueOf(totalPriceView.getText().toString()));
+				mOrder.setTotalBoxPrice(Float.valueOf(totalBoxPriceView.getText().toString()));
 				Spinner timeInfo = (Spinner)findViewById(R.id.time_spinner);
-				order.setSendTime(timeInfo.getSelectedItem().toString());
+				mOrder.setSendTime(timeInfo.getSelectedItem().toString());
 				EditText m = (EditText)findViewById(R.id.message);
-				order.setMessage(m.getText().toString());
+				mOrder.setMessage(m.getText().toString());
 				// all information ok, make the order.
-				// TODO send order request in new thread, and show loading image while doing it.
-				boolean result = OrderApi.order(order);
-				if (!result){
-					// TODO do something?
-				} else {
-					// to the order succeed page.
-					ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
-				}
+				// send order request in async task, and show loading dialog while doing it.
+				new LoadingTask(ShoppingCartActivity.this).execute();
+				// TODO clear shopping cart
 			}
 		});
 		
@@ -572,5 +568,58 @@ public class ShoppingCartActivity extends BaseActivity{
 		builder.setView(view);
 		mNumberPicker = builder.create();
 		mNumberPicker.show();
+	}
+	
+	public void setOrderResult(OrderResult result){
+		if (mOrder == null){
+			Log.d(TAG, "Something goes wrong, mOrder is null while set order id");
+			return;
+		}
+		mOrder.setId(result.getId());
+		mOrder.setResultMsg(result.getMsg());
+	}
+	
+	public void finishOrder(){
+		if (mOrder == null){
+			Log.d(TAG, "Something goes wrong, mOrder is null while finish order");
+			return;
+		}
+		if (mOrder.getId() == null){
+			// not success, to the fail activity
+			// here result message must not be null
+		} else {
+			// success, to the success activity
+		}
+	}
+	
+	private class LoadingTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private ProgressDialog mDialog = null;
+
+		public LoadingTask(ShoppingCartActivity activity) {
+	        this.activity = activity;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			OrderResult result = OrderApi.order(mOrder);
+			activity.setOrderResult(result);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage(this.activity.getResources().getString(R.string.loading_progress_text));
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        this.activity.finishOrder();
+	    }
 	}
 }

@@ -79,7 +79,7 @@ public class ListItemsAdapter extends BaseAdapter{
 		Bitmap bmp = shops.get(position).getBitmap();
 		if (bmp == null){
 			cache.mImageView.setImageBitmap(ImageTool.getBitmapByStream(mDefaultBitmapId, 
-					mContext.getResources().openRawResource(R.drawable.scroll_image_1), 
+					mContext.getResources().openRawResource(mDefaultBitmapId), 
 					mImageWidth, mImageHeight));
 		} else {
 			cache.mImageView.setImageBitmap(bmp);

@@ -65,6 +65,22 @@ public class ShopSummaryDAO extends CustomSqliteHelper {
 		this.getWritableDatabase().execSQL("DELETE FROM " + TABLE_NAME);
 	}
 	
+	public ShopSummaryContent getById(int shopId){
+		Cursor cursor = this.getReadableDatabase().query(TABLE_NAME, null, "id = ?", new String[]{String.valueOf(shopId)}, 
+				null, null, null, null);
+		while (cursor.moveToNext()){
+			int id = cursor.getInt(cursor.getColumnIndex(FIELD_ID));
+			String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME));
+			boolean isNew = cursor.getInt(cursor.getColumnIndex(FIELD_IS_NEW)) == 1 ? true : false;
+			String image = cursor.getString(cursor.getColumnIndex(FIELD_IMAGE));
+			String desc = cursor.getString(cursor.getColumnIndex(FIELD_DESC));
+			int rate = cursor.getInt(cursor.getColumnIndex(FIELD_RATE));
+			ShopSummaryContent shop = new ShopSummaryContent(id, isNew, image, name, desc, rate);
+			return shop;
+		}
+		return null;
+	}
+	
 	public ArrayList<ShopSummaryContent> get(){
 		return this.get(-1, 15);
 	}

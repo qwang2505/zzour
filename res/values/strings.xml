@@ -4,6 +4,7 @@
     <string name="app_name">宅宅网</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="loading_progress_text">加载中，请稍后...</string>
     
     <!-- values for zzour client -->
     <string name="logo_desc"></string>

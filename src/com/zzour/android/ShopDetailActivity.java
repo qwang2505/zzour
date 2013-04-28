@@ -12,9 +12,12 @@ import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.ShopDetailAdapter;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +35,12 @@ public class ShopDetailActivity extends BaseActivity{
 	private ShopDetailAdapter mAdapter = null;
 	private View mHeaderView = null;
 	private ShopDetailContent mShop = null;
+	private ImageView mBanner = null;
+	
+	private Handler mLoadImageHandler = new Handler();
+	private Bitmap mBitmap = null;
+	
+	private int mShopId = -1;
 	
 	@Override
 	public void onResume(){
@@ -47,15 +56,24 @@ public class ShopDetailActivity extends BaseActivity{
 		super.onCreate(savedInstanceState);
 		
 		Intent intent = this.getIntent();
-		int shopId = intent.getIntExtra("shop_id", -1);
-		if (shopId == -1){
+		mShopId = intent.getIntExtra("shop_id", -1);
+		if (mShopId == -1){
 			Log.e(TAG, "no shop id in intent! why this activity start?");
 			return;
 		}
 		
 		setContentView(R.layout.shop_detail);
 		
-		mShop = ShopDetailApi.getShopDetailById(shopId);
+		// load data in async task
+		new LoadingTask(this).execute();
+	}
+	
+	public void setShop(ShopDetailContent shop){
+		this.mShop = shop;
+	}
+	
+	private void show(){
+		//mShop = ShopDetailApi.getShopDetailById(mShopId, this);
 		ExpandableListView list = (ExpandableListView)findViewById(R.id.shop_detail);
 		// show shop detail
 		mAdapter = new ShopDetailAdapter(this);
@@ -73,7 +91,7 @@ public class ShopDetailActivity extends BaseActivity{
 
 			@Override
 			public void onClick(View view) {
-				// TODO if buy any, save into cart
+				// if buy any, save into cart
 				ArrayList<Food> foods = mAdapter.getBoughtFoods();
 				if (foods.size() == 0){
 					// TODO give out toast
@@ -99,16 +117,61 @@ public class ShopDetailActivity extends BaseActivity{
 		RatingBar rate = (RatingBar)mHeaderView.findViewById(R.id.shop_rating);
 		rate.setRating(shop.getRate());
 		// initial top banner
-		ImageView banner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
+		mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
 		DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels - 20;
-        // TODO get rael image in new thread
-		Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_1, getResources().openRawResource(R.drawable.scroll_image_1), 
+        final int width = metrics.widthPixels - 20;
+        // get real image in new thread
+		Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.logo, getResources().openRawResource(R.drawable.logo), 
 				width, 
 				(int)getResources().getDimension(R.dimen.detail_banner_height));
-		banner.setImageBitmap(bmp);
+		mBanner.setImageBitmap(bmp);
+		new Thread(new Runnable() {
+	 	       @Override
+	 	       public void run() {
+	 	    	   mBitmap = ImageTool.getBitmapByUrl(mShop.getBanner(), width, (int)getResources().getDimension(R.dimen.detail_banner_height), ShopDetailActivity.this);
+	 	    	   mLoadImageHandler.post(new Runnable(){
+	 	    		   public void run(){
+	 	    			   if (mBitmap == null){
+	 	    				   return;
+	 	    			   }
+	 	    			   mBanner.setImageBitmap(mBitmap);
+	 	    		   }
+	 	    	   });
+	 	       }
+	 	    }).start();
 		// TODO initial recommends foods images
 		list.addHeaderView(mHeaderView);
+	}
+	
+	private class LoadingTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShopDetailActivity activity = null;
+		private ProgressDialog mDialog = null;
+
+		public LoadingTask(ShopDetailActivity activity) {
+	        this.activity = activity;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			ShopDetailContent shop = ShopDetailApi.getShopDetailById(mShopId, this.activity);
+			activity.setShop(shop);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage(this.activity.getResources().getString(R.string.loading_progress_text));
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        this.activity.show();
+	    }
 	}
 }

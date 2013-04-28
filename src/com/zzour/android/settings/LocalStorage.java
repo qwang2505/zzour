@@ -1,69 +1,96 @@
 package com.zzour.android.settings;
 
-import com.zzour.android.R;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.util.Log;
 
 public class LocalStorage {
 	
-	public static final String SHOP_LIST_API = "shop_list";
-	public static final String SHOP_DETAIL_API = "shop_detail";
+	private static boolean mExternalStorageAvailable = false;
+	private static boolean mExternalStorageWriteable = false;
 	
-	private static SharedPreferences prefs = null;
-	
-	private static void ensurePrefs(Activity activity){
-		if (prefs == null){
-			prefs = activity.getPreferences(Activity.MODE_PRIVATE);
+	private static void checkExternalStorage(){
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+		    // We can read and write the media
+		    mExternalStorageAvailable = mExternalStorageWriteable = true;
+		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+		    // We can only read the media
+		    mExternalStorageAvailable = true;
+		    mExternalStorageWriteable = false;
+		} else {
+		    // Something else is wrong. It may be one of many other states, but all we need
+		    //  to know is we can neither read nor write
+		    mExternalStorageAvailable = mExternalStorageWriteable = false;
 		}
 	}
 	
-	public static boolean isApiDataExpired(String api, Activity activity){
-		ensurePrefs(activity);
-		long now = System.currentTimeMillis();
-		long t = prefs.getLong(api, 0);
-		if (t == 0 || now - t > GlobalSettings.getApiExpireTime()){
-			// no value in prefs or expired
-			return true;
+	private static File getExternalFilesDir(Context context){
+		if (GlobalSettings.getApiLevel() >= 8){
+			Log.d("ZZOUR", "api level greater than 8");
+			return context.getExternalCacheDir();
+		} else {
+			Log.d("ZZOUR", "api level lower than 8");
+			// create path
+			File f = Environment.getDownloadCacheDirectory();
+			// TODO test this
+			File dir =  new File(f.getAbsolutePath(), "/zzour/files/");
+			dir.mkdirs();
+			Log.d("ZZOUR", "cache path " + dir.toString());
+			return dir;
 		}
-		return false;
 	}
 	
-	public static void recordApiCall(String api, Activity activity){
-		ensurePrefs(activity);
-		long now = System.currentTimeMillis();
-		Editor editor = prefs.edit();
-		editor.putLong(api, now);
-		editor.commit();
-	}
-	
-	public static void setSearchKeyword(Activity activity, String value){
-		ensurePrefs(activity);
-		Editor editor = prefs.edit();
-		editor.putString("search_keyword", value);
-		editor.commit();
-	}
-	
-	public static String getSearchKeyword(Activity activity){
-		ensurePrefs(activity);
-		String sk = prefs.getString("search_keyword", null);
-		if (sk == null){
-			sk = activity.getResources().getString(R.string.search_initial_text);
+	public static void saveImage(String name, Bitmap bmp, Context context){
+		// save bitmap file to local storage
+		checkExternalStorage();
+		if (!mExternalStorageWriteable){
+			// not writable, return directly.
+			return;
 		}
-		return sk;
+		try{
+			File f = getExternalFilesDir(context);
+			File file = new File(f, name.replace("-", "a"));
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			// TODO all compress as png?
+			bmp.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+			byte[] bitmapdata = bos.toByteArray();
+			OutputStream os = new FileOutputStream(file);
+			os.write(bitmapdata);
+			bos.close();
+			os.close();
+		} catch (IOException e){
+			Log.e("ZZOUR", "Error write external storage.", e);
+		}
 	}
 	
-	public static void setHomePageBanners(Activity activity, String value){
-		ensurePrefs(activity);
-		Editor editor = prefs.edit();
-		editor.putString("home_banners", value);
-		editor.commit();
-	}
-	
-	public static String[] getHomePageBanners(Activity activity){
-		ensurePrefs(activity);
-		String bs = prefs.getString("home_banners", "");
-		return bs.split(";");
+	public static Bitmap getImage(String name, Context context){
+		checkExternalStorage();
+		if (!mExternalStorageAvailable){
+			return null;
+		}
+		try{
+			File f = getExternalFilesDir(context);
+			File file = new File(f, name.replace("-", "a"));
+			if (!file.exists()){
+				return null;
+			}
+			Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(file));
+			return bmp;
+		} catch (IOException e){
+			Log.e("ZZOUR", "Error read external storage.", e);
+		}
+		return null;
 	}
 }

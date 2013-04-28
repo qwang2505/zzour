@@ -30,6 +30,7 @@
             
             <ImageView android:id="@+id/about_logo"
                 android:layout_width="match_parent"
+                android:src="@drawable/logo"
                 android:contentDescription="@string/logo_desc"
                 android:layout_height="100dp" />
             

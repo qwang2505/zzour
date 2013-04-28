@@ -4,28 +4,45 @@ import java.util.HashMap;
 
 public class Order {
 
-	// TODO uuid for order
+	// uuid for order, returned from server
 	private String id;
 	// TODO time for order
-	private HashMap<Integer, Integer> foods = new HashMap<Integer,Integer>();
+	private HashMap<Integer, HashMap<Food, Integer>> foods = new HashMap<Integer, HashMap<Food, Integer>>();
+	private HashMap<Integer, String> shopNames = new HashMap<Integer, String>();
 	// add price here to make sure the price is right.
 	private float totalBoxPrice;
 	private float totalPrice;
 	private Address address;
 	private String sendTime;
 	private String message;
+	private String resultMsg;
 	
+	public String getResultMsg() {
+		return resultMsg;
+	}
+	public void setResultMsg(String resultMsg) {
+		this.resultMsg = resultMsg;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public int getFoodCount(){
 		return foods.size();
 	}
-	public void addFood(int id, int count){
-		foods.put(id, count);
-	}
-	public HashMap<Integer, Integer> getFoods() {
-		return foods;
-	}
-	public void setFoods(HashMap<Integer, Integer> foods) {
-		this.foods = foods;
+	public void addFood(int shopId, String shopName, Food food){
+		HashMap<Food, Integer> fs;
+		if (!foods.containsKey(shopId)){
+			fs = new HashMap<Food, Integer>();
+		} else {
+			fs = foods.get(shopId);
+		}
+		fs.put(food, food.getBuyCount());
+		if (!shopNames.containsKey(shopId)){
+			shopNames.put(shopId, shopName);
+		}
 	}
 	public float getTotalBoxPrice() {
 		return totalBoxPrice;

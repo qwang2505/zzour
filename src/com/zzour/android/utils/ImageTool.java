@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import com.zzour.android.settings.LocalStorage;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -15,15 +18,24 @@ public class ImageTool {
 	private static final String TAG = "ZZOUR";
 	private static HashMap<Integer, Bitmap> mBitmapCache = new HashMap<Integer, Bitmap>();
 	
-	public static Bitmap getBitmapByUrl(String src, int width, int height){
+	public static Bitmap getBitmapByUrl(String src, int width, int height, Context context){
+		// load image from memory
 		int key = (new String("src" + src + width + height)).hashCode();
 		if (mBitmapCache.containsKey(key)){
 			return mBitmapCache.get(key);
 		}
-		Bitmap bmp = getBitmapByUrl(src);
+		// load image from local storage by src as key
+		Bitmap bmp = LocalStorage.getImage(String.valueOf(src.hashCode()), context);
 		if (bmp == null){
-			return null;
+			// if not in local storage, get from internet
+			bmp = getBitmapByUrl(src);
+			LocalStorage.saveImage(String.valueOf(src.hashCode()), bmp, context);
+			// if can't get from internet, return
+			if (bmp == null){
+				return null;
+			}
 		}
+		// scale image
 		bmp = scaleImage(bmp, width, height);
 		mBitmapCache.put(key, bmp);
 		return bmp;
@@ -31,6 +43,7 @@ public class ImageTool {
 	
 	public static Bitmap getBitmapByStream(int resourceId, InputStream input, int width, int height){
 		// get key by resource id, width and height
+		// do not need load image, so do not save to local storage
 		int key = (new String("resource" + resourceId + width + height)).hashCode();
 		if (mBitmapCache.containsKey(key)){
 			return mBitmapCache.get(key);

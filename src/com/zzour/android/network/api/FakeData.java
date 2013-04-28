@@ -63,12 +63,8 @@ public class FakeData {
 	
 	public static String getFakeShopDetailById(int id){
 		String result = "{" + 
-							"\"id\": 2," +
 							"\"banner\": \"http://www.zzour.com/data/files/store_89/other/store_logo.jpg\"," +
-							"\"name\": \"佳粒粥\"," +
-							"\"desc\": \"后街唯一的粥类专营店，也是最火爆的餐饮店之一！正所谓：喝粥就喝佳粒粥！——华大宅宅校园\"," +
 							"\"addr\": \"华侨大学后门\"," +
-							"\"rate\": 3," +
 							"\"rcmds\": [" + 
 								"{" +
 									"\"id\": 123," +
