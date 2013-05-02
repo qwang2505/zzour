@@ -1,5 +1,6 @@
-package com.zzour.andoird.base;
+package com.zzour.android.base;
 
+import com.zzour.android.HomeActivity;
 import com.zzour.android.MainActivity;
 import com.zzour.android.R;
 import com.zzour.android.utils.ActivityTool;
@@ -21,10 +22,7 @@ public class BaseActivity extends Activity{
 			overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
 			return;
 		}
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		this.startActivity(intent);
-		overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+		((MainActivity)this.getParent()).switchTab(0);
 	}
 	
 	@Override

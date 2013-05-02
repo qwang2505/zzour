@@ -3,7 +3,7 @@ package com.zzour.android;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.zzour.andoird.base.BaseActivity;
+import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
@@ -27,6 +27,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ShopDetailActivity extends BaseActivity{
 	
@@ -38,6 +39,7 @@ public class ShopDetailActivity extends BaseActivity{
 	private ImageView mBanner = null;
 	
 	private Handler mLoadImageHandler = new Handler();
+	private Handler mToastHandler = new Handler();
 	private Bitmap mBitmap = null;
 	
 	private int mShopId = -1;
@@ -94,12 +96,18 @@ public class ShopDetailActivity extends BaseActivity{
 				// if buy any, save into cart
 				ArrayList<Food> foods = mAdapter.getBoughtFoods();
 				if (foods.size() == 0){
-					// TODO give out toast
+					// give out toast
+					mToastHandler.post(new Runnable(){
+		 	    		   public void run(){
+		 	    			  Toast.makeText(ShopDetailActivity.this, "您没有选择任何商品", Toast.LENGTH_SHORT).show();
+		 	    		   }
+		 	    	   });
 					return;
 				}
 				// TODO if do not log in, redirect to login activity, but save food info.
 				// TODO if already log in, go to shopping cart.
 				ShoppingCart.saveFoods(mShop, foods);
+				Log.d(TAG, "save foods");
 				ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
 			}
 		});

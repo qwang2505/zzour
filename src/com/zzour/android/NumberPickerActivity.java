@@ -1,6 +1,6 @@
 package com.zzour.android;
 
-import com.zzour.andoird.base.BaseActivity;
+import com.zzour.android.base.BaseActivity;
 
 import android.os.Bundle;
 

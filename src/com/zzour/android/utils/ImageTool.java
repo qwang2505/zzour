@@ -18,6 +18,11 @@ public class ImageTool {
 	private static final String TAG = "ZZOUR";
 	private static HashMap<Integer, Bitmap> mBitmapCache = new HashMap<Integer, Bitmap>();
 	
+	public static Bitmap cachedImage(String src, Context context){
+		Bitmap bmp = LocalStorage.getImage(String.valueOf(src.hashCode()), context);
+		return bmp;
+	}
+	
 	public static Bitmap getBitmapByUrl(String src, int width, int height, Context context){
 		// load image from memory
 		int key = (new String("src" + src + width + height)).hashCode();

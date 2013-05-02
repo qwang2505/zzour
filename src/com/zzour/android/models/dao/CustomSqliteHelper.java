@@ -17,7 +17,7 @@ public class CustomSqliteHelper extends SQLiteOpenHelper {
 		// create food table
 		db.execSQL("CREATE TABLE IF NOT EXISTS food (id INT PRIMARY KEY, shopId INT, category TEXT, name TEXT, price FLOAT, soldCount INT, image TEXT, boxPrice FLOAT, o INT);");
 		// create order table
-		db.execSQL("CREATE TABLE IF NOT EXISTS order (id TEXT PRIMARY KEY, foods TEXT, tbp FLOAT, bp FLOAT, addr TEXT, st TEXT, msg TEXT, rmsg TEXT);");
+		db.execSQL("CREATE TABLE IF NOT EXISTS orderTable (id TEXT PRIMARY KEY, foods TEXT, image TEXT, shopNames TEXT, t DATETIME, tbp FLOAT, bp FLOAT, addr TEXT, st TEXT, msg TEXT, rmsg TEXT);");
 		// create recommends food table
 		db.execSQL("CREATE TABLE IF NOT EXISTS rcmd_food (id INT PRIMARY KEY, shopId INT, category TEXT, name TEXT, price FLOAT, soldCount INT, image TEXT, boxPrice FLOAT, o INT);");
 		// create shop detail table

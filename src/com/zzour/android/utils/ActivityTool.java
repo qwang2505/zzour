@@ -43,6 +43,7 @@ public class ActivityTool {
 		// start activity from OrderSucceedActivity
 		HashMap<String, Integer> orderSucceed = new HashMap<String, Integer>();
 		orderSucceed.put("OrderListActivity", RIGHT);
+		orderSucceed.put("MainActivity", LEFT);
 		put("OrderSucceedActivity", orderSucceed);
 		
 		// start activity from OrderListActivity
@@ -72,10 +73,9 @@ public class ActivityTool {
 	}};
 	
 	private static final ArrayList<String> backToMainActivities = new ArrayList<String>(){{
-		add("ContactActivity");
+		add("StoreActivity");
 		add("OrderListActivity");
 		add("MoreActivity");
-		add("OrderSucceedActivity");
 	}};
 	
 	public static boolean shouldBackToMain(Activity activity){

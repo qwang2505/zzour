@@ -16,7 +16,7 @@ public class GlobalSettings {
 
 	public static long getApiExpireTime(){
 		// TODO read from settings
-		return 300000;
+		return 0;
 	}
 	
 	public static String getServerAddress(){

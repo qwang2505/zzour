@@ -1,5 +1,7 @@
 package com.zzour.android.models;
 
+import android.util.Log;
+
 public class Address {
 	private String name;
 	private String addr;
@@ -9,6 +11,17 @@ public class Address {
 		this.name = name;
 		this.phone = phone;
 		this.addr = addr;
+	}
+	
+	public Address(String text){
+		String[] ts = text.split(",,");
+		if (ts.length != 3){
+			Log.e("ZZOUR", "not right address: " + text);
+			return;
+		}
+		this.name = ts[0];
+		this.phone = ts[1];
+		this.addr = ts[2];
 	}
 	
 	public String getName() {
@@ -28,5 +41,9 @@ public class Address {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	public String toString(){
+		// use ,, as separator to avoid conflict
+		return name + ",," + phone + ",," + addr;
 	}
 }

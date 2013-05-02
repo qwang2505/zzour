@@ -15,7 +15,24 @@ public class Food extends BaseDataModel{
 	private int buyCount = 1;
 	// set default value for test
 	private float boxPrice = 0.5f;
+	
+	public Food(){
+		
+	}
 
+	public Food(String text){
+		String[] fs = text.split(",");
+		if (fs.length != 4){
+			return;
+		}
+		this.id = Integer.valueOf(fs[0]);
+		this.name = fs[1];
+		this.price = Float.valueOf(fs[2]);
+		this.buyCount = Integer.valueOf(fs[3]);
+	}
+	public String toString(){
+		return id + "," + name + "," + price + "," + buyCount;
+	}
 	public String getCategory() {
 		return category;
 	}

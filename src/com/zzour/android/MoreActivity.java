@@ -1,5 +1,6 @@
 package com.zzour.android;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,11 +11,8 @@ import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.zzour.andoird.base.BaseActivity;
+import com.zzour.android.base.BaseActivity;
 import com.zzour.android.utils.ActivityTool;
-import com.zzour.android.views.tab.MyTabHostProvider;
-import com.zzour.android.views.tab.TabHostProvider;
-import com.zzour.android.views.tab.TabView;
 
 public class MoreActivity extends BaseActivity 
 {
@@ -30,10 +28,7 @@ public class MoreActivity extends BaseActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TabHostProvider tabProvider = new MyTabHostProvider(MoreActivity.this);
-		TabView tabView = tabProvider.getTabHost(getResources().getString(R.string.more_title));
-		tabView.setCurrentView(R.layout.more);
-		setContentView(tabView.render(3));
+		setContentView(R.layout.more);
 		
 		login = (RelativeLayout)findViewById(R.id.more_login);
 		login.setOnClickListener(new OnClickListener(){

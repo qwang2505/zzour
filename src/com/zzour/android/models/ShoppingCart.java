@@ -13,11 +13,15 @@ public class ShoppingCart {
 
 	private static HashMap<Integer, HashMap<Integer, Food>> mProductMap = new HashMap<Integer, HashMap<Integer, Food>>();
 	private static HashMap<Integer, String> mShopNames = new HashMap<Integer, String>();
+	private static HashMap<Integer, String> mShopImages = new HashMap<Integer, String>();
 	
 	public static void saveFoods(ShopDetailContent shop, ArrayList<Food> foods){
 		// save name
 		if (!mShopNames.containsKey(shop.getId())){
 			mShopNames.put(shop.getId(), shop.getName());
+		}
+		if (!mShopImages.containsKey(shop.getId())){
+			mShopImages.put(shop.getId(), shop.getBanner());
 		}
 		// save foods
 		Iterator<Food> it = foods.iterator();
@@ -29,7 +33,7 @@ public class ShoppingCart {
 				mProductMap.put(shop.getId(), fs);
 			}
 			if (fs.containsKey(f.getId())){
-				// if already in map, add buy count
+				// if already in map, reset buy count
 				Food f1 = fs.get(f.getId());
 				f1.setBuyCount(f.getBuyCount());
 			} else {
@@ -52,6 +56,10 @@ public class ShoppingCart {
 	
 	public static String getShopName(int shopId){
 		return mShopNames.get(shopId);
+	}
+	
+	public static String getShopImage(int shopId){
+		return mShopImages.get(shopId);
 	}
 	
 	public static int getShopsCount(){

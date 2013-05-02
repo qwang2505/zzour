@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.zzour.andoird.base.BaseActivity;
+import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.Order;
@@ -17,6 +17,7 @@ import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.models.dao.AddressDAO;
 import com.zzour.android.network.api.OrderApi;
 import com.zzour.android.network.api.SchoolApi;
+import com.zzour.android.utils.ActivityTool;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -249,7 +250,7 @@ public class ShoppingCartActivity extends BaseActivity{
 					while (foodIds.hasNext()){
 						int foodId = foodIds.next();
 						Food food = ShoppingCart.getFood(shopId, foodId);
-						mOrder.addFood(shopId, ShoppingCart.getShopName(shopId), food);
+						mOrder.addFood(shopId, ShoppingCart.getShopName(shopId), ShoppingCart.getShopImage(shopId), food);
 					}
 				}
 				if (mOrder.getFoodCount() == 0){
@@ -586,9 +587,11 @@ public class ShoppingCartActivity extends BaseActivity{
 		}
 		if (mOrder.getId() == null){
 			// not success, to the fail activity
-			// here result message must not be null
+			Toast.makeText(this, "Ã·Ωª∂©µ•¥ÌŒÛ£∫" + mOrder.getResultMsg(), Toast.LENGTH_LONG);
+			return;
 		} else {
 			// success, to the success activity
+			ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
 		}
 	}
 	
@@ -604,7 +607,7 @@ public class ShoppingCartActivity extends BaseActivity{
 		
 		@Override
 		protected Boolean doInBackground(String... arg0) {
-			OrderResult result = OrderApi.order(mOrder);
+			OrderResult result = OrderApi.order(mOrder, ShoppingCartActivity.this);
 			activity.setOrderResult(result);
 			return true;
 		}

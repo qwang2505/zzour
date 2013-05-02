@@ -1,11 +1,12 @@
 package com.zzour.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.zzour.andoird.base.BaseActivity;
+import com.zzour.android.base.BaseActivity;
 import com.zzour.android.utils.ActivityTool;
 
 public class OrderSucceedActivity extends BaseActivity{
@@ -31,5 +32,10 @@ public class OrderSucceedActivity extends BaseActivity{
 				ActivityTool.startActivity(OrderSucceedActivity.this, OrderListActivity.class);
 			}
 		});
+	}
+	
+	@Override
+	public void onBackPressed(){
+		ActivityTool.startActivity(this, MainActivity.class);
 	}
 }
