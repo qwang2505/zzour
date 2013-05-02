@@ -115,6 +115,13 @@ public class ActivityTool {
 		nextDirection = UNKNOW;
 	}
 	
+	public static void startActivityForResult(Activity from, Class<?> cls, int requestCode){
+		Intent intent = new Intent(from, cls);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		from.startActivityForResult(intent, requestCode);
+		overridePendingTransition(from, cls);
+	}
+	
 	public static void startActivity(Activity from, Class<?> cls){
 		Intent intent = new Intent(from, cls);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

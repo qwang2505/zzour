@@ -17,11 +17,13 @@ import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.models.dao.AddressDAO;
 import com.zzour.android.network.api.OrderApi;
 import com.zzour.android.network.api.SchoolApi;
+import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,6 +50,8 @@ import android.widget.Toast;
 public class ShoppingCartActivity extends BaseActivity{
 	
 	private static final String TAG = "ZZOUR";
+	
+	private static final int LOGIN_REQUEST_CODE = 1;
 	
 	private TextView totalPriceView;
 	private TextView totalBoxPriceView;
@@ -269,6 +273,11 @@ public class ShoppingCartActivity extends BaseActivity{
 				EditText m = (EditText)findViewById(R.id.message);
 				mOrder.setMessage(m.getText().toString());
 				// all information ok, make the order.
+				// if not login, require login
+				if (!LocalPreferences.authed(ShoppingCartActivity.this)){
+					ActivityTool.startActivityForResult(ShoppingCartActivity.this, LoginActivity.class, LOGIN_REQUEST_CODE);
+					return;
+				}
 				// send order request in async task, and show loading dialog while doing it.
 				new LoadingTask(ShoppingCartActivity.this).execute();
 				// TODO clear shopping cart
@@ -625,4 +634,16 @@ public class ShoppingCartActivity extends BaseActivity{
 	        this.activity.finishOrder();
 	    }
 	}
+	
+	@Override  
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+        case LOGIN_REQUEST_CODE:
+        	new LoadingTask(ShoppingCartActivity.this).execute();
+            break;
+        default:
+            break;
+        }  
+    }  
+
 }

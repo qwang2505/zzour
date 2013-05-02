@@ -8,6 +8,7 @@ import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.network.api.ShopDetailApi;
+import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.ShopDetailAdapter;
@@ -104,8 +105,7 @@ public class ShopDetailActivity extends BaseActivity{
 		 	    	   });
 					return;
 				}
-				// TODO if do not log in, redirect to login activity, but save food info.
-				// TODO if already log in, go to shopping cart.
+				// go to shopping cart.
 				ShoppingCart.saveFoods(mShop, foods);
 				Log.d(TAG, "save foods");
 				ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);

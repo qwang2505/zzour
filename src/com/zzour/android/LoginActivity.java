@@ -2,6 +2,7 @@ package com.zzour.android;
 
 import com.zzour.android.base.BaseActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +21,16 @@ public class LoginActivity extends BaseActivity{
 				LoginActivity.this.onBackPressed();
 				return;
 			}
+		});
+		
+		((Button)findViewById(R.id.login_btn)).setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				LoginActivity.this.setResult(RESULT_OK);
+				LoginActivity.this.finish();
+			}
+			
 		});
 	}
 }

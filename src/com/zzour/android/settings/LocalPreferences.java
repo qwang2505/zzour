@@ -1,6 +1,7 @@
 package com.zzour.android.settings;
 
 import com.zzour.android.R;
+import com.zzour.android.models.User;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -70,5 +71,32 @@ public class LocalPreferences {
 		ensurePrefs(activity);
 		String bs = prefs.getString("home_banners", "");
 		return bs.split(";");
+	}
+	
+	public static boolean authed(Activity activity){
+		ensurePrefs(activity);
+		return prefs.getBoolean("user_authed", false);
+	}
+	
+	public static void setUser(User user, Activity activity){
+		ensurePrefs(activity);
+		Editor editor = prefs.edit();
+		editor.putString("user_name", user.getUserName());
+		editor.putString("user_pwd", user.getPwd());
+		editor.putInt("user_auth_type", user.getType().ordinal());
+		editor.putBoolean("user_authed", true);
+		editor.commit();
+	}
+	
+	public static User getUser(Activity activity){
+		ensurePrefs(activity);
+		if (!prefs.getBoolean("user_authed", false)){
+			return null;
+		}
+		String name = prefs.getString("user_name", "");
+		String pwd = prefs.getString("user_pwd", "");
+		int type = prefs.getInt("user_auth_type", -1);
+		User user = new User(name, pwd, User.AuthType.values()[type]);
+		return user;
 	}
 }
