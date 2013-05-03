@@ -48,9 +48,9 @@ public class ShopListApi {
 		// get json/xml data from server, and format into a list content.
 		// For demo, return some mocked data.
 		// if shop list in memory and not expired, return directly.
-		if (mShopList != null && !mShopList.expired()){
-			return mShopList;
-		}
+		//if (mShopList != null && !mShopList.expired()){
+		//	return mShopList;
+		//}
 		// else if do not in memory, load from cache, and if cache not expired, return directly.
 		// else, get list from server, and return
 		// get from cache, and check if expired.
@@ -58,8 +58,7 @@ public class ShopListApi {
 		// 		is expired. if not expired, load from local database.
 		// same api have different parameters, can't just decide expired by api path, need
 		//      to consider parameters too.
-		String key = LocalPreferences.SHOP_LIST_API + "so=" + sinceOrder +
-				"&rc=" + count;
+		String key = LocalPreferences.SHOP_LIST_API + "so=" + sinceOrder + "&rc=" + count;
 		if (!LocalPreferences.isApiDataExpired(key, activity)){
 			// since data not expired, get shop list from local database
 			ShopSummaryDAO m = new ShopSummaryDAO(activity);
@@ -90,6 +89,7 @@ public class ShopListApi {
 	
 	private static String getShopListFromServer(int sinceOrder, int count, long lastAccess){
 		String src = buildUrl(sinceOrder, count, lastAccess);
+		Log.d("ZZOUR", "get data from " + src);
 		try {
 	        URL url = new URL(src);
 	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -106,7 +106,7 @@ public class ShopListApi {
 	}
 	
 	private static String buildUrl(int sinceOrder, int count, long lastAccess){
-		return GlobalSettings.getServerAddress() + path + "?sinceOrder=" + sinceOrder +
+		return GlobalSettings.getServerAddress() + path + "?so=" + sinceOrder +
 				"&rc=" + count + "&la=" + lastAccess;
 	}
 	

@@ -99,4 +99,14 @@ public class LocalPreferences {
 		User user = new User(name, pwd, User.AuthType.values()[type]);
 		return user;
 	}
+	
+	public static void logout(Activity activity){
+		ensurePrefs(activity);
+		Editor editor = prefs.edit();
+		editor.remove("user_name");
+		editor.remove("user_pwd");
+		editor.remove("user_auth_type");
+		editor.remove("user_authed");
+		editor.commit();
+	}
 }

@@ -32,9 +32,6 @@
 		    android:text="@string/get_back_pwd_btn_text" />
 	        
 	</RelativeLayout>
-    
-    <ScrollView android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         
 		<RelativeLayout
 		    android:layout_width="match_parent"
@@ -151,7 +148,5 @@
 			    android:text="@string/login_qq_btn_text" />
 		  	
 		</RelativeLayout>
-
-	</ScrollView>
 
 </LinearLayout>

@@ -21,7 +21,7 @@ public class OrderListItemsAdapter extends BaseAdapter{
 	private int mImageHeight;
 	private int mDefaultBitmapId;
 	
-	private ArrayList<OrderSummary> orders = null;
+	private ArrayList<OrderSummary> orders = new ArrayList<OrderSummary>();
 	
     public OrderListItemsAdapter(Context context, int defaultBitmapId) {
 		this.mContext = context;
@@ -30,11 +30,16 @@ public class OrderListItemsAdapter extends BaseAdapter{
 		this.mDefaultBitmapId = defaultBitmapId;
 	}
     
-    public void setItems(ArrayList<OrderSummary> orders){
-    	this.orders = orders;
+    public int addItem(OrderSummary order){
+    	int p = this.orders.size();
+    	this.orders.add(order);
+    	return p;
     }
 
 	public int getCount() {
+		if (orders == null){
+			return 0;
+		}
 		return orders.size();
 	}
 
@@ -52,7 +57,7 @@ public class OrderListItemsAdapter extends BaseAdapter{
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// use cache for optimize
-		if(convertView==null){
+		if(convertView == null){
 			convertView=LayoutInflater.from(mContext).inflate(R.layout.order_item, null);
 			ItemViewCache viewCache=new ItemViewCache();
 			viewCache.image = (ImageView)convertView.findViewById(R.id.order_item_image);
@@ -61,7 +66,7 @@ public class OrderListItemsAdapter extends BaseAdapter{
 			viewCache.price = (TextView)convertView.findViewById(R.id.order_price);
 			convertView.setTag(viewCache);
 		}
-		ItemViewCache cache=(ItemViewCache)convertView.getTag();
+		ItemViewCache cache = (ItemViewCache)convertView.getTag();
 		
 		cache.name.setText(orders.get(position).getShopName());
 		cache.time.setText(orders.get(position).getTime());
@@ -75,7 +80,6 @@ public class OrderListItemsAdapter extends BaseAdapter{
 		} else {
 			cache.image.setImageBitmap(bmp);
 		}
-		// TODO start new thread to load image
 		return convertView;
 	}
 

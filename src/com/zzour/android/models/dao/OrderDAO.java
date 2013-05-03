@@ -42,11 +42,13 @@ public class OrderDAO extends CustomSqliteHelper {
 	
 	public void clean(){
 		this.getWritableDatabase().execSQL("DELETE FROM " + TABLE_NAME);
+		this.getWritableDatabase().close();
 	}
 	
 	public void clean(String id){
 		// clean food by shop id.
 		this.getWritableDatabase().execSQL("DELETE FROM " + TABLE_NAME + "WHERE id = ?", new Object[]{id});
+		this.getWritableDatabase().close();
 	}
 	
 	public void insert(Order order){
@@ -102,15 +104,19 @@ public class OrderDAO extends CustomSqliteHelper {
 	
 	public ArrayList<OrderSummary> getTodayOrders(int count, String from){
 		ArrayList<OrderSummary> orders = new ArrayList<OrderSummary>();
+		Cursor cursor;
+		Date now = new Date();
+		now.setHours(0);
+		now.setMinutes(0);
+		now.setSeconds(0);
+		String today = GlobalSettings.TIME_FORMAT.format(now);
 		if (from == null){
-			Date now = new Date();
-			now.setHours(0);
-			now.setMinutes(0);
-			now.setSeconds(0);
-			from = GlobalSettings.TIME_FORMAT.format(now);
+			cursor = this.getReadableDatabase().query(TABLE_NAME, new String[]{FIELD_ID, FIELD_IMAGE, FIELD_NAMES, FIELD_TOTAL_PRICE, FIELD_TIME},
+					"t >= ?", new String[]{today}, null, null, "t DESC", String.valueOf(count));
+		} else {
+			cursor = this.getReadableDatabase().query(TABLE_NAME, new String[]{FIELD_ID, FIELD_IMAGE, FIELD_NAMES, FIELD_TOTAL_PRICE, FIELD_TIME}, 
+					"t < ? and t >= ?", new String[]{from, today}, null, null, "t DESC", String.valueOf(count));
 		}
-		Cursor cursor = this.getReadableDatabase().query(TABLE_NAME, new String[]{FIELD_ID, FIELD_IMAGE, FIELD_NAMES, FIELD_TOTAL_PRICE, FIELD_TIME}, 
-				"t >= ?", new String[]{from}, null, null, "t DESC", String.valueOf(count));
 		while (cursor.moveToNext()){
 			OrderSummary os = new OrderSummary();
 			os.setId(cursor.getString(cursor.getColumnIndex(FIELD_ID)));
@@ -120,6 +126,7 @@ public class OrderDAO extends CustomSqliteHelper {
 			os.setTime(cursor.getString(cursor.getColumnIndex(FIELD_TIME)));
 			orders.add(os);
 		}
+		this.getReadableDatabase().close();
 		return orders;
 	}
 	
@@ -143,6 +150,7 @@ public class OrderDAO extends CustomSqliteHelper {
 			os.setTime(cursor.getString(cursor.getColumnIndex(FIELD_TIME)));
 			orders.add(os);
 		}
+		this.getReadableDatabase().close();
 		return orders;
 	}
 	
@@ -173,6 +181,7 @@ public class OrderDAO extends CustomSqliteHelper {
 				}
 			}
 		}
+		this.getReadableDatabase().close();
 		if (!found){
 			return null;
 		}

@@ -38,10 +38,8 @@ public class LocalStorage {
 	
 	private static File getExternalFilesDir(Context context){
 		if (GlobalSettings.getApiLevel() >= 8){
-			Log.d("ZZOUR", "api level greater than 8");
 			return context.getExternalCacheDir();
 		} else {
-			Log.d("ZZOUR", "api level lower than 8");
 			// create path
 			File f = Environment.getDownloadCacheDirectory();
 			// TODO test this

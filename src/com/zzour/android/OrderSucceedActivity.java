@@ -29,7 +29,9 @@ public class OrderSucceedActivity extends BaseActivity{
 			@Override
 			public void onClick(View v) {
 				// to order list activity
-				ActivityTool.startActivity(OrderSucceedActivity.this, OrderListActivity.class);
+				Intent intent = new Intent(OrderSucceedActivity.this, MainActivity.class);
+				intent.putExtra("tab", 2);
+				ActivityTool.startActivity(OrderSucceedActivity.this, MainActivity.class, intent);
 			}
 		});
 	}

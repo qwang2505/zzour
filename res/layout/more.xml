@@ -86,6 +86,36 @@
 			    	android:contentDescription="@string/dot_line_desc"
 			    	android:src="@drawable/dotted" />
             
+            <RelativeLayout android:id="@+id/more_logout"
+                android:layout_width="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:clickable="true"
+                android:layout_height="wrap_content">
+                
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/more_logout_text"/>
+                
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+            </RelativeLayout>
+            
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
             <RelativeLayout android:id="@+id/more_settings"
                 android:layout_width="match_parent"
                 android:paddingTop="10dp"

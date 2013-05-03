@@ -58,7 +58,12 @@ public class HomeActivity extends BaseActivity {
 	
 	private View mContentView = null;
 	
+	private int mLastOrder = -1;
+	private static final int RESULT_COUNT = 6;
+	
 	private HashMap<Integer, String> mImages = new HashMap<Integer, String>();
+	
+	private long prevBackTime = 0;
 	
 	// TODO read categories from api, or at least from xml file.
 	final CharSequence[] mSearchCategories = new CharSequence[] {	
@@ -103,6 +108,12 @@ public class HomeActivity extends BaseActivity {
         // add load more to list view
         mLoadMoreView = getLayoutInflater().inflate(R.layout.loadmore, null);
         mLoadMoreButton = (Button)mLoadMoreView.findViewById(R.id.loadMoreButton);
+        ListView list = (ListView)findViewById(R.id.list);
+        list.addFooterView(mLoadMoreView);
+        
+        // init adapter and set scroll view to list.
+        mAdapterTemp = new ListItemsAdapter(this, R.drawable.logo);
+        list.setAdapter(mAdapterTemp);
         mLoadMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,11 +132,6 @@ public class HomeActivity extends BaseActivity {
         	    }).start();
         	}
         });
-        ListView list = (ListView)findViewById(R.id.list);
-        list.addFooterView(mLoadMoreView);
-        
-        // init adapter and set scroll view to list.
-        mAdapterTemp = new ListItemsAdapter(this, R.drawable.logo);
         new Thread(initList).start();
         
         this.addListItemClickListener();
@@ -157,8 +163,15 @@ public class HomeActivity extends BaseActivity {
     
 	@Override
 	public void onBackPressed(){
-		// not all back to main
-		SysApplication.getInstance().exit();
+		// press twice to exit application
+		long now = System.currentTimeMillis();
+		if (now - this.prevBackTime < 2000){
+			SysApplication.getInstance().exit();
+		} else {
+			Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			this.prevBackTime = now;
+			return;
+		}
 	}
     
 	@Override
@@ -184,7 +197,7 @@ public class HomeActivity extends BaseActivity {
     
     private void loadMoreData(){
     	// pass in activity instance to get preference
-    	final ShopList shopList = ShopListApi.getShopList(this);
+    	final ShopList shopList = ShopListApi.getShopList(this, mLastOrder, RESULT_COUNT);
 
     	if (shopList == null){
     		mLoadMoreHandler.post(new Runnable(){
@@ -194,10 +207,21 @@ public class HomeActivity extends BaseActivity {
 	    	});
     		return;
     	}
+    	if (shopList.size() == 0){
+    		mLoadMoreHandler.post(new Runnable(){
+     		   public void run(){
+     			   Toast.makeText(HomeActivity.this, "没有更多数据了", Toast.LENGTH_SHORT).show();
+     		   }
+ 	    	});
+     		return;
+    	}
 		for (int i=0; i < shopList.size(); i++){
     		final ShopSummaryContent shop = shopList.get(i);
     		int p = mAdapterTemp.addItem(shop);
     		mImages.put(p, shop.getImage());
+    		if (i == shopList.size()-1){
+    			mLastOrder = shop.getId();
+    		}
     	}
     	// start new thread to download image and update
     	Iterator<Integer> it = mImages.keySet().iterator();
@@ -279,8 +303,7 @@ public class HomeActivity extends BaseActivity {
 			loadMoreData();
 			mHandler.post(new Runnable(){
 				public void run(){
-					ListView list = (ListView)findViewById(R.id.list);
-					list.setAdapter(mAdapterTemp);
+					mAdapterTemp.notifyDataSetChanged();
 				}
 			});
 		}

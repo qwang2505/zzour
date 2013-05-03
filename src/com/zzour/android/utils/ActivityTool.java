@@ -3,15 +3,18 @@ package com.zzour.android.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.zzour.android.MainActivity;
 import com.zzour.android.R;
 
 import android.app.Activity;
+import android.app.TabActivity;
 import android.content.Intent;
 import android.util.Log;
 
 public class ActivityTool {
 	
 	private static final String TAG = "ZZOUR";
+	private static MainActivity mainActivity = null;
 	
 	private static final int UNKNOW = -1;
 	private static final int LEFT = 0;
@@ -50,6 +53,7 @@ public class ActivityTool {
 		HashMap<String, Integer> orderList = new HashMap<String, Integer>();
 		orderList.put("StoreActivity", LEFT);
 		orderList.put("MoreActivity", RIGHT);
+		orderList.put("LoginActivity", RIGHT);
 		put("OrderListActivity", orderList);
 		
 		// start activity from StoreActivity
@@ -76,10 +80,11 @@ public class ActivityTool {
 		add("StoreActivity");
 		add("OrderListActivity");
 		add("MoreActivity");
+		add("TodayOrderListActivity");
+		add("HistoryOrderListActivity");
 	}};
 	
 	public static boolean shouldBackToMain(Activity activity){
-		Log.d(TAG, "check activity should back to main: " + activity.getClass().getName());
 		String name = activity.getClass().getName().replace(pkgName, "");
 		if (backToMainActivities.contains(name)){
 			return true;
@@ -122,6 +127,12 @@ public class ActivityTool {
 		overridePendingTransition(from, cls);
 	}
 	
+	public static void startActivityForResult(Activity from, Class<?> cls, int requestCode, Intent intent){
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		from.startActivityForResult(intent, requestCode);
+		overridePendingTransition(from, cls);
+	}
+	
 	public static void startActivity(Activity from, Class<?> cls){
 		Intent intent = new Intent(from, cls);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -130,9 +141,32 @@ public class ActivityTool {
 	}
 	
 	public static void startActivity(Activity from, Class<?> cls, Intent intent){
-		Log.d(TAG, "start activity " + from.getClass().getName() + " from " + cls.getName());
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		from.startActivity(intent);
 		overridePendingTransition(from, cls);
+	}
+	
+	public static void setMainActivity(MainActivity activity){
+		mainActivity = activity;
+	}
+	
+	public static void backToMain(Activity from, Intent intent){
+		if (mainActivity == null){
+			Log.e("ZZOUR", "what happened? forget to set main activity?");
+			return;
+		}
+		if (shouldBackToMain(from)){
+			mainActivity.switchTab(0);
+			Log.d("ZZOUR", "back to main by switch: " + from.getClass().getName());
+			return;
+		}
+		if (intent == null){
+			intent = new Intent(from, mainActivity.getClass());
+		}
+		Log.d("ZZOUR", "back to main by new: " + from.getClass().getName());
+		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+		from.startActivity(intent);
+		from.overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
+		mainActivity.switchTab(0);
 	}
 }

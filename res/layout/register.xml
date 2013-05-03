@@ -99,7 +99,6 @@
 		            android:layout_marginLeft="10dp"
 		            android:layout_height="wrap_content"
 		            android:padding="3dp"
-		            android:inputType="textPassword"
 		            android:layout_alignParentRight="true"
 		            android:hint="@string/register_mail_hint_text"
 		            android:background="@drawable/bg_edittext" />

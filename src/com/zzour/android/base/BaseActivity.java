@@ -1,7 +1,5 @@
 package com.zzour.android.base;
 
-import com.zzour.android.HomeActivity;
-import com.zzour.android.MainActivity;
 import com.zzour.android.R;
 import com.zzour.android.utils.ActivityTool;
 
@@ -13,16 +11,17 @@ import android.util.Log;
 public class BaseActivity extends Activity{
 	
 	protected static final String TAG = "ZZOUR";
+	protected boolean backToMain = false;
 	
 	@Override
 	public void onBackPressed(){
 		// not all back to main
-		if (!ActivityTool.shouldBackToMain(this)){
+		if (!ActivityTool.shouldBackToMain(this) && !backToMain){
 			super.onBackPressed();
 			overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
 			return;
 		}
-		((MainActivity)this.getParent()).switchTab(0);
+		ActivityTool.backToMain(this, null);
 	}
 	
 	@Override
