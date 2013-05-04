@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -67,6 +68,14 @@ public class ShopDetailActivity extends BaseActivity{
 		
 		setContentView(R.layout.shop_detail);
 		
+		((Button)findViewById(R.id.back_btn)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				ShopDetailActivity.this.onBackPressed();
+				return;
+			}
+		});
+		
 		// load data in async task
 		new LoadingTask(this).execute();
 	}
@@ -76,6 +85,9 @@ public class ShopDetailActivity extends BaseActivity{
 	}
 	
 	private void show(){
+		// init title bar text
+		TextView title_bar = (TextView)findViewById(R.id.title_bar_text_view);
+		title_bar.setText(mShop.getName());
 		//mShop = ShopDetailApi.getShopDetailById(mShopId, this);
 		ExpandableListView list = (ExpandableListView)findViewById(R.id.shop_detail);
 		// show shop detail

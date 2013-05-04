@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="3dp"
         android:paddingTop="3dp"
+        android:visibility="gone"
         android:textStyle="bold"/>
     
 </LinearLayout>

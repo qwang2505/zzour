@@ -19,13 +19,6 @@
     
     <string name="search_initial_text">请输入要搜索的关键字</string>
     
-    <!-- values for tab host -->
-    <string name="hello">hello</string>
-    <string name="exit">exit</string>
-    <string name="exitText">exit text</string>
-    <string name="finish">finish</string>
-    <string name="finishText">finishText</string>
-    
     <!-- string values for buttons -->
     <string name="back_button_text">返回</string>
     
@@ -33,6 +26,8 @@
 	<string name="load_more_button_text">点击加载更多</string>
 	<string name="loading_text">正在载入...</string>
 	
+	<!-- for shop detal  -->
+	<string name="title_bar_text">商家详情</string>
 	
 	<!-- for test ui -->
 	<string name="test_food_name">这里是个名字</string>

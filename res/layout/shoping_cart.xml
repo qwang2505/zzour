@@ -9,7 +9,11 @@
     	android:layout_width="match_parent"
     	android:layout_height="match_parent"
     	android:background="@drawable/title_bar"
+    	android:paddingBottom="3dp"
     	android:orientation="vertical">
+    	
+    	<include layout="@layout/back_button"/>
+    	
     	<TextView android:id="@+id/cart_title_text"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
@@ -33,6 +37,7 @@
 		    <TextView android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:textSize="14sp"
+		        android:id="@+id/shop_name"
 		        android:paddingTop="5dp"
 		        android:paddingBottom="5dp"
 		        android:paddingLeft="3dp"

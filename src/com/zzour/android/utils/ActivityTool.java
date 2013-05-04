@@ -167,6 +167,6 @@ public class ActivityTool {
 		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 		from.startActivity(intent);
 		from.overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
-		mainActivity.switchTab(0);
+		//mainActivity.switchTab(0);
 	}
 }

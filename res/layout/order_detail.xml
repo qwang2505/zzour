@@ -32,6 +32,7 @@
 	        android:orientation="vertical">
 		    
 		    <TextView android:layout_width="match_parent"
+		        android:id="@+id/shop_name"
 		        android:layout_height="wrap_content"
 		        android:textSize="14sp"
 		        android:paddingTop="5dp"

@@ -85,6 +85,22 @@ public class HistoryOrderListActivity extends BaseActivity{
     	    	ActivityTool.startActivity(HistoryOrderListActivity.this, OrderDetailActivity.class, intent);
 			}
 		});
+		
+		mLoadMoreButton.setText(getString(R.string.loading_text));
+	    new Thread(new Runnable() {
+	       @Override
+	       public void run() {
+	    	   Log.d(TAG, "start load data");
+	    	   loadMoreData();
+	    	   mLoadMoreHandler.post(new Runnable(){
+	    		   public void run(){
+	    			   mAdapter.notifyDataSetChanged();
+	    			   mLoadMoreButton.setText(getString(R.string.load_more_button_text));
+	    			   Log.d(TAG, "data loaded");
+	    		   }
+	    	   });
+	       }
+	    }).start();
 	}
 	
 	public void loadMoreData(){

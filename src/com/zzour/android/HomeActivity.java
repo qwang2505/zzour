@@ -233,7 +233,6 @@ public class HomeActivity extends BaseActivity {
     		final Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height, HomeActivity.this);
     		mLoadMoreHandler.post(new Runnable(){
     			public void run(){
-    				Log.d(TAG, "update shop bitmap at position " + position);
     				mAdapterTemp.updateShopBitmap(position, bmp);
     				mAdapterTemp.notifyDataSetChanged();
     			}

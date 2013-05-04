@@ -105,4 +105,11 @@ public class ShoppingCart {
 	public static void setBuyCount(int shopId, int foodId, int count){
 		mProductMap.get(shopId).get(foodId).setBuyCount(count);
 	}
+	
+	public static void clear(){
+		// clear shopping cart
+		mShopNames.clear();
+		mShopImages.clear();
+		mProductMap.clear();
+	}
 }

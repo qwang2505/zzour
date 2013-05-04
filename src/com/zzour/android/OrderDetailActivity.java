@@ -42,11 +42,15 @@ public class OrderDetailActivity extends BaseActivity{
 		// set shop and food
 		Iterator<Integer> shopIds = order.getShops();
 		LinearLayout products = (LinearLayout)findViewById(R.id.order_detail_products);
+		String shopName = "";
 		while (shopIds.hasNext()){
 			LinearLayout main = (LinearLayout)getLayoutInflater().inflate(R.layout.product_main, null);
-			TextView shopName = (TextView)main.findViewById(R.id.product_shop_name);
+			//TextView shopName = (TextView)main.findViewById(R.id.product_shop_name);
 			int shopId = shopIds.next();
-			shopName.setText(order.getShopName(shopId));
+			//shopName.setText(order.getShopName(shopId));
+			if (shopName.length() == 0){
+				shopName = order.getShopName(shopId);
+			}
 			Iterator<Food> foods = order.getFoods(shopId);
 			while (foods.hasNext()){
 				Food food = foods.next();
@@ -63,6 +67,7 @@ public class OrderDetailActivity extends BaseActivity{
 			}
 			products.addView(main);
 		}
+		((TextView)findViewById(R.id.shop_name)).setText(shopName);
 		((Button)findViewById(R.id.back_btn)).setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {

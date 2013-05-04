@@ -4,11 +4,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     
+    <RelativeLayout android:layout_width="match_parent"
+        android:background="@drawable/title_bar"
+        android:paddingBottom="3dp"
+        android:id="@+id/title_bar"
+        android:layout_height="wrap_content">
+        
+        <include layout="@layout/back_button"/>
+        
+        <com.zzour.android.views.AlwaysMarqueeTextView android:id="@+id/title_bar_text_view"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textColor="#eeeeee"
+            android:layout_marginTop="6dp"
+            android:text="@string/title_bar_text"/>
+        
+    </RelativeLayout>
+    
    	<ExpandableListView android:id="@+id/shop_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:clickable="true"
+        android:layout_below="@id/title_bar"
         android:paddingBottom="50dp"
         />
    	

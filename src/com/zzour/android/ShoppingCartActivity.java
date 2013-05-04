@@ -139,17 +139,29 @@ public class ShoppingCartActivity extends BaseActivity{
 			return;
 		}
 		
+		((Button)findViewById(R.id.back_btn)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				ShoppingCartActivity.this.onBackPressed();
+				return;
+			}
+		});
+		
 		// get foods from shopping cart, and render
 		Iterator<Integer> shopIds = ShoppingCart.getShops();
 		LinearLayout products = (LinearLayout)findViewById(R.id.products);
 		float totalPrice = 0.0f;
 		float totalBoxPrice = 0.0f;
+		String shopName = "";
 		while (shopIds.hasNext()){
 			// get product view
 			LinearLayout main = (LinearLayout)getLayoutInflater().inflate(R.layout.product_main, null);
-			TextView shopName = (TextView)main.findViewById(R.id.product_shop_name);
+			//TextView shopName = (TextView)main.findViewById(R.id.product_shop_name);
 			int shopId = shopIds.next();
-			shopName.setText(ShoppingCart.getShopName(shopId));
+			//shopName.setText(ShoppingCart.getShopName(shopId));
+			if (shopName.length() == 0){
+				shopName = ShoppingCart.getShopName(shopId);
+			}
 			Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
 			while (foodIds.hasNext()){
 				Integer foodId = foodIds.next();
@@ -216,6 +228,8 @@ public class ShoppingCartActivity extends BaseActivity{
 			}
 			products.addView(main);
 		}
+		// set shop name
+		((TextView)findViewById(R.id.shop_name)).setText(shopName);
 		// reset total price and total box price.
 		totalPriceView = (TextView)findViewById(R.id.total_price);
 		totalPriceView.setText(String.valueOf(totalPrice));
@@ -644,6 +658,33 @@ public class ShoppingCartActivity extends BaseActivity{
         default:
             break;
         }  
-    }  
-
+    }
+	
+	@Override
+	public void onBackPressed(){
+		showBackDialog();
+	}
+	
+	public void realBack(){
+		// clear shopping cart
+		ShoppingCart.clear();
+		super.onBackPressed();
+	}
+	
+	public void showBackDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("如继续返回，购物车将清空\n\n确定继续返回上一页吗？")
+		       .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   ShoppingCartActivity.this.realBack();
+		           }
+		       })
+		       .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 }
