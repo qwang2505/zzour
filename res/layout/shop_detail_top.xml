@@ -4,27 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusable="false"
-    android:paddingBottom="10dp"
+    android:paddingBottom="0dp"
     android:clickable="false">
     
     <!-- set image of this view in java code with bitmap -->
-    <ImageView android:id="@+id/shop_banner"
+    <!-- <ImageView android:id="@+id/shop_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10px"/>
+        android:padding="10px"/> -->
+    
+    <TextView android:id="@+id/online_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10px"
+        android:textSize="18sp"
+        android:textColor="#fe8e4d"
+        android:background="#efecea"
+        android:text="本店只支持电话订餐"/>
     
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
         android:orientation="vertical">
         
         <RelativeLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView android:id="@+id/shop_name"
+            <TextView android:id="@+id/send_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10px"
-                android:textStyle="bold"/>
+                android:text="平均速度：40分钟"/>
             
         	<RatingBar android:id="@+id/shop_rating"
             	style="@style/foodRatingBar"
@@ -38,23 +49,54 @@
             
         </RelativeLayout>
         
-        <TextView android:id="@+id/shop_addr"
+        <TextView android:id="@+id/praise_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10px"
-            android:paddingTop="10px"/>
+            android:paddingTop="5dp"
+            android:text="15人认为本店不错，会多次订餐"/>
         
-        <TextView android:id="@+id/shop_desc"
-            android:layout_width="wrap_content"
+        <!-- <RelativeLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10px"/>
+            android:orientation="horizontal">
+            <TextView android:id="@+id/telephone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10px"
+                android:text="电话：12345678901"/>
+            
+        	<TextView android:id="@+id/shop_hours"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:layout_marginRight="10dp"
+            	android:layout_alignParentRight="true"
+            	android:text="营业时间：11:00-14:00,17:00-23:00" />
+            
+        </RelativeLayout> -->
+        
+           <TextView android:id="@+id/telephone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="电话：12345678901"/>
+            
+        	<TextView android:id="@+id/shop_hours"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:paddingTop="5dp"
+            	android:text="营业时间：11:00-14:00,17:00-23:00" />
         
     </LinearLayout>
     
+    <WebView
+		android:id="@+id/notice"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#efecea"/>
+    
     <!-- TODO add recommends images into this in java code -->
-    <LinearLayout android:id="@+id/shop_recommends"
+    <!-- <LinearLayout android:id="@+id/shop_recommends"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"/> -->
 
 </LinearLayout>

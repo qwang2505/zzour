@@ -16,6 +16,10 @@ public class Validator {
 		if (password == null || password.length() == 0){
 			return new ValidateResult(false, "密码不能为空");
 		}
+		// length between 6 to 20 characters
+		if (password.length() > 20 || password.length() < 6){
+			return new ValidateResult(false, "密码不符合条件，应为6-20个字符，请重新输入");
+		}
 		return new ValidateResult(true, "");
 	}
 	

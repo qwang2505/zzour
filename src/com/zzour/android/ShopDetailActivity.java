@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -86,6 +87,7 @@ public class ShopDetailActivity extends BaseActivity{
 	
 	private void show(){
 		// init title bar text
+		Log.e(TAG, "show shop detail");
 		TextView title_bar = (TextView)findViewById(R.id.title_bar_text_view);
 		title_bar.setText(mShop.getName());
 		//mShop = ShopDetailApi.getShopDetailById(mShopId, this);
@@ -93,13 +95,19 @@ public class ShopDetailActivity extends BaseActivity{
 		// show shop detail
 		mAdapter = new ShopDetailAdapter(this);
 		// init top view, and add to expendable list as a header
+		Log.e(TAG, "init header view");
 		this.initHeaderView(mShop, list);
+		Log.e(TAG, "init header view finished");
 		Iterator<String> keys = mShop.getFoods().keySet().iterator();
 		while (keys.hasNext()){
 			String cat = keys.next();
 			mAdapter.setFoods(cat, mShop.getFoods().get(cat));
 		}
 		list.setAdapter(mAdapter);
+		for (int i=0; i < mAdapter.getGroupCount(); i++){
+			list.expandGroup(i);
+		}
+		list.setGroupIndicator(null);//除去自带的箭头
 		
 		Button btn = (Button)findViewById(R.id.go_to_cart);
 		btn.setOnClickListener(new OnClickListener(){
@@ -128,20 +136,32 @@ public class ShopDetailActivity extends BaseActivity{
 	private void initHeaderView(ShopDetailContent shop, ExpandableListView list){
 		mHeaderView = this.getLayoutInflater().inflate(R.layout.shop_detail_top, null);
 		// initial basic shop information
-		TextView text = (TextView)mHeaderView.findViewById(R.id.shop_name);
-		text.setText(shop.getName());
-		text = (TextView)mHeaderView.findViewById(R.id.shop_desc);
-		text.setText(shop.getDesc());
-		text = (TextView)mHeaderView.findViewById(R.id.shop_addr);
-		text.setText(shop.getAddress());
+		TextView text = (TextView)mHeaderView.findViewById(R.id.send_time);
+		text.setText("平均速度：" + shop.getSendTime());
+		text = (TextView)mHeaderView.findViewById(R.id.praise_count);
+		// TODO use correct data
+		text.setText(Float.valueOf(shop.getPraiseRate()).intValue() + "人认为该店不错");
+		text = (TextView)mHeaderView.findViewById(R.id.telephone);
+		text.setText("电话：" + shop.getTelephone());
+		text = (TextView)mHeaderView.findViewById(R.id.shop_hours);
+		text.setText("营业时间：" + shop.getShopHours());
+		text = (TextView)mHeaderView.findViewById(R.id.online_order);
+		if (shop.isOnlineOrder()){
+			text.setText("本店支持网上订餐");
+		} else {
+			text.setText("本店只支持电话订餐");
+		}
 		RatingBar rate = (RatingBar)mHeaderView.findViewById(R.id.shop_rating);
-		rate.setRating(shop.getRate());
+		rate.setRating(shop.getGrade());
+		WebView notice = (WebView)mHeaderView.findViewById(R.id.notice);
+		notice.loadData("<style type='text/css'>*{font-size: 14px;background-color:#efecea}</style>" + shop.getNotice(), "text/html; charset=UTF-8", null);
 		// initial top banner
-		mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
+		//mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
 		DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         final int width = metrics.widthPixels - 20;
         // get real image in new thread
+        /*
 		Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.logo, getResources().openRawResource(R.drawable.logo), 
 				width, 
 				(int)getResources().getDimension(R.dimen.detail_banner_height));
@@ -160,6 +180,7 @@ public class ShopDetailActivity extends BaseActivity{
 	 	    	   });
 	 	       }
 	 	    }).start();
+	 	*/
 		// TODO initial recommends foods images
 		list.addHeaderView(mHeaderView);
 	}

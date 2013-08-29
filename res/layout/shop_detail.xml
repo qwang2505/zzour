@@ -5,25 +5,35 @@
     android:orientation="vertical">
     
     <RelativeLayout android:layout_width="match_parent"
-        android:background="@drawable/title_bar"
+        android:background="@drawable/top_bar_background"
         android:paddingBottom="3dp"
         android:id="@+id/title_bar"
         android:layout_height="wrap_content">
         
-        <include layout="@layout/back_button"/>
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
         
         <com.zzour.android.views.AlwaysMarqueeTextView android:id="@+id/title_bar_text_view"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:textSize="25sp"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:textColor="#eeeeee"
+            android:textColor="#ffffffff"
             android:layout_marginTop="6dp"
             android:text="@string/title_bar_text"/>
+        
+        <!-- shou cang -->
         
     </RelativeLayout>
     
@@ -38,44 +48,40 @@
    	
    	<RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:paddingBottom="5dp"
-        android:background="@color/main_style_background_color" >
+        android:background="@drawable/bottom_background" >
         
    	    <TextView android:id="@+id/money_symbol"
    	        android:layout_width="wrap_content"
    	        android:layout_height="42dp" 
    	        android:gravity="bottom"
    	        android:paddingBottom="2dp"
-   	        android:paddingLeft="5dp"
-   	        android:textColor="#bb6008"
+   	        android:paddingLeft="8dp"
+   	        android:textColor="#ffffff"
    	        android:visibility="gone"
    	        android:text="￥" />
         
    	    <TextView android:id="@+id/total_money"
    	        android:layout_width="wrap_content"
-   	        android:layout_height="42dp"
+   	        android:layout_height="60dp"
    	        android:textSize="25sp"
    	        android:layout_toRightOf="@id/money_symbol"
    	        android:gravity="bottom"
-   	        android:textColor="#bb6008"
+   	        android:layout_marginBottom="5dp"
+   	        android:textColor="#f77f1e"
    	        android:text=""/>
         
         <Button android:id="@+id/go_to_cart"
             android:layout_width="wrap_content"
-            android:layout_height="42dp"
+            android:layout_height="60dp"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="3dp"
-            android:layout_marginBottom="3dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:background="@drawable/button"
-            android:includeFontPadding="false"
-            android:layout_centerVertical="true"
-            android:text="结算"/>
+            android:background="@drawable/go_to_address"
+            android:includeFontPadding="false"/>
         
     </RelativeLayout>
 

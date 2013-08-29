@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#efecea"
     android:orientation="vertical">
     
     <RelativeLayout android:layout_height="wrap_content"
@@ -9,13 +10,22 @@
         android:paddingBottom="3dp"
         android:background="@drawable/top_bar_background">
         
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:layout_centerVertical="true"
+		    android:background="@drawable/back_button"
+		    android:text="@string/back_button_text" />
+        
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textSize="25sp"
             android:textColor="#ffffff"
             android:layout_centerVertical="true"
-            android:text="@string/more_title" />
+            android:text="@string/more_account_manager_title" />
         
 	</RelativeLayout>
 	
@@ -26,45 +36,128 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             
-            <RelativeLayout android:id="@+id/more_user"
+            <RelativeLayout android:id="@+id/account_name"
                 android:layout_width="match_parent"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:clickable="true"
-                android:visibility="gone"
+                android:background="#ffffff"
                 android:layout_height="wrap_content">
                 
-                <TextView android:id="@+id/more_user_text"
+                <TextView android:id="@+id/account_name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:textColor="#f48e4c"
                     android:textSize="18sp"/>
                 
-                <ImageView android:layout_width="wrap_content"
+                <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/account_name_text"
+                    android:text="@string/more_account_name_welcome_text"/>
                 
             </RelativeLayout>
             
-            <RelativeLayout android:id="@+id/more_login"
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
+            <RelativeLayout android:id="@+id/account_email"
                 android:layout_width="match_parent"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
+                android:background="#ffffff"
+                android:layout_height="wrap_content">
+                
+                <TextView android:id="@+id/account_email_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/more_account_email_welcome_text"/>
+                
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/account_email_text"/>
+                
+            </RelativeLayout>
+            
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:layout_marginTop="40dp"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
+            <RelativeLayout android:id="@+id/accout_integral"
+                android:layout_width="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="#ffffff"
+                android:layout_height="wrap_content">
+                
+                <TextView android:id="@+id/account_integral_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/more_account_integral_text"/>
+                
+                <TextView android:id="@+id/account_integral_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:textColor="#f48e4c"
+                    android:layout_toRightOf="@id/account_integral_text"/>
+                
+                <TextView android:id="@+id/account_integral_text_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="18sp"
+                    android:text="@string/more_account_integral_text_2"
+                    android:layout_toRightOf="@id/account_integral_value"/>
+                
+            </RelativeLayout>
+            
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
+            <ImageView
+			    	android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:layout_marginTop="40dp"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/dotted" />
+            
+            <RelativeLayout android:id="@+id/account_change_password"
+                android:layout_width="match_parent"
+                android:paddingTop="10dp"
                 android:clickable="true"
-                android:visibility="gone"
+                android:paddingBottom="10dp"
+                android:background="#ffffff"
                 android:layout_height="wrap_content">
                 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:textSize="18sp"
-                    android:text="@string/more_login_text"/>
+                    android:text="@string/more_account_change_password_text"/>
                 
                 <ImageView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,19 +176,19 @@
 			    	android:contentDescription="@string/dot_line_desc"
 			    	android:src="@drawable/dotted" />
             
-            <RelativeLayout android:id="@+id/more_register"
+            <RelativeLayout android:id="@+id/account_change_email"
                 android:layout_width="match_parent"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:clickable="true"
-                android:visibility="gone"
+                android:background="#ffffff"
                 android:layout_height="wrap_content">
                 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:textSize="18sp"
-                    android:text="@string/more_register_text"/>
+                    android:text="@string/more_account_change_email_text"/>
                 
                 <ImageView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -114,125 +207,14 @@
 			    	android:contentDescription="@string/dot_line_desc"
 			    	android:src="@drawable/dotted" />
             
-            <!-- <RelativeLayout android:id="@+id/more_logout"
-                android:layout_width="match_parent"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:clickable="true"
-                android:layout_height="wrap_content">
-                
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:textSize="18sp"
-                    android:text="@string/more_logout_text"/>
-                
-                <ImageView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
-            
-            <ImageView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:contentDescription="@string/dot_line_desc"
-			    	android:src="@drawable/dotted" /> -->
-            
-            <!-- <RelativeLayout android:id="@+id/more_settings"
-                android:layout_width="match_parent"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:clickable="true"
-                android:layout_height="wrap_content">
-                
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:textSize="18sp"
-                    android:text="@string/more_settings_text"/>
-                
-                <ImageView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
-            
-            <ImageView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:contentDescription="@string/dot_line_desc"
-			    	android:src="@drawable/dotted" /> -->
-            
-            <RelativeLayout android:id="@+id/more_about"
-                android:layout_width="match_parent"
-                android:paddingTop="10dp"
-                android:clickable="true"
-                android:paddingBottom="10dp"
-                android:layout_height="wrap_content">
-                
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:textSize="18sp"
-                    android:text="@string/more_about_text"/>
-                
-                <ImageView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
-            
-            <ImageView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:contentDescription="@string/dot_line_desc"
-			    	android:src="@drawable/dotted" />
-            
-            <RelativeLayout android:id="@+id/more_feedback"
-                android:layout_width="match_parent"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:clickable="true"
-                android:layout_height="wrap_content">
-                
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:textSize="18sp"
-                    android:text="@string/more_feedback_text"/>
-                
-                <ImageView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
-            
-            <ImageView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:contentDescription="@string/dot_line_desc"
-			    	android:src="@drawable/dotted" />
+            <Button android:id="@+id/logout"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginRight="7dp"
+			    android:background="@drawable/logout"
+			    android:layout_marginTop="20dp"
+			    android:textColor="#ffffff"
+			    android:layout_gravity="center" />
             
         </LinearLayout>
     </ScrollView>

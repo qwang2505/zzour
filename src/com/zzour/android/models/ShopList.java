@@ -3,6 +3,12 @@ package com.zzour.android.models;
 import java.util.ArrayList;
 
 public class ShopList extends BaseDataModel{
+	public ShopList(ArrayList<ShopSummaryContent> mShops){
+		this.mShops = mShops;
+		this.mSearchKeyword = "default search keyword";
+		this.mBanners = new ArrayList<String>();
+		this.mBanners.add("http://www.zzour.com/data/files/mall/template/201304231757237155.jpg");
+	}
 	public ShopList(String mSearchKeyword, ArrayList<String> mBanners,
 			ArrayList<ShopSummaryContent> mShops) {
 		super();

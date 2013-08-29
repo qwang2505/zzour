@@ -9,6 +9,7 @@ import com.zzour.android.models.Food;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -174,9 +175,11 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
             ViewGroup parent) {
         TextView textView = getGenericView();
         textView.setText(getGroup(groupPosition).toString());
-        isExpanded = true;
-        ExpandableListView eLV = (ExpandableListView) parent;
-        eLV.expandGroup(groupPosition);
+        textView.setBackgroundColor(mContext.getResources().getColor(R.color.shop_detail_category_background_color));
+        textView.setTextColor(Color.WHITE);
+        //isExpanded = true;
+        //ExpandableListView eLV = (ExpandableListView) parent;
+        //eLV.expandGroup(groupPosition);
         return textView;
     }
 

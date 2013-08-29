@@ -65,7 +65,7 @@ public class ShopDetailDAO  extends CustomSqliteHelper{
 		cv.put(FIELD_ID, shop.getId());
 		cv.put(FIELD_NAME, shop.getName());
 		cv.put(FIELD_BANNER, shop.getBanner());
-		cv.put(FIELD_RATE, shop.getRate());
+		cv.put(FIELD_RATE, shop.getGrade());
 		cv.put(FIELD_ADDR, shop.getAddress());
 		cv.put(FIELD_DESC, shop.getDesc());
 		Iterator<String> it = shop.getFoods().keySet().iterator();
@@ -111,7 +111,7 @@ public class ShopDetailDAO  extends CustomSqliteHelper{
 			shop.setDesc(desc);
 			shop.setId(id);
 			shop.setName(name);
-			shop.setRate(rate);
+			shop.setGrade(rate);
 		}
 		return shop;
 	}

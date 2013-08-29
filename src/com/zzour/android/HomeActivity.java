@@ -58,7 +58,7 @@ public class HomeActivity extends BaseActivity {
 	
 	private View mContentView = null;
 	
-	private int mLastOrder = -1;
+	private int pageNum = 1;
 	private static final int RESULT_COUNT = 6;
 	
 	private HashMap<Integer, String> mImages = new HashMap<Integer, String>();
@@ -81,28 +81,28 @@ public class HomeActivity extends BaseActivity {
         
         setContentView(R.layout.activity_main);
         
-        mSearchCategory = (Spinner)findViewById(R.id.search_category);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
-                android.R.layout.simple_spinner_item, mSearchCategories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSearchCategory.setAdapter(adapter);
-        mSearchCategory.setSelection(0);
-        mSearchCategory.setOnItemSelectedListener(
-                new OnItemSelectedListener() {
-                    public void onItemSelected(
-                            AdapterView<?> parent, View view, int position, long id) {
-                        mSearchCategoryValue = mSearchCategoryValues[position];
-                    }
+        //mSearchCategory = (Spinner)findViewById(R.id.search_category);
+        //ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
+        //        android.R.layout.simple_spinner_item, mSearchCategories);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //mSearchCategory.setAdapter(adapter);
+        //mSearchCategory.setSelection(0);
+        //mSearchCategory.setOnItemSelectedListener(
+        //        new OnItemSelectedListener() {
+        //            public void onItemSelected(
+        //                    AdapterView<?> parent, View view, int position, long id) {
+        //               mSearchCategoryValue = mSearchCategoryValues[position];
+        //            }
 
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        mSearchCategoryValue = mSearchCategoryValues[0];
-                    }
-                });
+        //            public void onNothingSelected(AdapterView<?> parent) {
+        //               mSearchCategoryValue = mSearchCategoryValues[0];
+        //           }
+        //        });
         
         // TODO get search initial text from api, and reset. Here just reset.
-        EditText searchText = (EditText)findViewById(R.id.search);
-        String text = getString(R.string.search_initial_text);
-        searchText.setText(text);
+        //EditText searchText = (EditText)findViewById(R.id.search);
+        //String text = getString(R.string.search_initial_text);
+        //searchText.setText(text);
         this.initScrollImageView();
     
         // add load more to list view
@@ -197,7 +197,7 @@ public class HomeActivity extends BaseActivity {
     
     private void loadMoreData(){
     	// pass in activity instance to get preference
-    	final ShopList shopList = ShopListApi.getShopList(this, mLastOrder, RESULT_COUNT);
+    	final ShopList shopList = ShopListApi.getShopList(this, pageNum, RESULT_COUNT);
 
     	if (shopList == null){
     		mLoadMoreHandler.post(new Runnable(){
@@ -215,28 +215,32 @@ public class HomeActivity extends BaseActivity {
  	    	});
      		return;
     	}
+    	pageNum += 1;
 		for (int i=0; i < shopList.size(); i++){
+			Log.e(TAG, "add shop " + i);
     		final ShopSummaryContent shop = shopList.get(i);
     		int p = mAdapterTemp.addItem(shop);
-    		mImages.put(p, shop.getImage());
-    		if (i == shopList.size()-1){
-    			mLastOrder = shop.getId();
-    		}
+    		mImages.put(p, shop.getLogo());
     	}
+		Log.e(TAG, "add shop over");
     	// start new thread to download image and update
     	Iterator<Integer> it = mImages.keySet().iterator();
-    	Log.d(TAG, "image count need to download: " + mImages.size());
+    	Log.e(TAG, "image count need to download: " + mImages.size());
 		final int width = (int)getResources().getDimension(R.dimen.list_image_width);
 		final int height = (int)getResources().getDimension(R.dimen.list_image_height);
     	while (it.hasNext()){
     		final int position = (Integer)it.next();
+    		Log.e(TAG, "download image " + mImages.get(position));
     		final Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height, HomeActivity.this);
-    		mLoadMoreHandler.post(new Runnable(){
-    			public void run(){
-    				mAdapterTemp.updateShopBitmap(position, bmp);
-    				mAdapterTemp.notifyDataSetChanged();
-    			}
-    		});
+    		Log.e(TAG, "download image over");
+    		if (bmp != null){
+	    		mLoadMoreHandler.post(new Runnable(){
+	    			public void run(){
+	    				mAdapterTemp.updateShopBitmap(position, bmp);
+	    				mAdapterTemp.notifyDataSetChanged();
+	    			}
+	    		});
+    		}
     	}
     }
     

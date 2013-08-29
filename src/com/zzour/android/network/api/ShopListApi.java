@@ -1,5 +1,6 @@
 package com.zzour.android.network.api;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,13 +39,14 @@ public class ShopListApi {
 	
 	private static ShopList mShopList;
 	
-	private static String path = "/shop/list.json";
+	//private static String path = "/shop/list.json";
+	private static String path = "/index.php?app=search&act=store&method=ajax";
 	
 	public static ShopList getShopList(Activity activity){
 		return getShopList(activity, 0, 6);
 	}
 
-	public static ShopList getShopList(Activity activity, int sinceOrder, int count){
+	public static ShopList getShopList(Activity activity, int pageNum, int count){
 		// get json/xml data from server, and format into a list content.
 		// For demo, return some mocked data.
 		// if shop list in memory and not expired, return directly.
@@ -58,56 +60,71 @@ public class ShopListApi {
 		// 		is expired. if not expired, load from local database.
 		// same api have different parameters, can't just decide expired by api path, need
 		//      to consider parameters too.
-		String key = LocalPreferences.SHOP_LIST_API + "so=" + sinceOrder + "&rc=" + count;
-		if (!LocalPreferences.isApiDataExpired(key, activity)){
-			// since data not expired, get shop list from local database
-			ShopSummaryDAO m = new ShopSummaryDAO(activity);
-			// read search keyword from local storage. if nothing, use default
-			String sk = LocalPreferences.getSearchKeyword(activity);
-			// read banners from local storage
-			String[] banners = LocalPreferences.getHomePageBanners(activity);
-			// TODO apply parameters to get from database
-			ShopList sl = new ShopList(sk, banners, m.get());
-			return sl;
-		}
-		Log.d(TAG, "data expired, get from server again");
+		// TODO do not query from local cache
+		//String key = LocalPreferences.SHOP_LIST_API + "so=" + pageNum + "&rc=" + count;
+		//if (!LocalPreferences.isApiDataExpired(key, activity)){
+		//	// since data not expired, get shop list from local database
+		//	ShopSummaryDAO m = new ShopSummaryDAO(activity);
+		//	// read search keyword from local storage. if nothing, use default
+		//	String sk = LocalPreferences.getSearchKeyword(activity);
+		//	// read banners from local storage
+		//	String[] banners = LocalPreferences.getHomePageBanners(activity);
+		//	// TODO apply parameters to get from database
+		//	ShopList sl = new ShopList(sk, banners, m.get());
+		//	return sl;
+		//}
+		//Log.d(TAG, "data expired, get from server again");
 		// get data from server
-		long lastAccess = LocalPreferences.getLastAccess(key, activity);
-		String data = getShopListFromServer(sinceOrder, count, lastAccess);
+		// TODO get last access timestamp
+		//long lastAccess = LocalPreferences.getLastAccess(key, activity);
+		String data = getShopListFromServer(pageNum, count, 0);
 		if (data == null){
+			// TODO log error, and remind user
 			return null;
 		}
 		// For demo, get from fake data.
 		//String data = FakeData.getFackShopList(0, 0, 1, 15);
 		// save data to local database and settings
 		ShopList sl = ShopListApi.parseShopListData(data);
-		if (sl != null){
-			saveShopList(activity, sl, key);
-		}
+		// TODO save to local cache
+		//if (sl != null){
+		//	saveShopList(activity, sl, key);
+		//}
 		return sl;
 	}
 	
-	private static String getShopListFromServer(int sinceOrder, int count, long lastAccess){
-		String src = buildUrl(sinceOrder, count, lastAccess);
-		Log.d("ZZOUR", "get data from " + src);
+	private static String getShopListFromServer(int pageNum, int count, long lastAccess){
+		String src = buildUrl(pageNum, count, lastAccess);
+		Log.e("ZZOUR", "get data from " + src);
 		try {
 	        URL url = new URL(src);
 	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 	        connection.setDoInput(true);
 	        connection.connect();
-	        DataInputStream input = new DataInputStream(connection.getInputStream());
-	        byte[] buf = new byte[input.available()];
-	        input.readFully(buf);
+	        InputStream inStream = connection.getInputStream();
+	        byte[] buf = readInputStream(inStream);
 	        return (new String(buf));
-	    } catch (IOException e) {
+	    } catch (Exception e) {
 	        e.printStackTrace();
+	        Log.e("ZZOUR", "get data from server error: " + e.toString());
 	        return null;
 	    }
 	}
 	
-	private static String buildUrl(int sinceOrder, int count, long lastAccess){
-		return GlobalSettings.getServerAddress() + path + "?so=" + sinceOrder +
-				"&rc=" + count + "&la=" + lastAccess;
+	public static byte[] readInputStream(InputStream inStream) throws Exception{
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();  
+        byte[] buffer = new byte[1024];  
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {  
+            outStream.write(buffer, 0, len);  
+        }  
+        inStream.close();  
+        return outStream.toByteArray();  
+    }  
+	
+	private static String buildUrl(int pageNum, int count, long lastAccess){
+		return GlobalSettings.getServerAddress() + path + "&la=" + lastAccess +
+				"&page=" + pageNum + "&page_per=" + count;
 	}
 	
 	private static void saveShopList(Activity activity, ShopList shopList, String key){
@@ -138,35 +155,53 @@ public class ShopListApi {
 	
 	private static ShopList parseShopListData(String data){
 		try{
-			JSONTokener jsonObj = new JSONTokener(data);
-			JSONObject dataObj = (JSONObject)jsonObj.nextValue();
-			// get default search key, optional
-			String dsk = dataObj.optString("dsk");
-			// get banners, optional
-			JSONArray bs = dataObj.optJSONArray("banners");
-			ArrayList<String> banners = new ArrayList<String>();
-			for (int i=0; i < bs.length(); i++){
-				banners.add((String)bs.opt(i));
+			//JSONTokener jsonObj = new JSONTokener(data);
+			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
+			JSONObject dataObj = new JSONObject(data);
+			String error = dataObj.getString("msg");
+			String done = dataObj.getString("done");
+			if (done != "true"){
+				// TODO log error, show error message to user.
+				return null;
 			}
+			// TODO get default search key, optional
+			//String dsk = dataObj.optString("dsk");
+			// get banners, optional
+			//JSONArray bs = dataObj.optJSONArray("banners");
+			//ArrayList<String> banners = new ArrayList<String>();
+			//for (int i=0; i < bs.length(); i++){
+			//	banners.add((String)bs.opt(i));
+			//}
 			// get shops
-			JSONArray shopObjs = dataObj.getJSONArray("shops");
+			JSONObject shopObjs = dataObj.getJSONObject("retval");
 			ArrayList<ShopSummaryContent> shops = new ArrayList<ShopSummaryContent>();
-			for (int i=0; i < shopObjs.length(); i++){
-				JSONObject obj = (JSONObject)shopObjs.opt(i);
-				int id = obj.getInt("id");
-				String name = obj.getString("name");
-				String desc = obj.optString("desc", "");
-				String image = obj.getString("image");
-				float rate = (float)obj.optDouble("rate", 4.0);
+			JSONArray shopIds = shopObjs.names();
+			for (int i=0; i < shopIds.length(); i++){
+				JSONObject obj = (JSONObject)shopObjs.get(shopIds.getString(i));
+				int id = obj.getInt("store_id");
+				String name = obj.getString("store_name");
+				// TODO get description
+				String desc = obj.getString("description");
+				String image = obj.getString("store_logo");
+				// TODO format image correctly
+				image = "http://www.zzour.com/" + image;
+				float rate = (float)obj.getDouble("sgrade");
 				boolean isNew = obj.optBoolean("new", false);
 				
 				ShopSummaryContent shop = new ShopSummaryContent(id, isNew, image, name, desc, rate);
+				shop.setCreditValue(obj.getInt("credit_value"));
+				shop.setGrade((float)obj.getDouble("sgrade"));
+				shop.setOnlineOrder(obj.getInt("onlineOrder") == 1);
+				shop.setAlive(obj.getInt("if_live") == 1);
 				shops.add(shop);
 			}
 			mShopList = null;
-			mShopList = new ShopList(dsk, banners, shops);
+			mShopList = new ShopList(shops);
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse result data: " + ex.toString());
+			return null;
+		} catch (Exception ex){
+			Log.e("ZZOUR", "error in parse result data 2: " + ex.toString());
 			return null;
 		}
 		return mShopList;

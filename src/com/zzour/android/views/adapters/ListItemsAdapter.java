@@ -8,11 +8,13 @@ import com.zzour.android.utils.ImageTool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class ListItemsAdapter extends BaseAdapter{
@@ -68,14 +70,16 @@ public class ListItemsAdapter extends BaseAdapter{
 			convertView=LayoutInflater.from(mContext).inflate(R.layout.item, null);
 			ItemViewCache viewCache=new ItemViewCache();
 			viewCache.mTitleView=(TextView)convertView.findViewById(R.id.item_title);
-			viewCache.mDescView = (TextView)convertView.findViewById(R.id.item_desc);
+			viewCache.mDescView = (TextView)convertView.findViewById(R.id.item_credit);
 			viewCache.mImageView = (ImageView)convertView.findViewById(R.id.item_image);
+			viewCache.mItemRating = (RatingBar)convertView.findViewById(R.id.item_rating);
 			convertView.setTag(viewCache);
 		}
 		ItemViewCache cache=(ItemViewCache)convertView.getTag();
 		
 		cache.mTitleView.setText(shops.get(position).getName());
-		cache.mDescView.setText(shops.get(position).getDescription());
+		cache.mDescView.setText(shops.get(position).getCreditValue() + "人认为该店不错");
+		cache.mItemRating.setRating(shops.get(position).getGrade());
 		Bitmap bmp = shops.get(position).getBitmap();
 		if (bmp == null){
 			cache.mImageView.setImageBitmap(ImageTool.getBitmapByStream(mDefaultBitmapId, 
@@ -91,5 +95,6 @@ public class ListItemsAdapter extends BaseAdapter{
 		public TextView mTitleView;
 		public TextView mDescView;
 		public ImageView mImageView;
+		public RatingBar mItemRating;
 	}
 }

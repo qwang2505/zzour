@@ -13,6 +13,7 @@ public class GlobalSettings {
 	public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	private static String schema = "http://";
+	public static String server = "www.zzour.com";
 
 	public static long getApiExpireTime(){
 		// TODO read from settings
@@ -21,7 +22,7 @@ public class GlobalSettings {
 	
 	public static String getServerAddress(){
 		// TODO read from settings
-		return schema + "10.2.9.0";
+		return schema + server;
 	}
 	
 	public static int getApiLevel(){

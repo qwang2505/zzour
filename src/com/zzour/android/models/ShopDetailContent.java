@@ -8,9 +8,87 @@ public class ShopDetailContent extends BaseDataModel{
 	private int id;
 	private String banner;
 	private String name;
-	private float rate;
+	private float grade;
 	private String address;
 	private String desc;
+	
+	private boolean onlineOrder;
+	private String sendTime;
+	private int goodsCount;
+	private float praiseRate;
+	private boolean live;
+	private String shopHours;
+	private String telephone;
+	private String notice;
+	
+	public String getNotice() {
+		return notice;
+	}
+
+	public void setNotice(String notice) {
+		this.notice = notice;
+	}
+
+	public boolean isOnlineOrder() {
+		return onlineOrder;
+	}
+
+	public void setOnlineOrder(boolean onlineOrder) {
+		this.onlineOrder = onlineOrder;
+	}
+
+	public String getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(String sendTime) {
+		this.sendTime = sendTime;
+		if (this.sendTime == null || this.sendTime == "null"){
+			this.sendTime = "40∑÷÷”";
+		}
+	}
+
+	public int getGoodsCount() {
+		return goodsCount;
+	}
+
+	public void setGoodsCount(int goodsCount) {
+		this.goodsCount = goodsCount;
+	}
+
+	public float getPraiseRate() {
+		return praiseRate;
+	}
+
+	public void setPraiseRate(float praiseRate) {
+		this.praiseRate = praiseRate;
+	}
+
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+
+	public String getShopHours() {
+		return shopHours;
+	}
+
+	public void setShopHours(String shopHours) {
+		this.shopHours = shopHours;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+
 	private ArrayList<Food> recommends = new ArrayList<Food>();
 	private HashMap<String, ArrayList<Food> > foods = new HashMap<String, ArrayList<Food>>();
 
@@ -38,12 +116,12 @@ public class ShopDetailContent extends BaseDataModel{
 		this.name = name;
 	}
 
-	public float getRate() {
-		return rate;
+	public float getGrade() {
+		return grade;
 	}
 
-	public void setRate(float rate) {
-		this.rate = rate;
+	public void setGrade(float rate) {
+		this.grade = rate;
 	}
 
 	public String getAddress() {
@@ -77,6 +155,7 @@ public class ShopDetailContent extends BaseDataModel{
 	public void setFoods(HashMap<String, ArrayList<Food>> foods) {
 		this.foods = foods;
 	}
+
 
 	@Override
 	public boolean expired() {

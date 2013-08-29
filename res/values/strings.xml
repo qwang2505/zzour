@@ -80,6 +80,13 @@
 	<string name="more_settings_text">设置</string>
 	<string name="more_about_text">关于宅宅</string>
 	<string name="more_feedback_text">反馈意见</string>
+	<string name="more_account_manager_title">账户</string>
+	<string name="more_account_change_password_text">修改密码</string>
+	<string name="more_account_change_email_text">修改邮箱</string>
+	<string name="more_account_name_welcome_text">，欢迎光临</string>
+	<string name="more_account_email_welcome_text">您的邮箱：</string>
+	<string name="more_account_integral_text">积分：</string>
+	<string name="more_account_integral_text_2">分</string>
 	
 	<!-- for loging page -->
 	<string name="login_title">登陆</string>

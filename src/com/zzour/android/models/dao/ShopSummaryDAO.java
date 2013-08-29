@@ -37,9 +37,9 @@ public class ShopSummaryDAO extends CustomSqliteHelper {
 		cv.put(FIELD_ID, summary.getId());
 		cv.put(FIELD_NAME, summary.getName());
 		cv.put(FIELD_IS_NEW, summary.isNew() ? 1: 0);
-		cv.put(FIELD_IMAGE, summary.getImage());
+		cv.put(FIELD_IMAGE, summary.getLogo());
 		cv.put(FIELD_DESC, summary.getDescription());
-		cv.put(FIELD_RATE, summary.getRate());
+		cv.put(FIELD_RATE, summary.getGrade());
 		cv.put(FIELD_ORDER, order);
 		this.getWritableDatabase().replace(TABLE_NAME, null, cv);
 		this.getWritableDatabase().close();

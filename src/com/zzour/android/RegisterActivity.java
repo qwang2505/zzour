@@ -123,11 +123,11 @@ public class RegisterActivity extends BaseActivity{
 	        this.mDialog.show();
 	    }
 
-	        @Override
+	    @Override
 	    protected void onPostExecute(final Boolean success) {
 	        if (mDialog.isShowing()) {
 	        	mDialog.dismiss();
-	        }
+	        } 
 	        this.activity.finishRegister();
 	    }
 	}

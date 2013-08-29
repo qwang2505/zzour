@@ -3,4 +3,5 @@
     <color name="main_style_background_color">#EDEDED</color>
     <color name="button_color">#d2691e</color>
     <color name="text_color">#bb6008</color>
+    <color name="shop_detail_category_background_color">#f48e4d</color>
 </resources>

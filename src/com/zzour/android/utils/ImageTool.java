@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.util.Log;
 
 public class ImageTool {
 	
@@ -34,11 +35,11 @@ public class ImageTool {
 		if (bmp == null){
 			// if not in local storage, get from internet
 			bmp = getBitmapByUrl(src);
-			LocalStorage.saveImage(String.valueOf(src.hashCode()), bmp, context);
 			// if can't get from internet, return
 			if (bmp == null){
 				return null;
 			}
+			LocalStorage.saveImage(String.valueOf(src.hashCode()), bmp, context);
 		}
 		// scale image
 		bmp = scaleImage(bmp, width, height);
@@ -81,6 +82,7 @@ public class ImageTool {
 	        return bmp;
 	    } catch (IOException e) {
 	        e.printStackTrace();
+	        Log.e(TAG, "get bitmap by url failed: " + src);
 	        return null;
 	    }
 	}

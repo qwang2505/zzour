@@ -12,9 +12,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zzour.android.base.BaseActivity;
+import com.zzour.android.models.User;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 
@@ -26,17 +28,36 @@ public class MoreActivity extends BaseActivity
 	
 	private RelativeLayout login;
 	private RelativeLayout register;
-	private RelativeLayout settings;
+	private RelativeLayout userLayout;
+	//private RelativeLayout settings;
 	private RelativeLayout about;
 	private RelativeLayout feedback;
-	private RelativeLayout logout;
+	//private RelativeLayout logout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.more);
-		
+		userLayout = (RelativeLayout)findViewById(R.id.more_user);
 		login = (RelativeLayout)findViewById(R.id.more_login);
+		register = (RelativeLayout)findViewById(R.id.more_register);
+		userLayout.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				Log.e("zzour", "click accout");
+				ActivityTool.startActivity(MoreActivity.this, AccountManagerActivity.class);
+			}
+		});
+		userLayout.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View view, MotionEvent e) {
+				if (e.getAction() == MotionEvent.ACTION_DOWN) {
+					userLayout.setBackgroundColor(selectedColor);
+				} else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_MOVE) {
+					userLayout.setBackgroundColor(0x00000000);
+				}
+				return false;
+			}
+		});
 		login.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -53,8 +74,6 @@ public class MoreActivity extends BaseActivity
 				return false;
 			}
 		});
-		
-		register = (RelativeLayout)findViewById(R.id.more_register);
 		register.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -71,8 +90,24 @@ public class MoreActivity extends BaseActivity
 				return false;
 			}
 		});
+		if (LocalPreferences.authed(this)){
+			// disable login button
+			login.setVisibility(RelativeLayout.GONE);
+			register.setVisibility(RelativeLayout.GONE);
+			userLayout.setVisibility(RelativeLayout.VISIBLE);
+			TextView userName = (TextView)userLayout.findViewById(R.id.more_user_text);
+			User user = LocalPreferences.getUser(this);
+			if (user == null){
+				Log.e("ZZOUR", "authed but no user name? what happened?");
+			}
+			userName.setText(user.getUserName());
+		} else {
+			userLayout.setVisibility(RelativeLayout.GONE);
+			login.setVisibility(RelativeLayout.VISIBLE);
+			register.setVisibility(RelativeLayout.VISIBLE);
+		}
 		
-		settings = (RelativeLayout)findViewById(R.id.more_settings);
+/*		settings = (RelativeLayout)findViewById(R.id.more_settings);
 		settings.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -88,7 +123,7 @@ public class MoreActivity extends BaseActivity
 				}
 				return false;
 			}
-		});
+		});*/
 		
 		about = (RelativeLayout)findViewById(R.id.more_about);
 		about.setOnClickListener(new OnClickListener(){
@@ -125,121 +160,35 @@ public class MoreActivity extends BaseActivity
 				return false;
 			}
 		});
-		
-		logout = (RelativeLayout)findViewById(R.id.more_logout);
-		// logout
-		logout.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				Log.d(TAG, "logout clicked");
-				showLogoutDialog();
-			}
-		});
-		logout.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View view, MotionEvent e) {
-				if (e.getAction() == MotionEvent.ACTION_DOWN) {
-					logout.setBackgroundColor(selectedColor);
-				} else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_MOVE) {
-					logout.setBackgroundColor(0x00000000);
-				}
-				return false;
-			}
-		});
-		
-		// set button status
-		if (LocalPreferences.authed(this)){
-			// disable login button
-			login.setClickable(false);
-			login.setBackgroundColor(disableColor);
-			login.setOnTouchListener(null);
-		} else {
-			// disable logout button
-			logout.setClickable(false);
-			logout.setBackgroundColor(disableColor);
-			logout.setOnTouchListener(null);
-		}
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (userLayout == null){
+			userLayout = (RelativeLayout)findViewById(R.id.more_user);
+		}
+		if (login == null) {
+			login = (RelativeLayout) findViewById(R.id.more_login);
+		}
+		if (register == null) {
+			register = (RelativeLayout)findViewById(R.id.more_register);
+		} 
 		if (LocalPreferences.authed(this)){
-			login.setClickable(false);
-			login.setBackgroundColor(disableColor);
-			login.setOnTouchListener(null);
-			logout.setClickable(true);
-			logout.setBackgroundColor(0x00000000);
-			logout.setOnTouchListener(new OnTouchListener() {
-				public boolean onTouch(View view, MotionEvent e) {
-					if (e.getAction() == MotionEvent.ACTION_DOWN) {
-						logout.setBackgroundColor(selectedColor);
-					} else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_MOVE) {
-						logout.setBackgroundColor(0x00000000);
-					}
-					return false;
-				}
-			});
-		} else {
-			logout.setClickable(false);
-			logout.setBackgroundColor(disableColor);
-			logout.setOnTouchListener(null);
-			login.setClickable(true);
-			login.setBackgroundColor(0x00000000);
-			login.setOnTouchListener(new OnTouchListener() {
-				public boolean onTouch(View view, MotionEvent e) {
-					if (e.getAction() == MotionEvent.ACTION_DOWN) {
-						login.setBackgroundColor(selectedColor);
-					} else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_MOVE) {
-						login.setBackgroundColor(0x00000000);
-					}
-					return false;
-				}
-			});
-		}
-	}
-
-
-
-	public void logout(){
-		// logout
-		LocalPreferences.logout(this);
-		Toast.makeText(this, "注销成功", Toast.LENGTH_SHORT).show();
-		// reset logout and login status
-		login.setClickable(true);
-		login.setBackgroundColor(0x00000000);
-		login.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View view, MotionEvent e) {
-				if (e.getAction() == MotionEvent.ACTION_DOWN) {
-					login.setBackgroundColor(selectedColor);
-				} else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_MOVE) {
-					login.setBackgroundColor(0x00000000);
-				}
-				return false;
+			// disable login button
+			login.setVisibility(RelativeLayout.GONE);
+			register.setVisibility(RelativeLayout.GONE);
+			userLayout.setVisibility(RelativeLayout.VISIBLE);
+			TextView userName = (TextView)userLayout.findViewById(R.id.more_user_text);
+			User user = LocalPreferences.getUser(this);
+			if (user == null){
+				Log.e("ZZOUR", "authed but no user name? what happened?");
 			}
-		});
-		logout.setClickable(false);
-		logout.setBackgroundColor(disableColor);
-		logout.setOnTouchListener(null);
-	}
-	
-	public void showLogoutDialog(){
-		if (!LocalPreferences.authed(this)){
-			Toast.makeText(this, "用户没有登陆", Toast.LENGTH_SHORT).show();
-			return;
+			userName.setText(user.getUserName());
+		} else {
+			userLayout.setVisibility(RelativeLayout.GONE);
+			login.setVisibility(RelativeLayout.VISIBLE);
+			register.setVisibility(RelativeLayout.VISIBLE);
 		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("确定注销账户？")
-		       .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                MoreActivity.this.logout();
-		           }
-		       })
-		       .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
 	}
 }

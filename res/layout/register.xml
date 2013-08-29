@@ -8,9 +8,16 @@
     <RelativeLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" 
         android:paddingBottom="3dp"
-        android:background="@drawable/title_bar">
+        android:background="@drawable/top_bar_background">
         
-        <include layout="@layout/back_button" />
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:layout_centerVertical="true"
+		    android:background="@drawable/back_button"
+		    android:text="@string/back_button_text" />
         
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,14 +118,13 @@
 		        android:text="@string/register_agree_protocol_text" />
 		    
 		    <Button android:id="@+id/register_btn"
-			    android:layout_width="130dp"
-			    android:layout_height="35dp"
-			    android:layout_marginRight="10dp"
-			    android:background="@drawable/button"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginRight="7dp"
+			    android:background="@drawable/submit_register"
 			    android:layout_marginTop="20dp"
 			    android:textColor="#ffffff"
-			    android:layout_gravity="center"
-			    android:text="@string/register_btn_text_2" />
+			    android:layout_gravity="center" />
 		    
 	    </LinearLayout>
 	    

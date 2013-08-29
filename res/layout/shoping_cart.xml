@@ -8,16 +8,24 @@
     <RelativeLayout
     	android:layout_width="match_parent"
     	android:layout_height="match_parent"
-    	android:background="@drawable/title_bar"
+    	android:background="@drawable/top_bar_background"
     	android:paddingBottom="3dp"
     	android:orientation="vertical">
     	
-    	<include layout="@layout/back_button"/>
+    	<Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
     	
     	<TextView android:id="@+id/cart_title_text"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:layout_centerHorizontal="true"
+    	    android:layout_centerVertical="true"
     	    android:textSize="25sp"
     	    android:paddingTop="3dp"
     	    android:paddingBottom="3dp"
@@ -192,6 +200,7 @@
 		        android:layout_marginTop="10dp"
 		        android:layout_marginBottom="20dp"
 		        android:background="@drawable/button"
+		        android:textColor="#ffffff"
 		        android:text="@string/order_text" />
 		    
 		</LinearLayout>

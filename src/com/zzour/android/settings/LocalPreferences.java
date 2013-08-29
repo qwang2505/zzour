@@ -83,6 +83,7 @@ public class LocalPreferences {
 		Editor editor = prefs.edit();
 		editor.putString("user_name", user.getUserName());
 		editor.putString("user_pwd", user.getPwd());
+		editor.putString("user_session", user.getSession());
 		editor.putInt("user_auth_type", user.getType().ordinal());
 		editor.putBoolean("user_authed", true);
 		editor.commit();
@@ -95,8 +96,9 @@ public class LocalPreferences {
 		}
 		String name = prefs.getString("user_name", "");
 		String pwd = prefs.getString("user_pwd", "");
+		String session = prefs.getString("user_session", "");
 		int type = prefs.getInt("user_auth_type", -1);
-		User user = new User(name, pwd, User.AuthType.values()[type]);
+		User user = new User(name, pwd, session, User.AuthType.values()[type]);
 		return user;
 	}
 	
@@ -105,6 +107,7 @@ public class LocalPreferences {
 		Editor editor = prefs.edit();
 		editor.remove("user_name");
 		editor.remove("user_pwd");
+		editor.remove("user_session");
 		editor.remove("user_auth_type");
 		editor.remove("user_authed");
 		editor.commit();

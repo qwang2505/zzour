@@ -6,13 +6,23 @@ public class User extends BaseDataModel{
 	private String userName;
 	// when use third party account system, pwd should be token, etc.
 	private String pwd;
+	private String session;
+	public String getSession() {
+		return session;
+	}
+
+	public void setSession(String session) {
+		this.session = session;
+	}
+
 	// auth type, normal, qq account, renren account, etc.
 	private AuthType type;
 	
-	public User(String name, String pwd, AuthType type){
+	public User(String name, String pwd, String session, AuthType type){
 		this.userName = name;
 		this.pwd = pwd;
 		this.type = type;
+		this.session = session;
 	}
 	
 	public String getUserName() {
