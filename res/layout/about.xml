@@ -7,9 +7,16 @@
     <RelativeLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" 
         android:paddingBottom="3dp"
-        android:background="@drawable/title_bar">
+        android:background="@drawable/top_bar_background">
         
-        <include layout="@layout/back_button" />
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
         
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,8 +38,16 @@
             <ImageView android:id="@+id/about_logo"
                 android:layout_width="match_parent"
                 android:src="@drawable/logo"
+                android:scaleType="center"
                 android:contentDescription="@string/logo_desc"
-                android:layout_height="100dp" />
+                android:background="#efecea"
+                android:layout_height="180dp" />
+            
+            <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/seperator2" />
             
             <RelativeLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,12 +59,12 @@
                     android:textSize="18sp"
                     android:text="@string/about_version_text"/>
                 
-                <ImageView android:id="@+id/settings_arrow_2"
+                <!-- <ImageView android:id="@+id/settings_arrow_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
+                    android:src="@drawable/arrow" /> -->
                 
                 <TextView android:id="@+id/about_version_number"
                     android:layout_width="wrap_content"
@@ -60,7 +75,38 @@
                 
             </RelativeLayout>
             
-            <RelativeLayout android:layout_width="match_parent"
+            <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/seperator2" />
+            
+            <RelativeLayout android:id="@+id/about_update_version_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+                
+                <TextView android:id="@+id/about_update_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="更新版本"/>
+                
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/arrow_desc_text"
+                    android:src="@drawable/arrow" />
+                
+            </RelativeLayout>
+            
+            <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/seperator2" />
+            
+            <!-- <RelativeLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp">
                 
@@ -74,35 +120,25 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
-            
-            <RelativeLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
-                
-                <TextView android:id="@+id/about_help"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="@string/about_help_text"/>
-                
-                <ImageView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:contentDescription="@string/arrow_desc_text"
-                    android:src="@drawable/arrow" />
-                
-            </RelativeLayout>
+                    android:src="@drawable/arrow" /> -->
             
             <Button android:id="@+id/about_call"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_gravity="center"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:drawableLeft="@drawable/phone"
-		        android:text="@string/about_call_text"></Button>
+		        android:background="#efecea"
+		        android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
+            
+            <Button android:id="@+id/about_website"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:background="#efecea"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" />
             
         </LinearLayout>
     </ScrollView>

@@ -10,13 +10,17 @@ import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.Order;
-import com.zzour.android.models.OrderResult;
+import com.zzour.android.models.OrderFormResult;
+import com.zzour.android.models.ApiResult;
+import com.zzour.android.models.Region;
 import com.zzour.android.models.School;
 import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShoppingCart;
+import com.zzour.android.models.SimpleOrder;
+import com.zzour.android.models.User;
 import com.zzour.android.models.dao.AddressDAO;
 import com.zzour.android.network.api.OrderApi;
-import com.zzour.android.network.api.SchoolApi;
+import com.zzour.android.network.api.RegionApi;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 
@@ -54,7 +58,6 @@ public class ShoppingCartActivity extends BaseActivity{
 	private static final int LOGIN_REQUEST_CODE = 1;
 	
 	private TextView totalPriceView;
-	private TextView totalBoxPriceView;
 	
 	private int mCurrentShop = -1;
 	private int mCurrentFood = -1;
@@ -64,17 +67,28 @@ public class ShoppingCartActivity extends BaseActivity{
 	private AlertDialog mNumberPicker;
 	private AlertDialog mNewAddressDialog;
 	
-	private ArrayList<School> mSchools;
-	private School mCurrentSchool = null;
-	
 	private RadioButton mNewAddrBtn = null;
 	// button handler
 	private ButtonHandler bHandler; 
 	
 	private Address mCurrentAddr = null;
-	private Order mOrder = null;
+	private SimpleOrder mOrder = null;
+	private ApiResult mOrderResult = null;
+	
+	private ArrayList<Food> foods = new ArrayList<Food>();
+	private ArrayList<Address> addrs = null;
+	private int shipId = -1;
+	
+	private ApiResult mRemoveResult = null;
+	private ApiResult mUpdateResult = null;
+	private ApiResult mClearCartResult = null;
 	
 	private HashMap<RadioButton, Address> mAddrMap = new HashMap<RadioButton, Address>();
+	
+	// regions
+	private ArrayList<Region> mFirstLevelRegions = null;
+	private ArrayList<Region> mSecondLevelRegions = null;
+	private ArrayList<Region> mThirdLevelRegions = null;
 	
 	class  ButtonHandler  extends  Handler { 
 
@@ -147,202 +161,40 @@ public class ShoppingCartActivity extends BaseActivity{
 			}
 		});
 		
-		// get foods from shopping cart, and render
+		// call api to add foods to shopping cart
+		foods.clear();
 		Iterator<Integer> shopIds = ShoppingCart.getShops();
-		LinearLayout products = (LinearLayout)findViewById(R.id.products);
-		float totalPrice = 0.0f;
-		float totalBoxPrice = 0.0f;
-		String shopName = "";
 		while (shopIds.hasNext()){
-			// get product view
-			LinearLayout main = (LinearLayout)getLayoutInflater().inflate(R.layout.product_main, null);
-			//TextView shopName = (TextView)main.findViewById(R.id.product_shop_name);
 			int shopId = shopIds.next();
-			//shopName.setText(ShoppingCart.getShopName(shopId));
-			if (shopName.length() == 0){
-				shopName = ShoppingCart.getShopName(shopId);
-			}
+			mCurrentShop = shopId;
 			Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
 			while (foodIds.hasNext()){
 				Integer foodId = foodIds.next();
 				Food food = ShoppingCart.getFood(shopId, foodId);
-				RelativeLayout foodItem = (RelativeLayout)getLayoutInflater().inflate(R.layout.product_food_item, null);
-				TextView foodName = (TextView)foodItem.findViewById(R.id.product_food_item_name);
-				TextView foodPrice = (TextView)foodItem.findViewById(R.id.product_food_item_price);
-				EditText foodCount = (EditText)foodItem.findViewById(R.id.product_food_item_count);
-				TextView foodItemId = (TextView)foodItem.findViewById(R.id.product_food_item_id);
-				ImageButton deleteBtn = (ImageButton)foodItem.findViewById(R.id.product_food_item_delete_btn);
-				OnClickListener listener = new OnClickListener(){
-					@Override
-					public void onClick(View v) {
-						// find id view, get shop and delete it.
-						RelativeLayout parent = (RelativeLayout)v.getParent();
-						LinearLayout grandParent = (LinearLayout)parent.getParent();
-						String text = (String) ((TextView)parent.findViewById(R.id.product_food_item_id)).getText();
-						Food food = ShoppingCart.getFoodByStringId(text);
-						boolean shopEmpty = ShoppingCart.deleteFood(text);
-						grandParent.removeView(parent);
-						if (shopEmpty){
-							LinearLayout grandgrandParent = (LinearLayout)grandParent.getParent();
-							grandgrandParent.removeView(grandParent);
-						}
-						// reset total price and total box price.
-						float oriTotalPrice = Float.valueOf(totalPriceView.getText().toString());
-						float oriTotalBoxPrice = Float.valueOf(totalBoxPriceView.getText().toString());
-						oriTotalPrice -= food.getPrice() * food.getBuyCount();
-						oriTotalBoxPrice -= food.getBoxPrice() * food.getBuyCount();
-						totalPriceView.setText(String.valueOf(oriTotalPrice));
-						totalBoxPriceView.setText(String.valueOf(oriTotalBoxPrice));
-					}
-				};
-				foodCount.setOnClickListener(new OnClickListener(){
-					@Override
-					public void onClick(View v) {
-						RelativeLayout parent = (RelativeLayout)v.getParent();
-						// get position and save
-						TextView idView = (TextView)parent.findViewById(R.id.product_food_item_id);
-						String text = idView.getText().toString();
-						String[] ids = text.split(";");
-						if (ids.length != 2){
-							return;
-						}
-						mCurrentShop = Integer.valueOf(ids[0]);
-						mCurrentFood = Integer.valueOf(ids[1]);
-						Food food = ShoppingCart.getFoodByStringId(text);
-						mCurrentCount = food.getBuyCount();
-						mCurrentView = (EditText)v;
-						// get current value
-						showNumberPickerDialog(food.getBuyCount());
-					}
-					
-				});
-				deleteBtn.setOnClickListener(listener);
-				foodName.setOnClickListener(listener);
-				foodName.setText(food.getName());
-				foodPrice.setText(String.valueOf(food.getPrice()));
-				foodCount.setText(String.valueOf(food.getBuyCount()));
-				foodItemId.setText(ShoppingCart.getStringId(shopId, foodId));
-				main.addView(foodItem);
-				totalBoxPrice += food.getBoxPrice() * food.getBuyCount();
-				totalPrice += food.getPrice() * food.getBuyCount();
+				foods.add(food);
 			}
-			products.addView(main);
 		}
-		// set shop name
-		((TextView)findViewById(R.id.shop_name)).setText(shopName);
-		// reset total price and total box price.
-		totalPriceView = (TextView)findViewById(R.id.total_price);
-		totalPriceView.setText(String.valueOf(totalPrice));
-		totalBoxPriceView = (TextView)findViewById(R.id.box_price);
-		totalBoxPriceView.setText(String.valueOf(totalBoxPrice));
-		
-		// TOOD add on click listener for adding new address
-		mNewAddrBtn = (RadioButton)findViewById(R.id.new_address_button);
-		mNewAddrBtn.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-			@Override
-			public void onCheckedChanged(CompoundButton button, boolean status) {
-				// show dialog for adding new address
-				if (!status){
-					return;
-				}
-				showNewAddressDialog();
-			}
-		});
-		// add order finish button click listener.
-		Button finishOrder = (Button)findViewById(R.id.deal);
-		finishOrder.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				// get and valid information first.
-				// if no shop or food in shopping cart, give advice
-				if (ShoppingCart.getShopsCount() == 0){
-					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_SHORT).show();
-					return;
-				}
-				// add foods into order.
-				Iterator<Integer> shopIds = ShoppingCart.getShops();
-				mOrder = new Order();
-				while (shopIds.hasNext()){
-					int shopId = shopIds.next();
-					Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
-					while (foodIds.hasNext()){
-						int foodId = foodIds.next();
-						Food food = ShoppingCart.getFood(shopId, foodId);
-						mOrder.addFood(shopId, ShoppingCart.getShopName(shopId), ShoppingCart.getShopImage(shopId), food);
-					}
-				}
-				if (mOrder.getFoodCount() == 0){
-					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_LONG).show();
-					return;
-				}
-				if (mCurrentAddr == null){
-					Toast.makeText(getApplicationContext(), "请选择收货地址！", Toast.LENGTH_LONG).show();
-					return;
-				}
-				mOrder.setAddress(mCurrentAddr);
-				mOrder.setTotalPrice(Float.valueOf(totalPriceView.getText().toString()));
-				mOrder.setTotalBoxPrice(Float.valueOf(totalBoxPriceView.getText().toString()));
-				Spinner timeInfo = (Spinner)findViewById(R.id.time_spinner);
-				mOrder.setSendTime(timeInfo.getSelectedItem().toString());
-				EditText m = (EditText)findViewById(R.id.message);
-				mOrder.setMessage(m.getText().toString());
-				// all information ok, make the order.
-				// if not login, require login
-				if (!LocalPreferences.authed(ShoppingCartActivity.this)){
-					ActivityTool.startActivityForResult(ShoppingCartActivity.this, LoginActivity.class, LOGIN_REQUEST_CODE);
-					return;
-				}
-				// send order request in async task, and show loading dialog while doing it.
-				new LoadingTask(ShoppingCartActivity.this).execute();
-				// TODO clear shopping cart
-			}
-		});
-		
-		loadAddress();
+		// call api to add all foods into shopping cart
+		new LoadingTask(ShoppingCartActivity.this).execute();
 	}
 	
-	private void loadAddress(){
-		AddressDAO dao = new AddressDAO(this);
-		ArrayList<Address> addrs = dao.get();
-		if (addrs == null || addrs.size() == 0){
-			return;
+	private String[] getRegionNames(ArrayList<Region> regions, int level){
+		int size = regions.size();
+		if (level <= 2){
+			size += 1;
 		}
-		Iterator<Address> it = addrs.iterator();
+		String[] names = new String[size];
+		Iterator<Region> it = regions.iterator();
+		int i = 0;
+		if (level <= 2){
+			i += 1;
+			names[0] = "请选择";
+		}
 		while (it.hasNext()){
-			Address addr = it.next();
-			// add new address into view
-			View view = LayoutInflater.from(ShoppingCartActivity.this).inflate(R.layout.address_info, null);
-			((TextView)view.findViewById(R.id.address_name)).setText(addr.getName());
-			((TextView)view.findViewById(R.id.address_phone)).setText(addr.getPhone());
-			((TextView)view.findViewById(R.id.address_detail)).setText(addr.getAddr());
-			LinearLayout parent = (LinearLayout)ShoppingCartActivity.this.findViewById(R.id.address_info);
-			parent.addView(view, parent.getChildCount() - 1);
-			RadioButton rb = (RadioButton)view.findViewById(R.id.address_radio_button);
-			rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-				@Override
-				public void onCheckedChanged(CompoundButton button,
-						boolean status) {
-					if (!status){
-						return;
-					}
-					Iterator<RadioButton> it = mAddrMap.keySet().iterator();
-					while (it.hasNext()){
-						RadioButton a = it.next();
-						if (a != button){
-							Log.d(TAG, "unset check status of others.");
-							a.setChecked(false);
-						}
-					}
-					Log.d(TAG, "set current addr and uncheck new addre button.");
-					mCurrentAddr = mAddrMap.get(button);
-					mNewAddrBtn.setChecked(false);
-				}
-			});
-			mAddrMap.put(rb, addr);
-			if (!it.hasNext()){
-				rb.setChecked(true);
-			}
+			names[i] = it.next().getName();
+			i += 1;
 		}
+		return names;
 	}
 	
 	private void showNewAddressDialog(){
@@ -364,33 +216,58 @@ public class ShoppingCartActivity extends BaseActivity{
 				}
 				String addr = "";
 				Spinner spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school);
+				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
+					Toast.makeText(getApplicationContext(), "请选择学校！", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				if (spiner.getVisibility() == Spinner.VISIBLE && spiner.getSelectedItemPosition() != 0){
 					addr += (String)spiner.getSelectedItem();
 					addr += " ";
 				}
 				spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area);
+				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
+					Toast.makeText(getApplicationContext(), "请选择校区！", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				if (spiner.getVisibility() == Spinner.VISIBLE && spiner.getSelectedItemPosition() != 0){
 					addr += (String)spiner.getSelectedItem();
 					addr += " ";
 				}
 				spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area_detail);
+				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
+					Toast.makeText(getApplicationContext(), "请选择详细区域！", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				int regionId = -1;
+				String regionName = "";
 				if (spiner.getVisibility() == Spinner.VISIBLE){
 					addr += (String)spiner.getSelectedItem();
 					addr += " ";
+					Region r = mThirdLevelRegions.get(spiner.getSelectedItemPosition() - 1);
+					regionId = r.getId();
+					regionName = r.getName();
 				}
 				TextView address = (TextView)mNewAddressDialog.findViewById(R.id.new_address_detail);
-				addr += address.getText();
+				addr = address.getText().toString();
 				if (addr.length() <= 0){
 					Toast.makeText(getApplicationContext(), "地址不能为空！", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				Address address1 = new Address(name.getText().toString(), phone.getText().toString(), addr);
+				// construct new address
+				Address address1 = new Address();
+				address1.setAddr(addr);
+				address1.setId(-1);
+				address1.setName(name.getText().toString());
+				address1.setPhone(phone.getText().toString());
+				address1.setRegionId(regionId);
+				address1.setRegionName(regionName);
+				address1.setUserId(-1);
 				dialog.dismiss();
 				// add new address into view
 				View view = LayoutInflater.from(ShoppingCartActivity.this).inflate(R.layout.address_info, null);
 				((TextView)view.findViewById(R.id.address_name)).setText(address1.getName());
 				((TextView)view.findViewById(R.id.address_phone)).setText(address1.getPhone());
-				((TextView)view.findViewById(R.id.address_detail)).setText(address1.getAddr());
+				((TextView)view.findViewById(R.id.address_detail)).setText(address1.getRegionName() + " " + address1.getAddr());
 				LinearLayout parent = (LinearLayout)ShoppingCartActivity.this.findViewById(R.id.address_info);
 				parent.addView(view, parent.getChildCount() - 1);
 				RadioButton rb = (RadioButton)view.findViewById(R.id.address_radio_button);
@@ -424,9 +301,9 @@ public class ShoppingCartActivity extends BaseActivity{
 				// set current checked, and set current address
 				rb.setChecked(true);
 				mCurrentAddr = address1;
-				// save new address to cache.
-				AddressDAO dao = new AddressDAO(ShoppingCartActivity.this);
-				dao.insert(address1);
+				// TODO save new address to cache.
+				//AddressDAO dao = new AddressDAO(ShoppingCartActivity.this);
+				//dao.insert(address1);
 			}
 		});
 		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -443,11 +320,12 @@ public class ShoppingCartActivity extends BaseActivity{
 		// init dialog view
 		View view = LayoutInflater.from(this).inflate(R.layout.new_address, null);
 		builder.setView(view);
-		// init schools
-		if (mSchools == null){
-			mSchools = SchoolApi.getSchoolList();
+		if (mFirstLevelRegions == null){
+			// TODO load level failed, reload and toast
+			return;
 		}
-		String[] names = getSchoolNames();
+		// get first level regions names
+		String[] names = this.getRegionNames(mFirstLevelRegions, 1);
 		Spinner schoolSpinner = (Spinner)view.findViewById(R.id.new_address_school);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, names);
 		adapter.setDropDownViewResource ( android.R.layout.simple_spinner_dropdown_item );
@@ -465,32 +343,20 @@ public class ShoppingCartActivity extends BaseActivity{
 					areaSpinner.setVisibility(Spinner.GONE);
 					return;
 				}
+				// load sub level region in async task, and then update ui in activity
 				// show second spinner if there is.
-				School s = mSchools.get(position-1);
-				mCurrentSchool = s;
-				ArrayList<SchoolArea> areas = s.getArea();
-				String[] areaNames = getSchoolAreaNames(areas);
-				if (areaNames.length > 0){
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShoppingCartActivity.this,android.R.layout.simple_spinner_item, areaNames);
-					adapter.setDropDownViewResource ( android.R.layout.simple_spinner_dropdown_item );
-					areaSpinner.setAdapter(adapter);
-					areaSpinner.setVisibility(Spinner.VISIBLE);
-				} else {
-					areaSpinner.setVisibility(Spinner.GONE);
-				}
+				Region r = mFirstLevelRegions.get(position - 1);
+				// call region api to get child regions
+				new RegionTask(ShoppingCartActivity.this, r.getId(), 2).execute();
 			}
 
 			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-			
+			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
 		mNewAddressDialog = builder.create();
 		popUpDialog(mNewAddressDialog);
 		Spinner areaSpinner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area);
 		areaSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -499,50 +365,12 @@ public class ShoppingCartActivity extends BaseActivity{
 					detailSpinner.setVisibility(Spinner.GONE);
 					return;
 				}
-				if (mCurrentSchool == null){
-					Log.e(TAG, "what happend? current school should not be null");
-				}
-				String[] names = mCurrentSchool.getArea().get(position-1).getDetails();
-				if (names != null && names.length > 0 && names[0].length() > 0){
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShoppingCartActivity.this,android.R.layout.simple_spinner_item, names);
-					adapter.setDropDownViewResource ( android.R.layout.simple_spinner_dropdown_item );
-					detailSpinner.setAdapter(adapter);
-					detailSpinner.setVisibility(Spinner.VISIBLE);
-				} else {
-					detailSpinner.setVisibility(Spinner.GONE);
-				}
+				Region r = mSecondLevelRegions.get(position - 1);
+				new RegionTask(ShoppingCartActivity.this, r.getId(), 3).execute();
 			}
-
 			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-			
+			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
-	}
-	
-	private String[] getSchoolAreaNames(ArrayList<SchoolArea> areas){
-		String[] schools = new String[areas.size()+1];
-		schools[0] = "选择校区";
-		Iterator<SchoolArea> it = areas.iterator();
-		int i = 1;
-		while (it.hasNext()){
-			schools[i] = it.next().getName();
-			i += 1;
-		}
-		return schools;
-	}
-	
-	private String[] getSchoolNames(){
-		String[] schools = new String[mSchools.size()+1];
-		schools[0] = "选择学校";
-		Iterator<School> it = mSchools.iterator();
-		int i = 1;
-		while (it.hasNext()){
-			schools[i] = it.next().getName();
-			i += 1;
-		}
-		return schools;
 	}
 	
 	public void showNumberPickerDialog(int number){
@@ -552,37 +380,20 @@ public class ShoppingCartActivity extends BaseActivity{
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				if (mCurrentShop == -1 || mCurrentFood == -1 || mCurrentCount == -1 || mCurrentView == null){
-					Log.d(TAG, "what happended?");
+					Log.e(TAG, "what happended?");
 					return;
 				}
 				int count = Integer.valueOf(((TextView)mNumberPicker.findViewById(R.id.numpicker_input)).getText().toString());
 				Food f = ShoppingCart.getFood(mCurrentShop, mCurrentFood);
+				// calling api to set buy count
 				f.setBuyCount(count);
-				// update total money, total box money
-				float price = Float.valueOf(totalPriceView.getText().toString());
-				float boxPrice = Float.valueOf(totalBoxPriceView.getText().toString());
-				if (mCurrentCount == count){
-					return;
-				} else if (mCurrentCount > count){
-					price -= f.getPrice() * (mCurrentCount - count);
-					boxPrice -= f.getBoxPrice() * (mCurrentCount - count);
-				} else {
-					price += f.getPrice() * (count - mCurrentCount);
-					boxPrice += f.getBoxPrice() * (count - mCurrentCount);
-				}
-				totalPriceView.setText(String.valueOf(price));
-				totalBoxPriceView.setText(String.valueOf(boxPrice));
-				mCurrentView.setText(String.valueOf(count));
-				mCurrentShop = -1;
-				mCurrentFood = -1;
-				mCurrentCount = -1;
-				mCurrentView = null;
+				new UpdateTask(ShoppingCartActivity.this, f).execute();
+
 			}
 		});
 		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mCurrentShop = -1;
 				mCurrentFood = -1;
 				return;
 			}
@@ -594,28 +405,398 @@ public class ShoppingCartActivity extends BaseActivity{
 		mNumberPicker.show();
 	}
 	
-	public void setOrderResult(OrderResult result){
-		if (mOrder == null){
-			Log.d(TAG, "Something goes wrong, mOrder is null while set order id");
+	public void setOrderFormResult(OrderFormResult result){
+		// set foods and addresses
+		foods = result.getFoods();
+		addrs = result.getAddrs();
+		shipId = result.getShipMethods().get(0).getId();
+	}
+	
+	public void finishOrderForm(){
+		if (foods == null || addrs == null || shipId == -1){
+			Log.d(TAG, "Something goes wrong, foods is null while finish order");
+			this.realBack();
 			return;
 		}
-		mOrder.setId(result.getId());
-		mOrder.setResultMsg(result.getMsg());
+		// show foods and addresses
+		this.showForm();
+		this.showAddresses();
+	}
+	
+	public void showAddresses(){
+		Iterator<Address> it = addrs.iterator();
+		boolean first = true;
+		while (it.hasNext()){
+			Address address1 = it.next();
+			View view = LayoutInflater.from(ShoppingCartActivity.this).inflate(R.layout.address_info, null);
+			((TextView)view.findViewById(R.id.address_name)).setText(address1.getName());
+			((TextView)view.findViewById(R.id.address_phone)).setText(address1.getPhone());
+			((TextView)view.findViewById(R.id.address_detail)).setText(address1.getAddr());
+			LinearLayout parent = (LinearLayout)ShoppingCartActivity.this.findViewById(R.id.address_info);
+			parent.addView(view, parent.getChildCount() - 1);
+			RadioButton rb = (RadioButton)view.findViewById(R.id.address_radio_button);
+			if (!mAddrMap.containsKey(rb)){
+				// if radio button and address info not in map, add it.
+				mAddrMap.put(rb, address1);
+			}
+			mNewAddrBtn.setChecked(false);
+			// add address radio button status change listener
+			rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+				@Override
+				public void onCheckedChanged(CompoundButton button,
+						boolean status) {
+					if (!status){
+						return;
+					}
+					Iterator<RadioButton> it = mAddrMap.keySet().iterator();
+					while (it.hasNext()){
+						RadioButton a = it.next();
+						if (a != button){
+							Log.d(TAG, "unset check status of others.");
+							a.setChecked(false);
+						}
+					}
+					Log.d(TAG, "set current addr and uncheck new addre button.");
+					mCurrentAddr = mAddrMap.get(button);
+					mNewAddrBtn.setChecked(false);
+				}
+			});
+			// set current checked, and set current address
+			if (first){
+				rb.setChecked(true);
+				mCurrentAddr = address1;
+			}
+		}
+	}
+	
+	public void showForm(){
+		LinearLayout products = (LinearLayout)findViewById(R.id.products);
+		float totalPrice = 0.0f;
+		String shopName = "";
+		
+		// get product view
+		LinearLayout main = (LinearLayout)getLayoutInflater().inflate(R.layout.product_main, null);
+		// get shop id from result
+		int shopId = mCurrentShop;
+		if (shopName.length() == 0){
+			shopName = ShoppingCart.getShopName(shopId);
+		}
+		ShoppingCart.clear();
+		Iterator<Food> foods = this.foods.iterator();
+		while (foods.hasNext()){
+			Food food = foods.next();
+			RelativeLayout foodItem = (RelativeLayout)getLayoutInflater().inflate(R.layout.product_food_item, null);
+			TextView foodName = (TextView)foodItem.findViewById(R.id.product_food_item_name);
+			TextView foodPrice = (TextView)foodItem.findViewById(R.id.product_food_item_price);
+			EditText foodCount = (EditText)foodItem.findViewById(R.id.product_food_item_count);
+			TextView foodItemId = (TextView)foodItem.findViewById(R.id.product_food_item_id);
+			ImageButton deleteBtn = (ImageButton)foodItem.findViewById(R.id.product_food_item_delete_btn);
+			OnClickListener listener = new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					// find id view, get shop and delete it.
+					RelativeLayout parent = (RelativeLayout)v.getParent();
+					String text = (String) ((TextView)parent.findViewById(R.id.product_food_item_id)).getText();
+					Food food = ShoppingCart.getFoodByStringId(text);
+					// delete in task
+					new DeleteTask(ShoppingCartActivity.this, food, v).execute();
+				}
+			};
+			foodCount.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					RelativeLayout parent = (RelativeLayout)v.getParent();
+					// get position and save
+					TextView idView = (TextView)parent.findViewById(R.id.product_food_item_id);
+					String text = idView.getText().toString();
+					String[] ids = text.split(";");
+					if (ids.length != 2){
+						return;
+					}
+					mCurrentFood = Integer.valueOf(ids[1]);
+					Food food = ShoppingCart.getFoodByStringId(text);
+					mCurrentCount = food.getBuyCount();
+					mCurrentView = (EditText)v;
+					// get current value
+					showNumberPickerDialog(food.getBuyCount());
+				}
+				
+			});
+			deleteBtn.setOnClickListener(listener);
+			foodName.setOnClickListener(listener);
+			foodName.setText(food.getName());
+			foodPrice.setText(String.valueOf(food.getPrice()));
+			foodCount.setText(String.valueOf(food.getBuyCount()));
+			foodItemId.setText(ShoppingCart.getStringId(shopId, food.getId()));
+			main.addView(foodItem);
+			totalPrice += food.getPrice() * food.getBuyCount();
+			// if food not in shopping cart, add into.
+			ShoppingCart.saveFood(shopId, food);
+		}
+		products.addView(main);
+	
+		// set shop name
+		((TextView)findViewById(R.id.shop_name)).setText(shopName);
+		// reset total price and total box price.
+		totalPriceView = (TextView)findViewById(R.id.total_price);
+		totalPriceView.setText(String.valueOf(totalPrice));
+		
+		// add on click listener for adding new address
+		mNewAddrBtn = (RadioButton)findViewById(R.id.new_address_button);
+		mNewAddrBtn.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean status) {
+				// show dialog for adding new address
+				if (!status){
+					return;
+				}
+				// load first level region first, than show new address dialog.
+				new RegionTask(ShoppingCartActivity.this, 0, 1).execute();
+			}
+		});
+		// add order finish button click listener.
+		Button finishOrder = (Button)findViewById(R.id.deal);
+		finishOrder.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				// get and valid information first.
+				// if no shop or food in shopping cart, give advice
+				if (ShoppingCart.getShopsCount() == 0){
+					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				// if not login, require login
+				if (!LocalPreferences.authed(ShoppingCartActivity.this)){
+					ActivityTool.startActivityForResult(ShoppingCartActivity.this, LoginActivity.class, LOGIN_REQUEST_CODE);
+					return;
+				}
+				if (mCurrentAddr == null){
+					Toast.makeText(getApplicationContext(), "请选择收货地址！", Toast.LENGTH_LONG).show();
+					return;
+				}
+				// add foods into order.
+				Iterator<Integer> shopIds = ShoppingCart.getShops();
+				boolean hasFood = false;
+				while (shopIds.hasNext()){
+					int shopId = shopIds.next();
+					Iterator<Integer> foodIds = ShoppingCart.getFoods(shopId);
+					while (foodIds.hasNext()){
+						hasFood = true;
+						break;
+					}
+					if (hasFood){
+						break;
+					}
+				}
+				if (!hasFood){
+					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				//ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
+				//return;
+				if (mOrder == null){
+					mOrder = new SimpleOrder();
+				}
+				mOrder.setAddress(mCurrentAddr.getAddr());
+				mOrder.setConsignee(mCurrentAddr.getName());
+				mOrder.setPhone(mCurrentAddr.getPhone());
+				mOrder.setRegionId(mCurrentAddr.getRegionId());
+				Spinner timeInfo = (Spinner)findViewById(R.id.time_spinner);
+				mOrder.setSendTime(timeInfo.getSelectedItem().toString());
+				mOrder.setShipId(shipId);				
+				mOrder.setShopId(mCurrentShop);
+				EditText m = (EditText)findViewById(R.id.message);
+				mOrder.setMessage(m.getText().toString());
+				// all information ok, make the order.
+				// send order request in async task, and show loading dialog while doing it.
+				new OrderTask(ShoppingCartActivity.this, mOrder).execute();
+			}
+		});
+	}
+	
+	public void setUpdateResult(ApiResult result){
+		this.mUpdateResult = result;
+	}
+	
+	public void showUpdateResult(Food food){
+		if (mUpdateResult == null || !mUpdateResult.isSuccess()){
+			Log.e(TAG, "update food count failed");
+			Toast.makeText(getApplicationContext(), "修改数量失败，请重新尝试", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		int count = food.getBuyCount();
+		// update total money, total box money
+		float price = Float.valueOf(totalPriceView.getText().toString());
+		if (mCurrentCount == count){
+			return;
+		} else if (mCurrentCount > count){
+			price -= food.getPrice() * (mCurrentCount - count);
+		} else {
+			price += food.getPrice() * (count - mCurrentCount);
+		}
+		totalPriceView.setText(String.valueOf(price));
+		mCurrentView.setText(String.valueOf(count));
+		mCurrentFood = -1;
+		mCurrentCount = -1;
+		mCurrentView = null;
+		this.mUpdateResult = null;
+	}
+	
+	private class UpdateTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private Food food = null;
+		private ProgressDialog mDialog = null;
+
+		public UpdateTask(ShoppingCartActivity activity, Food food) {
+	        this.activity = activity;
+	        this.food = food;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			// call api to update food count
+			User user = LocalPreferences.getUser(activity);
+			ApiResult result = OrderApi.updateCount(food, user);
+			activity.setUpdateResult(result);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage("加载中，请稍候。。。");
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        // update count finished, update ui
+	        activity.showUpdateResult(food);
+	    }
+	}
+	
+	public void setDeleteResult(ApiResult result){
+		this.mRemoveResult = result;
+	}
+	
+	public void showDeleteResult(Food food, View v){
+		if (mRemoveResult == null || !mRemoveResult.isSuccess()){
+			Toast.makeText(getApplicationContext(), "删除物品失败，请重新尝试", Toast.LENGTH_SHORT).show();
+			Log.e(TAG, "remove failed");
+			return;
+		}
+		RelativeLayout parent = (RelativeLayout)v.getParent();
+		LinearLayout grandParent = (LinearLayout)parent.getParent();
+		String text = (String) ((TextView)parent.findViewById(R.id.product_food_item_id)).getText();
+		boolean shopEmpty = ShoppingCart.deleteFood(text);
+		grandParent.removeView(parent);
+		if (shopEmpty){
+			LinearLayout grandgrandParent = (LinearLayout)grandParent.getParent();
+			grandgrandParent.removeView(grandParent);
+		}
+		// reset total price and total box price.
+		float oriTotalPrice = Float.valueOf(totalPriceView.getText().toString());
+		oriTotalPrice -= food.getPrice() * food.getBuyCount();
+		totalPriceView.setText(String.valueOf(oriTotalPrice));
+		this.mRemoveResult = null;
+	}
+	
+	private class DeleteTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private Food food = null;
+		private View view = null;
+		private ProgressDialog mDialog = null;
+
+		public DeleteTask(ShoppingCartActivity activity, Food food, View view) {
+	        this.activity = activity;
+	        this.food = food;
+	        this.view = view;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			try {
+				// call api to remove food from shopping cart
+				User user = LocalPreferences.getUser(activity);
+				ApiResult result = OrderApi.removeFood(food, user);
+				activity.setDeleteResult(result);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage("加载中，请稍候。。。");
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        // remove finished, update ui
+	        activity.showDeleteResult(food, view);
+	    }
+	}
+	
+	private class OrderTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private SimpleOrder order = null;
+		private ProgressDialog mDialog = null;
+
+		public OrderTask(ShoppingCartActivity activity, SimpleOrder order) {
+	        this.activity = activity;
+	        this.order = order;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			// call api to make order
+			User user = LocalPreferences.getUser(activity);
+			ApiResult result = OrderApi.order(order, user);
+			activity.setOrderResult(result);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage("处理中，请稍候。。。");
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        activity.finishOrder();
+	    }
+	}
+	
+	public void setOrderResult(ApiResult result){
+		mOrderResult = result;
 	}
 	
 	public void finishOrder(){
-		if (mOrder == null){
-			Log.d(TAG, "Something goes wrong, mOrder is null while finish order");
+		Log.e("ZZOUR", "finish order");
+		if (mOrderResult == null){
+			Toast.makeText(getApplicationContext(), "订单提交失败，请重新尝试！", Toast.LENGTH_SHORT).show();
+			return;
+		} else if (!mOrderResult.isSuccess()){
+			Toast.makeText(getApplicationContext(), "订单提交失败，" + mOrderResult.getMsg(), Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (mOrder.getId() == null){
-			// not success, to the fail activity
-			Toast.makeText(this, "提交订单错误：" + mOrder.getResultMsg(), Toast.LENGTH_LONG);
-			return;
-		} else {
-			// success, to the success activity
-			ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
-		}
+		// success, to success activity
+		ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
 	}
 	
 	private class LoadingTask extends AsyncTask<String, Void, Boolean> {
@@ -630,8 +811,28 @@ public class ShoppingCartActivity extends BaseActivity{
 		
 		@Override
 		protected Boolean doInBackground(String... arg0) {
-			OrderResult result = OrderApi.order(mOrder, ShoppingCartActivity.this);
-			activity.setOrderResult(result);
+			User user = LocalPreferences.getUser(activity);
+			// add foods into shopping cart by calling api
+			if (foods.size() > 0){
+				boolean success = false;
+				try {
+					success = OrderApi.addAll(foods, user);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (!success){
+					// set result
+					Toast.makeText(getApplicationContext(), "添加商品到购物车失败，请重新尝试", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			}
+			// reset foods to empty
+			foods = null;
+			// get order form by calling api
+			OrderFormResult result = OrderApi.getOrderForm(mCurrentShop, user);
+			// set result to shopping cart activity
+			activity.setOrderFormResult(result);
 			return true;
 		}
 		
@@ -645,7 +846,7 @@ public class ShoppingCartActivity extends BaseActivity{
 	        if (mDialog.isShowing()) {
 	        	mDialog.dismiss();
 	        }
-	        this.activity.finishOrder();
+	        this.activity.finishOrderForm();
 	    }
 	}
 	
@@ -660,14 +861,144 @@ public class ShoppingCartActivity extends BaseActivity{
         }  
     }
 	
+	public void setClearCartResult(ApiResult result){
+		this.mClearCartResult = result;
+	}
+	
+	public void finishClearCart(){
+		if (mClearCartResult == null || !mClearCartResult.isSuccess()){
+			// TODO toast
+			return;
+		}
+		ShoppingCart.clear();
+		this.realBack();
+	}
+	
+	private class BackTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private ProgressDialog mDialog = null;
+
+		public BackTask(ShoppingCartActivity activity) {
+	        this.activity = activity;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			// call api to clear cart
+			User user = LocalPreferences.getUser(activity);
+			ApiResult result = OrderApi.clearCart(user);
+			activity.setClearCartResult(result);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage("处理中，请稍候。。。");
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        // finish
+	        this.activity.finishClearCart();
+	    }
+	}
+	
+	private class RegionTask extends AsyncTask<String, Void, Boolean> {
+		
+		private ShoppingCartActivity activity = null;
+		private int parentId = -1;
+		private int level = -1;
+		private ProgressDialog mDialog = null;
+
+		public RegionTask(ShoppingCartActivity activity, int parentId, int level) {
+	        this.activity = activity;
+	        this.parentId = parentId;
+	        this.level = level;
+	        this.mDialog = new ProgressDialog(activity);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			// call api to load region
+			Log.e("ZZOUR", "call api to load regions");
+			ArrayList<Region> regions = RegionApi.getRegions(parentId);
+			// call activity set method to set region result
+			Log.e("ZZOUR", "set region result, got regions count: " + regions.size());
+			activity.setRegionTaskResult(regions, this.level);
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	        this.mDialog.setMessage("加载中，请稍候。。。");
+	        this.mDialog.show();
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        if (mDialog.isShowing()) {
+	        	mDialog.dismiss();
+	        }
+	        // load region finish, update ui
+	        activity.finishRegionTask(level);
+	    }
+	}
+	
+	public void setRegionTaskResult(ArrayList<Region> regions, int level){
+		if (level == 1){
+			// save first level region
+			mFirstLevelRegions = regions;
+		} else if (level == 2){
+			mSecondLevelRegions = regions;
+		} else if (level == 3){
+			mThirdLevelRegions = regions;
+		} else{
+			Log.e("ZZOUR", "what happended? region level is " + level);
+		}
+	}
+	
+	public void finishRegionTask(int level){
+		if (level == 1){
+			showNewAddressDialog();
+		} else if (level == 2){
+			Log.e("ZZOUR", "update level 2 ui");
+			Spinner areaSpinner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area);
+			String[] areaNames = getRegionNames(mSecondLevelRegions, 2);
+			if (areaNames.length > 0){
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShoppingCartActivity.this,android.R.layout.simple_spinner_item, areaNames);
+				adapter.setDropDownViewResource ( android.R.layout.simple_spinner_dropdown_item );
+				areaSpinner.setAdapter(adapter);
+				areaSpinner.setVisibility(Spinner.VISIBLE);
+			} else {
+				areaSpinner.setVisibility(Spinner.GONE);
+			}
+		} else if (level == 3){
+			Log.e("ZZOUR", "update level 3 ui");
+			Spinner detailSpinner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area_detail);
+			String[] names = getRegionNames(mThirdLevelRegions, 3);
+			if (names != null && names.length > 0 && names[0].length() > 0){
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShoppingCartActivity.this,android.R.layout.simple_spinner_item, names);
+				adapter.setDropDownViewResource ( android.R.layout.simple_spinner_dropdown_item );
+				detailSpinner.setAdapter(adapter);
+				detailSpinner.setVisibility(Spinner.VISIBLE);
+			} else {
+				detailSpinner.setVisibility(Spinner.GONE);
+			}
+		} else{
+			Log.e("ZZOUR", "what happended? region level is " + level);
+		}
+	}
+	
 	@Override
 	public void onBackPressed(){
 		showBackDialog();
 	}
 	
 	public void realBack(){
-		// clear shopping cart
-		ShoppingCart.clear();
 		super.onBackPressed();
 	}
 	
@@ -676,7 +1007,7 @@ public class ShoppingCartActivity extends BaseActivity{
 		builder.setMessage("如继续返回，购物车将清空\n\n确定继续返回上一页吗？")
 		       .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
-		        	   ShoppingCartActivity.this.realBack();
+		        	   new BackTask(ShoppingCartActivity.this).execute();
 		           }
 		       })
 		       .setNegativeButton("取消", new DialogInterface.OnClickListener() {

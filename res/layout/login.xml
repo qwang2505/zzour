@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
     
     <RelativeLayout android:id="@+id/login_title_bar"
@@ -41,9 +41,8 @@
 	        
 	</RelativeLayout>
         
-		<RelativeLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
+		<RelativeLayout android:layout_width="match_parent"
+		    android:layout_height="match_parent"
 		    android:orientation="vertical">
 			
 		  	<FrameLayout android:id="@+id/login_user_line"
@@ -134,23 +133,41 @@
 		  	    
 		  	</RelativeLayout>
 		  	
-		  	<!-- <Button android:id="@+id/login_renren_btn"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:background="@drawable/blue_button"
-			    android:layout_alignParentBottom="true"
-			    android:layout_centerHorizontal="true"
-			    android:layout_marginBottom="10dp"
-			    android:text="@string/login_renren_btn_text" />
+		  	<!-- third party login -->
+		  	<RelativeLayout android:layout_width="match_parent"
+		  	    android:layout_height="wrap_content"
+		  	    android:background="#d9d4d0"
+		  	    android:paddingTop="5dp"
+		  	    android:id="@+id/thirdparty_login_buttons"
+		  	    android:paddingBottom="5dp"
+		  	    android:layout_alignParentBottom="true">
+		  	    
+		  	    <LinearLayout 
+		  	        android:layout_width="wrap_content"
+		  	        android:layout_height="wrap_content"
+		  	        android:orientation="horizontal"
+		  	        android:layout_centerHorizontal="true">
+		  	        
+				  	<Button android:id="@+id/login_renren_btn"
+					    android:layout_width="32dp"
+					    android:layout_height="32dp"
+					    android:background="@drawable/renren" />
+				  	
+				  	<Button android:id="@+id/login_qq_btn"
+					    android:layout_width="32dp"
+					    android:layout_marginLeft="80dp"
+					    android:layout_height="32dp"
+					    android:background="@drawable/qq" />
+		  	    </LinearLayout>
+		  	</RelativeLayout>
 		  	
-		  	<Button android:id="@+id/login_qq_btn"
-		  	    android:layout_above="@id/login_renren_btn"
-			    android:layout_width="wrap_content"
-			    android:layout_centerHorizontal="true"
-			    android:layout_height="wrap_content"
-			    android:background="@drawable/blue_button"
-			    android:layout_marginBottom="10dp"
-			    android:text="@string/login_qq_btn_text" /> -->
+		  	<TextView android:layout_above="@id/thirdparty_login_buttons"
+		  	    android:layout_width="match_parent"
+		  	    android:layout_height="wrap_content"
+		  	    android:textColor="#97928e"
+		  	    android:paddingLeft="5dp"
+		  	    android:paddingBottom="2dp"
+		  	    android:text="使用下列账号登录"/>
 		  	
 		</RelativeLayout>
 

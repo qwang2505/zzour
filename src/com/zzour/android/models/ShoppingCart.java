@@ -41,6 +41,21 @@ public class ShoppingCart {
 			}
 		}
 	}
+	
+	public static void saveFood(Integer shopId, Food food){
+		HashMap<Integer, Food> fs = mProductMap.get(shopId);
+		if (fs == null){
+			fs = new HashMap<Integer, Food>();
+			mProductMap.put(shopId, fs);
+		}
+		if (fs.containsKey(food.getId())){
+			// if already in map, reset buy count
+			Food f1 = fs.get(food.getId());
+			f1.setBuyCount(food.getBuyCount());
+		} else {
+			fs.put(food.getId(), food);
+		}
+	}
 
 	public static Iterator<Integer> getShops(){
 		return mProductMap.keySet().iterator();

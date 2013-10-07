@@ -1,32 +1,29 @@
 package com.zzour.android;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.OrderSummary;
-import com.zzour.android.models.ShopList;
-import com.zzour.android.models.ShopSummaryContent;
+import com.zzour.android.models.User;
 import com.zzour.android.models.dao.OrderDAO;
-import com.zzour.android.network.api.ShopListApi;
+import com.zzour.android.network.api.MyOrderApi;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
-import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.OrderListItemsAdapter;
 
-public class TodayOrderListActivity extends BaseActivity{
+public class FinishedOrderListActivity extends BaseActivity{
 	
 	private OrderListItemsAdapter mAdapter = null;
 	
@@ -34,7 +31,8 @@ public class TodayOrderListActivity extends BaseActivity{
 	private Button mLoadMoreButton = null;
 	private Handler mLoadMoreHandler = new Handler();
 	
-	private String lastOrderTime = null;
+	private int page = 1;
+	private final int count = 6;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -42,7 +40,7 @@ public class TodayOrderListActivity extends BaseActivity{
 		if (!LocalPreferences.authed(this)){
 			return;
 		}
-		setContentView(R.layout.my_order_list);
+		setContentView(R.layout.finished_order_list);
 		
 		// add load more to list view
         mLoadMoreView = getLayoutInflater().inflate(R.layout.loadmore, null);
@@ -70,9 +68,7 @@ public class TodayOrderListActivity extends BaseActivity{
 		
 		mAdapter = new OrderListItemsAdapter(this, R.drawable.logo);
 		list.setAdapter(mAdapter);
-		
-		// TODO get image in new thread
-		
+
 		// add onclick listener
 		list.setOnItemClickListener(new OnItemClickListener(){
 
@@ -85,9 +81,13 @@ public class TodayOrderListActivity extends BaseActivity{
     	    		return;
     	    	}
     	    	OrderSummary order = mAdapter.getOrderAtPosition(position);
-    	    	Intent intent = new Intent(TodayOrderListActivity.this, OrderDetailActivity.class);
+    	    	Intent intent = new Intent(FinishedOrderListActivity.this, OrderDetailActivity.class);
     	    	intent.putExtra("order_id", order.getId());
-    	    	ActivityTool.startActivity(TodayOrderListActivity.this, OrderDetailActivity.class, intent);
+    	    	intent.putExtra("shop_name", order.getShopName());
+    	    	intent.putExtra("status", order.getStatus());
+    	    	intent.putExtra("time", order.getTime());
+    	    	intent.putExtra("price", order.getPrice());
+    	    	ActivityTool.startActivity(FinishedOrderListActivity.this, OrderDetailActivity.class, intent);
 			}
 		});
 		
@@ -108,29 +108,22 @@ public class TodayOrderListActivity extends BaseActivity{
 	    }).start();
 	}
 	
-	@Override
-	public void onResume(){
-		super.onResume();
-	}
-	
 	public void loadMoreData(){
-		// pass in activity instance to get preference
-		OrderDAO dao = new OrderDAO(this);
-		ArrayList<OrderSummary> orders = dao.getTodayOrders(6, lastOrderTime);
+		// get orders from server side
+		User user = LocalPreferences.getUser(this);
+		ArrayList<OrderSummary> orders = MyOrderApi.getOrdersByType("all", page, count, user);
     	if (orders.size() == 0){
     		mLoadMoreHandler.post(new Runnable(){
      		   public void run(){
-     			   Toast.makeText(TodayOrderListActivity.this, "没有更多数据了", Toast.LENGTH_SHORT).show();
+     			   Toast.makeText(FinishedOrderListActivity.this, "没有更多数据了", Toast.LENGTH_SHORT).show();
      		   }
  	    	});
      		return;
     	}
+    	page += 1;
 		for (int i=0; i < orders.size(); i++){
     		OrderSummary order = orders.get(i);
-    		int p = mAdapter.addItem(order);
-    		if (i == orders.size()-1){
-    			lastOrderTime = order.getTime();
-    		}
+    		mAdapter.addItem(order);
     	}
 	}
 	

@@ -120,6 +120,10 @@ public class ShopDetailApi {
 			shop.setId(storeObj.getInt("store_id"));
 			shop.setName(storeObj.getString("store_name"));
 			shop.setOnlineOrder(storeObj.getInt("onlineOrder") == 1);
+			// TODO for debug
+			if (shop.getId() % 2 == 0){
+				shop.setOnlineOrder(true);
+			}
 			shop.setSendTime(storeObj.getString("send_time"));
 			shop.setGoodsCount(storeObj.getInt("goods_count"));
 			shop.setPraiseRate((float)storeObj.getDouble("praise_rate"));
@@ -148,6 +152,7 @@ public class ShopDetailApi {
 					Food food = new Food();
 					JSONObject obj = (JSONObject)foodObjs.get(foodIds.getString(i));;
 					food.setId(obj.getInt("goods_id"));
+					food.setSpecId(obj.getInt("default_spec"));
 					food.setName(obj.getString("goods_name"));
 					food.setPrice((float)obj.getDouble("price"));
 					food.setSoldCount(obj.getInt("sales"));

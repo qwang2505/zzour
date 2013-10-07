@@ -8,7 +8,7 @@
         android:id="@+id/order_succeed_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/title_bar"
+        android:background="@drawable/top_bar_background"
         android:textColor="#ffffff"
         android:gravity="center"
         android:paddingBottom="3dp"
@@ -26,65 +26,83 @@
 		    <ImageView android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center"
-		        android:layout_marginTop="45dp"
+		        android:layout_marginTop="20dp"
 		        android:contentDescription="@string/order_succeed_image_desc"
 		        android:src="@drawable/order_success" />
 		    
 		    <TextView android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:textSize="15sp"
-		        android:layout_marginTop="5dp"
+		        android:textSize="20sp"
+		        android:layout_marginTop="10dp"
 		        android:gravity="center"
+		        android:textColor="#8b7e71"
 		        android:text="@string/order_succeed_text_1" />
 		    
 		    <TextView android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:textSize="15sp"
-		        android:layout_marginTop="15dp"
+		        android:textSize="20sp"
+		        android:layout_marginTop="5dp"
 		        android:gravity="center"
+		        android:textColor="#8b7e71"
 		        android:text="@string/order_succeed_text_2" />
 		    
 		    <TextView android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:textSize="15sp"
-		        android:layout_marginTop="5dp"
+		        android:layout_marginTop="40dp"
 		        android:gravity="center"
+		        android:textColor="#000000"
 		        android:text="@string/order_succeed_text_3" />
 		    
-		    <Button android:id="@+id/order_succeed_share_btn"
-		        android:layout_width="wrap_content"
+		    <LinearLayout android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:background="@drawable/button"
-		        android:layout_marginTop="80dp"
-		        android:layout_gravity="center" 
-		        android:textColor="#ffffff"
-		        android:text="@string/share_text"/>
-		    
-		    <LinearLayout android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:orientation="horizontal">
+		        android:orientation="horizontal"
+		        android:gravity="center"
+		        android:layout_marginTop="5dp"
+		        android:layout_gravity="center">
 		        
-		        <Button android:id="@+id/order_succeed_continut_btn"
-		        	android:layout_width="wrap_content"
-		        	android:layout_height="wrap_content"
-		        	android:background="@drawable/button"
-		        	android:layout_marginTop="5dp"
-		        	android:layout_gravity="center" 
-		        	android:textColor="#ffffff"
-		        	android:text="@string/order_succeed_back_to_main_text"/>
+		        <TextView android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="15sp"
+			        android:gravity="center"
+			        android:textColor="#000000"
+			        android:text="@string/order_succeed_text_4" />
 		        
-		        <Button android:id="@+id/order_succeed_list_btn"
-		        	android:layout_width="wrap_content"
-		        	android:layout_height="wrap_content"
-		        	android:background="@drawable/button"
-		        	android:layout_marginTop="5dp"
-		        	android:layout_marginLeft="10dp"
-		        	android:layout_gravity="center" 
-		        	android:textColor="#ffffff"
-		        	android:text="@string/order_succeed_order_list_text"/>
+		       	<TextView android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="15sp"
+			        android:textColor="#f28a49"
+			        android:gravity="center"
+			        android:textStyle="italic"
+			        android:text="@string/order_succeed_text_5" />
 		        
 		    </LinearLayout>
+		    
+		    <Button android:id="@+id/order_succeed_list_btn"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/button_my_order"
+		        android:layout_marginTop="40dp"
+		        android:layout_gravity="center" 
+		        android:textColor="#ffffff"/>
+		    
+		        
+	        <Button android:id="@+id/order_succeed_continut_btn"
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content"
+	        	android:background="@drawable/button_back_to_ain"
+	        	android:layout_marginTop="5dp"
+	        	android:layout_gravity="center" 
+	        	android:textColor="#ffffff"/>
+	        
+	        <Button android:id="@+id/order_succeed_share_btn"
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content"
+	        	android:background="@drawable/button_share"
+	        	android:layout_marginTop="5dp"
+	        	android:layout_marginBottom="5dp"
+	        	android:layout_gravity="center" 
+	        	android:textColor="#ffffff"/>
     
     	</LinearLayout>
     

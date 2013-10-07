@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#efecea"
     android:orientation="vertical">
     
     <RelativeLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" 
         android:paddingBottom="3dp"
-        android:background="@drawable/title_bar">
+        android:background="@drawable/top_bar_background">
         
-        <include layout="@layout/back_button" />
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
         
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,6 +32,7 @@
 		    android:layout_height="35dp"
 		    android:layout_margin="3dp"
 		    android:layout_alignParentRight="true"
+		    android:layout_centerVertical="true"
 		    android:background="@drawable/back_button"
 		    android:textColor="#ffffff"
 		    android:text="@string/feedback_send_btn_text" />
@@ -35,12 +44,15 @@
         
         <LinearLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+	    	android:focusableInTouchMode="true"
             android:orientation="vertical">
             
             <TextView android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
                 android:paddingLeft="5dp"
+                android:textColor="#89837f"
                 android:text="@string/feedback_info_text" />
             
             <EditText android:id="@+id/feedback_message"
@@ -61,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
                 android:paddingLeft="5dp"
+                android:textColor="#89837f"
                 android:text="@string/feedback_contact_info_text" />
             
             <EditText android:id="@+id/feedback_contact_info"
@@ -83,9 +96,13 @@
                 android:layout_marginBottom="40dp"
                 android:layout_gravity="center"
 		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
 		        android:drawableLeft="@drawable/phone"
-		        android:text="@string/about_call_text"></Button>
+		        android:background="#d0cbc7"
+		        android:paddingLeft="10dp"
+		        android:paddingRight="10dp"
+		        android:layout_height="wrap_content">
+                
+            </Button>
             
         </LinearLayout>
         

@@ -19,8 +19,7 @@
         android:padding="10px"
         android:textSize="18sp"
         android:textColor="#fe8e4d"
-        android:background="#efecea"
-        android:text="本店只支持电话订餐"/>
+        android:background="#efecea"/>
     
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,8 +89,13 @@
     <WebView
 		android:id="@+id/notice"
 	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"/>
+    
+    <!-- <WebView
+		android:id="@+id/notice"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:background="#efecea"/>
+	    android:background="#efecea"/> -->
     
     <!-- TODO add recommends images into this in java code -->
     <!-- <LinearLayout android:id="@+id/shop_recommends"

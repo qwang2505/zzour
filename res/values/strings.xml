@@ -39,7 +39,7 @@
 	<string name="cart_title">购物车</string>
 	<string name="order_text">下单完成（货到付款）</string>
 	<string name="box_price_text">餐盒费￥:</string>
-	<string name="total_price_text">总价￥:</string>
+	<string name="total_price_text">总价:</string>
 	<string name="address_info_text">收货人地址</string>
 	<string name="time_info_text">选择配送时间</string>
 	<string name="product_info_text">商品信息</string>
@@ -60,9 +60,11 @@
 	
 	<!-- for order succeed page -->
 	<string name="order_succeed_title">下单结果</string>
-	<string name="order_succeed_text_1">您已下单成功！</string>
-	<string name="order_succeed_text_2">订单信息会及时发送至商家处</string>
-	<string name="order_succeed_text_3">请耐心等待哈！</string>
+	<string name="order_succeed_text_1">已成功触发店内打印机</string>
+	<string name="order_succeed_text_2">开始打印您的订单信息</string>
+	<string name="order_succeed_text_3">跟踪订单、在线催单、在线退单</string>
+	<string name="order_succeed_text_4">请进入</string>
+	<string name="order_succeed_text_5">我的订单</string>
 	<string name="order_succeed_image_desc"></string>
 	<string name="share_text">分享给好友</string>
 	<string name="order_succeed_back_to_main_text">继续下单</string>
@@ -134,7 +136,6 @@
 	<string name="about_version_number_text">1.0.0</string>
 	<string name="about_protocol_text">用户服务协议</string>
 	<string name="about_help_text">帮助</string>
-	<string name="about_call_text">呼叫宅宅客服：0592-5964379</string>
 	
 	<!-- for feedback page -->
 	<string name="feedback_title">反馈意见</string>

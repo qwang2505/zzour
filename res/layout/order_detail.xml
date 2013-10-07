@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
     
-    <RelativeLayout android:layout_width="match_parent"
-        android:background="@drawable/title_bar"
+    <RelativeLayout android:id="@+id/top_block"
+        android:layout_width="match_parent"
+        android:background="@drawable/top_bar_background"
         android:paddingBottom="3dp"
         android:layout_height="wrap_content">
         
-        <include layout="@layout/back_button"/>
+        <Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
         
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,191 +27,249 @@
             android:textSize="25sp"
             android:textColor="#eeeeee"
             android:layout_marginTop="6dp"
+            android:layout_centerVertical="true"
             android:text="@string/order_detail_title"/>
         
     </RelativeLayout>
 	    
-	<ScrollView 
+	<ScrollView android:id="@+id/main_block"
 	    android:layout_width="match_parent"
+	    android:layout_below="@id/top_block"
+	    android:layout_marginBottom="60dp"
 	    android:layout_height="wrap_content">
-	    
+        
 	    <LinearLayout android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical">
-		    
-		    <TextView android:layout_width="match_parent"
-		        android:id="@+id/shop_name"
+	    
+		    <RelativeLayout android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:textSize="14sp"
-		        android:paddingTop="5dp"
-		        android:paddingBottom="5dp"
-		        android:paddingLeft="3dp"
-		        android:textColor="@color/text_color"
-		        android:text="@string/product_info_text" />
-		    
-		    <ImageView
-		    	android:layout_width="match_parent"
-		    	android:layout_height="wrap_content"
-		    	android:contentDescription="@string/dot_line_desc"
-		    	android:src="@drawable/dotted" />
-		    
-		    <LinearLayout android:id="@+id/order_detail_products"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" 
-		        android:orientation="vertical">
-		        
-		    </LinearLayout>
-		        
-		    <RelativeLayout android:id="@+id/order_detail_price_info"
-		        android:layout_width="match_parent"
-		        android:paddingTop="5dp"
-		        android:paddingBottom="5dp"
-		        android:layout_height="wrap_content">
-		        <TextView android:id="@+id/order_detail_box_price_info"
+		        android:background="#efecea"
+		        android:padding="6dp">
+		        <TextView android:id="@+id/shop_name"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:visibility="gone"
-		            android:paddingLeft="3dp"
-		            android:text="@string/box_price_text" />
-		        <TextView android:id="@+id/box_price"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:paddingLeft="5dp"
-		            android:visibility="gone"
-		            android:layout_toRightOf="@id/order_detail_box_price_info"
-		            android:text="0" />
-		        <TextView android:id="@+id/order_detail_total_price"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:paddingLeft="5dp"
-		            android:layout_alignParentRight="true"
-		            android:paddingRight="5dp" />
-		        <TextView android:id="@+id/order_detail_total_price_info"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:paddingLeft="3dp"
-		            android:layout_toLeftOf="@id/order_detail_total_price"
-		            android:text="@string/total_price_text" />
-		        
+		            android:textColor="#f48e4d"
+		            android:maxWidth="200dp"
+		            android:singleLine="true"
+		            android:ellipsize="marquee"
+		            android:textSize="20sp"
+		            android:text="这是一个名字比较长的店家，你能看见吗"/>
+		        <ImageView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentRight="true"
+	                android:paddingRight="10dp"
+	                android:paddingLeft="10dp"
+	                android:layout_centerVertical="true"
+	                android:contentDescription="@string/arrow_desc_text"
+	                android:src="@drawable/arrow" />
 		    </RelativeLayout>
 		    
-		    <LinearLayout android:id="@+id/order_detail_address_info"
-		        android:layout_width="match_parent"
+		    <LinearLayout android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:orientation="vertical">
-		        <TextView android:layout_width="match_parent"
+		        android:padding="5dp"
+		        android:orientation="horizontal">
+		        <TextView android:id="@+id/time_desc"
+		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:textSize="14sp"
-		            android:paddingTop="5dp"
-		            android:paddingBottom="5dp"
-		            android:paddingLeft="3dp"
-		            android:textColor="@color/text_color"
-		            android:text="@string/address_info_text" />
-		        
-		     	<ImageView
-		    		android:layout_width="match_parent"
-		    		android:layout_height="wrap_content"
-		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
-		
-	    	    <RelativeLayout android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:orientation="horizontal">
-			        
-			        <TextView android:id="@+id/order_detail_address_name"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content" 
-			            android:layout_marginTop="3dp"
-			            android:layout_marginLeft="3dp"/>
-			        
-			        <TextView android:id="@+id/order_detail_address_phone"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_marginLeft="10dp"
-			            android:layout_marginTop="3dp"
-			            android:paddingRight="5dp"
-			            android:layout_toRightOf="@id/order_detail_address_name"/>
-			        
-			        <TextView android:id="@+id/order_detail_address_detail"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_below="@id/order_detail_address_name"
-			            android:layout_marginTop="3dp"
-			            android:layout_marginLeft="3dp" />
-			        
-			    </RelativeLayout>
-		    	    
+		            android:textStyle="bold"
+		            android:textColor="#000000"
+		            android:text="下单时间："/>
+		        <TextView android:id="@+id/time"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#959494"
+		            android:text="2013-09-30 19:20:05"/>
 		    </LinearLayout>
 		    
-		    <LinearLayout android:id="@+id/order_detail_time_info"
-		        android:layout_width="match_parent"
+		    <LinearLayout android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:orientation="vertical">
-		    	
-		        <TextView android:layout_width="match_parent"
+		        android:padding="5dp"
+		        android:orientation="horizontal">
+		        <TextView android:id="@+id/status_desc"
+		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:textSize="14sp"
-		            android:paddingTop="5dp"
-		            android:paddingBottom="5dp"
-		            android:paddingLeft="3dp"
-		            android:textColor="@color/text_color"
-		            android:text="@string/order_detail_time_info_text" />
-		        <ImageView
-		    		android:layout_width="match_parent"
-		    		android:layout_height="wrap_content"
-		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
-		        
-		        <TextView android:id="@+id/order_detail_time_info_detail"   
-		           	android:layout_width="wrap_content"  
-		           	android:layout_height="wrap_content"
-		           	android:layout_marginTop="3dp"
-		           	android:layout_marginBottom="3dp"
-		           	android:layout_marginLeft="5dp">
-		            
-		        </TextView>  
-		        
+		            android:textStyle="bold"
+		            android:textColor="#000000"
+		            android:text="订单状态："/>
+		        <TextView android:id="@+id/status"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#f48e4d"
+		            android:background="#efecea"
+		            android:text="待收货"/>
 		    </LinearLayout>
 		    
-		    <LinearLayout android:id="@+id/message_info"
+		    <LinearLayout android:id="@+id/logs"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical">
 		        
-		        <TextView android:layout_width="match_parent"
+		    </LinearLayout>
+		    
+		    <ImageView android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:layout_marginTop="10dp"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/seperator" />
+		    
+		    <RelativeLayout android:id="@+id/buttons"
+		        android:layout_width="match_parent"
+		        android:layout_marginTop="10dp"
+		        android:layout_height="wrap_content">
+		        
+		        <LinearLayout android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:textSize="14sp"
-		            android:paddingTop="5dp"
-		            android:paddingBottom="5dp"
-		            android:paddingLeft="3dp"
-		            android:textColor="@color/text_color"
-		            android:text="@string/message_info_text" />
-		        
-		        <ImageView
-		    		android:layout_width="match_parent"
-		    		android:layout_height="wrap_content"
-		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
-		        
-		        <TextView android:id="@+id/order_detail_message"
-		    		android:layout_width="match_parent"
-		    		android:layout_height="wrap_content"
-		    		android:layout_marginTop="5dp"
-		    		android:text="@string/message_hint_text"
-		    		android:textSize="14sp"
-		    		android:paddingLeft="3dp"
-		    		android:paddingRight="3dp"
-		    		android:layout_marginLeft="3dp"
-		    		android:layout_marginRight="3dp" />
+		            android:orientation="horizontal"
+		            android:layout_centerHorizontal="true">
+			        <Button android:id="@+id/push_order"
+			            android:layout_width="wrap_content"
+			            android:layout_height="35dp"
+			            android:text="催 单"
+			            android:textSize="20sp"
+			            android:background="#f48e4d"
+			            android:paddingLeft="20dp"
+			            android:paddingRight="20dp"
+			            android:textColor="#ffffff" />
+			        <Button android:id="@+id/cancel_order"
+			            android:layout_width="wrap_content"
+			            android:layout_height="35dp"
+			            android:text="退 单"
+			            android:textSize="20sp"
+			            android:background="#383533"
+			            android:layout_marginLeft="80dp"
+			            android:paddingLeft="20dp"
+			            android:paddingRight="20dp"
+			            android:textColor="#ffffff" />
+		        </LinearLayout>
+		    </RelativeLayout>
+		    
+		    <ImageView android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:layout_marginTop="10dp"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/seperator2" />
+		    
+		    <LinearLayout android:id="@+id/foods_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="5dp"
+		        android:orientation="vertical">
+		        <TextView android:id="@+id/foods_desc"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:textColor="#f48e4d"
+		            android:layout_marginLeft="5dp"
+		            android:text="已购菜品"/>
+		        <ImageView android:layout_width="match_parent"
+			    	android:layout_height="wrap_content"
+			    	android:layout_marginTop="5dp"
+			    	android:contentDescription="@string/dot_line_desc"
+			    	android:src="@drawable/seperator2" />
+		    </LinearLayout>
+		    
+		    <LinearLayout android:id="@+id/foods"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical">
 		        
 		    </LinearLayout>
 		    
+		    <RelativeLayout android:id="@+id/price_info"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="5dp">
+		        <TextView android:id="@+id/price_desc_2"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textStyle="bold"
+		            android:layout_alignParentRight="true"
+		            android:text="（不含餐盒费）"/>
+		        <TextView android:id="@+id/price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textStyle="bold"
+		            android:textColor="#f80418"
+		            android:layout_toLeftOf="@id/price_desc_2"
+		            android:text="24.0"/>
+		        <TextView android:id="@+id/price_desc_1"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textStyle="bold"
+		            android:layout_toLeftOf="@id/price"
+		            android:text="总计：￥"/>
+		    </RelativeLayout>
+		    
+		    <LinearLayout android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:padding="3dp"
+		        android:orientation="horizontal">
+		        <TextView android:id="@+id/addr_desc"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#000000"
+		            android:text="地址："
+		            android:textStyle="bold"/>
+		        <TextView android:id="@+id/addr"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#959494"
+		            android:textStyle="bold"/>
+		    </LinearLayout>
+		    <LinearLayout android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:padding="3dp"
+		        android:orientation="horizontal">
+		        <TextView android:id="@+id/phone_desc"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#000000"
+		            android:text="电话："
+		            android:textStyle="bold"/>
+		        <TextView android:id="@+id/phone"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#959494"
+		            android:textStyle="bold"/>
+		    </LinearLayout>
+		    <LinearLayout android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:padding="3dp"
+		        android:orientation="horizontal">
+		        <TextView android:id="@+id/remark_desc"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#000000"
+		            android:text="备注："
+		            android:textStyle="bold"/>
+		        <TextView android:id="@+id/remark"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textColor="#959494"
+		            android:textStyle="bold"/>
+		    </LinearLayout>
+
 	    </LinearLayout>
 	    
 	</ScrollView>
+	
+	<RelativeLayout android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="5dp"
+        android:background="@drawable/bottom_background" >
+        
+        <Button android:id="@+id/finish_order"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="3dp"
+            android:visibility="gone"
+            android:background="@drawable/finish_order"
+            android:includeFontPadding="false"/>
+        
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

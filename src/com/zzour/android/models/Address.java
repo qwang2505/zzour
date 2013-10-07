@@ -3,14 +3,17 @@ package com.zzour.android.models;
 import android.util.Log;
 
 public class Address {
+	private int id;
+	private int userId;
 	private String name;
 	private String addr;
 	private String phone;
+	private int regionId;
+	private String regionName;
 	
-	public Address(String name, String phone, String addr){
-		this.name = name;
-		this.phone = phone;
-		this.addr = addr;
+	public Address(){
+		this.id = -1;
+		this.userId = -1;
 	}
 	
 	public Address(String text){
@@ -24,6 +27,38 @@ public class Address {
 		this.addr = ts[2];
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public int getRegionId() {
+		return regionId;
+	}
+
+	public void setRegionId(int regionId) {
+		this.regionId = regionId;
+	}
+
+	public String getRegionName() {
+		return regionName;
+	}
+
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
+
 	public String getName() {
 		return name;
 	}

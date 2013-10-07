@@ -4,12 +4,12 @@ import android.os.Bundle;
 
 import com.zzour.android.base.BaseActivity;
 
-public class StoreActivity extends BaseActivity {
+public class CollectionActivity extends BaseActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.store);
+		setContentView(R.layout.collection);
 	}
 	
 }

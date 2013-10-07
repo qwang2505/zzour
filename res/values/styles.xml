@@ -1,13 +1,20 @@
 <resources>
 
     <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        Base application theme for API 11+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 11+ devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
-        <item name="android:background">#ffffff</item>
+        <!-- <item name="android:background">#ffffff</item> -->
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:listViewStyle">@style/ListView</item>
     </style>
+    
+    <!-- list view -->
+  <style name="ListView" parent="@android:style/Widget.Holo.ListView">
+    <item name="android:listSelector">#ffffff</item>
+  </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">

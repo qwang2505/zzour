@@ -51,7 +51,10 @@ public class AddressDAO extends CustomSqliteHelper {
 			String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME));
 			String addr = cursor.getString(cursor.getColumnIndex(FIELD_ADDR));
 			String phone = cursor.getString(cursor.getColumnIndex(FIELD_PHONE));
-			Address address = new Address(name, phone, addr);
+			Address address = new Address();
+			address.setAddr(addr);
+			address.setName(name);
+			address.setPhone(phone);
 			addrs.add(address);
 		}
 		return addrs;

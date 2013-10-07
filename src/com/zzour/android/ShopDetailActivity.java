@@ -7,6 +7,7 @@ import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
+import com.zzour.android.models.User;
 import com.zzour.android.network.api.ShopDetailApi;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
@@ -85,9 +86,16 @@ public class ShopDetailActivity extends BaseActivity{
 		this.mShop = shop;
 	}
 	
+	public boolean isOnline(){
+		if (this.mShop == null){
+			Log.e(TAG, "shop is null while calling is online");
+			return false;
+		}
+		return this.mShop.isOnlineOrder();
+	}
+	
 	private void show(){
 		// init title bar text
-		Log.e(TAG, "show shop detail");
 		TextView title_bar = (TextView)findViewById(R.id.title_bar_text_view);
 		title_bar.setText(mShop.getName());
 		//mShop = ShopDetailApi.getShopDetailById(mShopId, this);
@@ -95,9 +103,7 @@ public class ShopDetailActivity extends BaseActivity{
 		// show shop detail
 		mAdapter = new ShopDetailAdapter(this);
 		// init top view, and add to expendable list as a header
-		Log.e(TAG, "init header view");
 		this.initHeaderView(mShop, list);
-		Log.e(TAG, "init header view finished");
 		Iterator<String> keys = mShop.getFoods().keySet().iterator();
 		while (keys.hasNext()){
 			String cat = keys.next();
@@ -108,29 +114,72 @@ public class ShopDetailActivity extends BaseActivity{
 			list.expandGroup(i);
 		}
 		list.setGroupIndicator(null);//除去自带的箭头
-		
-		Button btn = (Button)findViewById(R.id.go_to_cart);
-		btn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View view) {
-				// if buy any, save into cart
-				ArrayList<Food> foods = mAdapter.getBoughtFoods();
-				if (foods.size() == 0){
-					// give out toast
-					mToastHandler.post(new Runnable(){
-		 	    		   public void run(){
-		 	    			  Toast.makeText(ShopDetailActivity.this, "您没有选择任何商品", Toast.LENGTH_SHORT).show();
-		 	    		   }
-		 	    	   });
-					return;
+		// for online and not online, show different button
+		if (mShop.isOnlineOrder()){
+			Button btn = (Button)findViewById(R.id.go_to_cart);
+			btn.setVisibility(Button.VISIBLE);
+			btn.setOnClickListener(new OnClickListener(){
+	
+				@Override
+				public void onClick(View view) {
+					// if buy any, save into cart
+					ArrayList<Food> foods = mAdapter.getBoughtFoods();
+					/*if (foods.size() == 0){
+						// give out toast
+						mToastHandler.post(new Runnable(){
+			 	    		   public void run(){
+			 	    			  Toast.makeText(ShopDetailActivity.this, "您没有选择任何商品", Toast.LENGTH_SHORT).show();
+			 	    		   }
+			 	    	   });
+						return;
+					}*/
+					// TODO check if already login. If not, require login first
+					User user = LocalPreferences.getUser(ShopDetailActivity.this);
+					if (user == null){
+						// give out toast
+						mToastHandler.post(new Runnable(){
+			 	    		   public void run(){
+			 	    			  Toast.makeText(ShopDetailActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+			 	    		   }
+			 	    	   });
+						return;
+					}
+					// go to shopping cart.
+					ShoppingCart.saveFoods(mShop, foods);
+					Log.d(TAG, "save foods");
+					ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
 				}
-				// go to shopping cart.
-				ShoppingCart.saveFoods(mShop, foods);
-				Log.d(TAG, "save foods");
-				ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
-			}
-		});
+			});
+		} else {
+			Button btn = (Button)findViewById(R.id.go_to_dial);
+			btn.setVisibility(Button.VISIBLE);
+			btn.setText("拨打电话 " + mShop.getTelephone());
+			btn.setOnClickListener(new OnClickListener(){
+				
+				@Override
+				public void onClick(View view) {
+					// if buy any, save into cart
+					ArrayList<Food> foods = mAdapter.getBoughtFoods();
+					// TODO if dial, need login or not?
+					User user = LocalPreferences.getUser(ShopDetailActivity.this);
+					if (user == null){
+						// give out toast
+						mToastHandler.post(new Runnable(){
+			 	    		   public void run(){
+			 	    			  Toast.makeText(ShopDetailActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
+			 	    		   }
+			 	    	   });
+						return;
+					}
+					// go to shopping cart.
+					ShoppingCart.saveFoods(mShop, foods);
+					Intent intent = new Intent(ShopDetailActivity.this, ShoppingDialActivity.class);
+					intent.putExtra("shop_id", mShop.getId());
+					intent.putExtra("shop_phone", mShop.getTelephone());
+					ActivityTool.startActivity(ShopDetailActivity.this, ShoppingDialActivity.class, intent);
+				}
+			});
+		}
 	}
 	
 	private void initHeaderView(ShopDetailContent shop, ExpandableListView list){
@@ -154,7 +203,8 @@ public class ShopDetailActivity extends BaseActivity{
 		RatingBar rate = (RatingBar)mHeaderView.findViewById(R.id.shop_rating);
 		rate.setRating(shop.getGrade());
 		WebView notice = (WebView)mHeaderView.findViewById(R.id.notice);
-		notice.loadData("<style type='text/css'>*{font-size: 14px;background-color:#efecea}</style>" + shop.getNotice(), "text/html; charset=UTF-8", null);
+		//notice.loadData("<style type='text/css'>*{font-size: 14px;background-color:#efecea}</style>" + shop.getNotice(), "text/html; charset=UTF-8", null);
+		notice.loadData(shop.getNotice(), "text/html; charset=UTF-8", null);
 		// initial top banner
 		//mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
 		DisplayMetrics metrics = new DisplayMetrics();

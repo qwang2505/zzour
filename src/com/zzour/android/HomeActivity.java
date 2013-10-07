@@ -80,29 +80,7 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.activity_main);
-        
-        //mSearchCategory = (Spinner)findViewById(R.id.search_category);
-        //ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
-        //        android.R.layout.simple_spinner_item, mSearchCategories);
-        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //mSearchCategory.setAdapter(adapter);
-        //mSearchCategory.setSelection(0);
-        //mSearchCategory.setOnItemSelectedListener(
-        //        new OnItemSelectedListener() {
-        //            public void onItemSelected(
-        //                    AdapterView<?> parent, View view, int position, long id) {
-        //               mSearchCategoryValue = mSearchCategoryValues[position];
-        //            }
 
-        //            public void onNothingSelected(AdapterView<?> parent) {
-        //               mSearchCategoryValue = mSearchCategoryValues[0];
-        //           }
-        //        });
-        
-        // TODO get search initial text from api, and reset. Here just reset.
-        //EditText searchText = (EditText)findViewById(R.id.search);
-        //String text = getString(R.string.search_initial_text);
-        //searchText.setText(text);
         this.initScrollImageView();
     
         // add load more to list view
@@ -230,9 +208,7 @@ public class HomeActivity extends BaseActivity {
 		final int height = (int)getResources().getDimension(R.dimen.list_image_height);
     	while (it.hasNext()){
     		final int position = (Integer)it.next();
-    		Log.e(TAG, "download image " + mImages.get(position));
     		final Bitmap bmp = ImageTool.getBitmapByUrl(mImages.get(position), width, height, HomeActivity.this);
-    		Log.e(TAG, "download image over");
     		if (bmp != null){
 	    		mLoadMoreHandler.post(new Runnable(){
 	    			public void run(){

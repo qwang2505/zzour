@@ -28,12 +28,14 @@ public class ImageTool {
 		// load image from memory
 		int key = (new String("src" + src + width + height)).hashCode();
 		if (mBitmapCache.containsKey(key)){
+			Log.e("ZZOUR", "get image from memory cache");
 			return mBitmapCache.get(key);
 		}
 		// load image from local storage by src as key
 		Bitmap bmp = LocalStorage.getImage(String.valueOf(src.hashCode()), context);
 		if (bmp == null){
 			// if not in local storage, get from internet
+			Log.e("ZZOUR", "download image from internet");
 			bmp = getBitmapByUrl(src);
 			// if can't get from internet, return
 			if (bmp == null){

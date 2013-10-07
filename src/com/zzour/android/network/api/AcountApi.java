@@ -3,8 +3,6 @@ package com.zzour.android.network.api;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +26,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.util.Log;
 
+import com.zzour.android.models.AccountInfo;
 import com.zzour.android.models.LoginResult;
 import com.zzour.android.models.RegisterResult;
 import com.zzour.android.models.User;
 import com.zzour.android.models.UserAccount;
+import com.zzour.android.network.api.results.UserAccountResult;
 import com.zzour.android.settings.GlobalSettings;
 import com.zzour.android.settings.LocalPreferences;
 
@@ -39,16 +39,20 @@ public class AcountApi {
 	
 	private static final String loginPath = "/index.php?app=member&act=login&method=ajax";
 	private static final String registerPath = "/index.php?app=member&act=register&method=ajax";
-	private static final String accountDetailPath = "/index.php?app=member&act=profile&method=ajax";
+	private static final String accountDetailPath = "/index.php?app=member&act=profile&method=ajax&ajax=1";
+	private static final String validUserPath = "/index.php?app=qqlogin&act=user_validate";
+	private static final String thirdPartyLoginPath = "/index.php?app=qqlogin&act=register&method=ajax";
 	
 	private static final String sessionName = "ECM_ID";
 	
+	public static LoginResult login(AccountInfo account, Activity activity){
+		return loginNormal(account.getName(), account.getPassword(), account.getType(), activity);
+	}
+	
 	public static LoginResult loginNormal(String user, String pwd, User.AuthType authType, Activity activity){
 		LoginResult result;
-		// md5 password
-		//pwd = MD5Hash.md5(pwd);
 		// call server api to log in
-		ApiResult apiResult = postLogin(user, pwd, authType.ordinal());
+		ApiResult apiResult = postLogin(user, pwd);
 		if (apiResult == null || apiResult.session.length() == 0){
 			result = new LoginResult();
 			result.setSuccess(false);
@@ -61,6 +65,7 @@ public class AcountApi {
 			result.setSuccess(false);
 			result.setMsg("连接服务器错误，请检查网络设置！");
 		} else if (result.isSuccess()){
+			// TODO change user structure
 			User u = new User(user, pwd, apiResult.session, authType);
 			LocalPreferences.setUser(u, activity);
 		}
@@ -91,7 +96,7 @@ public class AcountApi {
 		return result;
 	}
 	
-	public static UserAccount getUserAcountDetail(User user){
+	public static UserAccountResult getUserAcountDetail(User user){
 		String data = getAccountDetail(user.getSession());
 		if (data == null){
 			return null;
@@ -99,26 +104,34 @@ public class AcountApi {
 		return parseAccountDetail(data);
 	}
 	
-	public static UserAccount parseAccountDetail(String data){
+	public static UserAccountResult parseAccountDetail(String data){
+		UserAccountResult result = new UserAccountResult();
 		try {
-			Log.e("zzour", "login data: " + data);
-			//JSONTokener jsonObj = new JSONTokener(data);
-			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
+			Log.e("ZZOUR", "get account detail data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
 			if (!success){
-				return null;
+				String msg = dataObj.getString("msg");
+				result.setMsg(msg);
+				if (msg.startsWith("您需要先登录")){
+					result.setNeedLogin(true);
+				}
+				return result;
 			}
 			JSONObject retObj = dataObj.getJSONObject("retval");
 			UserAccount account = new UserAccount();
 			account.setUserName(retObj.getString("user_name"));
 			account.setEmail(retObj.getString("email"));
 			account.setIntegral(retObj.getInt("integral"));
-			Log.e("ZZOUR", "over parse account data");
-			return account;
+			result.setAccount(account);
+			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse login result:　" + ex);
-			return null;
+			ex.printStackTrace();
+			result.setMsg("解析返回数据错误");
+			result.setSuccess(false);
+			return result;
 		}
 	}
 	
@@ -240,7 +253,7 @@ public class AcountApi {
 	    }
 	}
 	
-	public static ApiResult postLogin(String name, String password, int type) {
+	public static ApiResult postLogin(String name, String password) {
 	    // Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(buildLoginUrl());
@@ -296,5 +309,101 @@ public class AcountApi {
 	private static class ApiResult{
 		public String data;
 		public String session;
+	}
+	
+	private static String buildValidUserUrl(AccountInfo account){
+		return GlobalSettings.getServerAddress() + validUserPath + "&user_name=" + account.getName() + "&password=" + account.getPassword();
+	}
+	
+	private static boolean parseValidUserResult(String data){
+		try {
+			Log.e("ZZOUR", "data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean valid = dataObj.getInt("retval") == 1;
+			return valid;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse register result:　" + ex);
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean isValidUser(AccountInfo account){
+		String src = buildValidUserUrl(account);
+		Log.e("ZZOUR", "get data from " + src);
+		InputStream content = null;
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+		    HttpResponse response = httpclient.execute(new HttpGet(src));
+		    content = response.getEntity().getContent();
+		    byte[] buf = readInputStream(content);
+		    String data =  (new String(buf));
+		    return parseValidUserResult(data);
+		} catch (Exception e) {
+		    Log.e("ZZOUR", "Network exception", e);
+		    e.printStackTrace();
+		    return false;
+		}
+	}
+	
+	private static String buildThirdPartyRegisterPath(AccountInfo account){
+		return GlobalSettings.getServerAddress() + thirdPartyLoginPath + "&user_name=" + account.getName() +
+				"&password=" + account.getPassword() + "&real_name=" + account.getNickName() + "&birthday=&head=" + account.getProfileUrl();
+	}
+	
+	private static RegisterResult parseThirdPartyRegisterResult(String data){
+		try {
+			Log.e("ZZOUR", "third party register response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			//int retval = dataObj.getInt("retval");
+			// TODO add expire
+			//String expire = dataObj.optString("expire", "");
+			RegisterResult result = new RegisterResult();
+			//result.setMsg(retval);
+			result.setSuccess(success);
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse register result:　" + ex);
+			return null;
+		}
+	}
+	
+	public static RegisterResult registerThirdParty(AccountInfo account, Activity activity){
+		String src = buildThirdPartyRegisterPath(account);
+		Log.e("ZZOUR", "get data from " + src);
+		InputStream content = null;
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+		    HttpResponse response = httpclient.execute(new HttpGet(src));
+	        List<Cookie> cookie = ((AbstractHttpClient) httpclient).getCookieStore().getCookies();
+	        if (response == null){
+	        	return null;
+	        }
+	        String session = "";
+	        if (cookie.size() <= 0){
+	        	Log.e("ZZOUR", "no cookie");
+	        } else {
+	        	session = cookie.get(0).getValue();
+	        	Log.e("ZZOUR", "cookie: " + session);
+	        }
+	        if (cookie.size() > 1){
+	        	Log.e("ZZOUR", "cookie size more than one, use the first one as session id");
+	        }
+		    content = response.getEntity().getContent();
+		    byte[] buf = readInputStream(content);
+		    String data =  (new String(buf));
+		    RegisterResult result = parseThirdPartyRegisterResult(data);
+		    if (result.isSuccess()){
+		    	// login after register success
+				User u = new User(account.getName(), account.getPassword(), session, account.getType());
+				LocalPreferences.setUser(u, activity);
+		    }
+		    return result;
+		} catch (Exception e) {
+		    Log.e("ZZOUR", "Network exception", e);
+		    e.printStackTrace();
+		    return null;
+		}
 	}
 }

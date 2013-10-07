@@ -4,7 +4,17 @@ package com.zzour.android.models;
 public class Food extends BaseDataModel{
 	
 	private int id;
+	private int specId;
 	private int shopId;
+	// used in shopping cart
+	private int recId;
+	public int getRecId() {
+		return recId;
+	}
+	public void setRecId(int recId) {
+		this.recId = recId;
+	}
+
 	private String category;
 	private String name;
 	private float price;
@@ -19,7 +29,6 @@ public class Food extends BaseDataModel{
 	public Food(){
 		
 	}
-
 	public Food(String text){
 		String[] fs = text.split(",");
 		if (fs.length != 4){
@@ -32,6 +41,13 @@ public class Food extends BaseDataModel{
 	}
 	public String toString(){
 		return id + "," + name + "," + price + "," + buyCount;
+	}
+	public int getSpecId() {
+		return specId;
+	}
+
+	public void setSpecId(int specId) {
+		this.specId = specId;
 	}
 	public String getCategory() {
 		return category;

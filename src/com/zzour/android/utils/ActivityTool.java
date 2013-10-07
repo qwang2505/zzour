@@ -28,14 +28,17 @@ public class ActivityTool {
 		// start activity from MainActivity
 		HashMap<String, Integer> main = new HashMap<String, Integer>();
 		main.put("ShopDetailActivity", RIGHT);
-		main.put("StoreActivity", RIGHT);
+		main.put("CollectionActivity", RIGHT);
 		main.put("OrderListActivity", RIGHT);
+		main.put("UnFinishedOrderListActivity", RIGHT);
+		main.put("FinishedOrderListActivity", RIGHT);
 		main.put("MoreActivity", RIGHT);
 		put("MainActivity", main);
 		
 		// start activity from ShopDetailActivity
 		HashMap<String, Integer> shopDetail = new HashMap<String, Integer>();
 		shopDetail.put("ShoppingCartActivity", RIGHT);
+		shopDetail.put("ShoppingDialActivity", RIGHT);
 		put("ShopDetailActivity", shopDetail);
 		
 		// start activity from ShoppingCartActivity
@@ -51,16 +54,16 @@ public class ActivityTool {
 		
 		// start activity from OrderListActivity
 		HashMap<String, Integer> orderList = new HashMap<String, Integer>();
-		orderList.put("StoreActivity", LEFT);
+		orderList.put("CollectionActivity", LEFT);
 		orderList.put("MoreActivity", RIGHT);
 		orderList.put("LoginActivity", RIGHT);
 		put("OrderListActivity", orderList);
 		
-		// start activity from StoreActivity
+		// start activity from CollectionActivity
 		HashMap<String, Integer> store = new HashMap<String, Integer>();
 		store.put("OrderListActivity", RIGHT);
 		store.put("MoreActivity", RIGHT);
-		put("StoreActivity", store);
+		put("CollectionActivity", store);
 		
 		// start activity from MoreActivity
 		HashMap<String, Integer> more = new HashMap<String, Integer>();
@@ -69,7 +72,7 @@ public class ActivityTool {
 		more.put("SettingsActivity", RIGHT);
 		more.put("AboutActivity", RIGHT);
 		more.put("FeedbackActivity", RIGHT);
-		more.put("StoreActivity", LEFT);
+		more.put("CollectionActivity", LEFT);
 		more.put("OrderListActivity", LEFT);
 		put("MoreActivity", more);
 		
@@ -77,11 +80,11 @@ public class ActivityTool {
 	}};
 	
 	private static final ArrayList<String> backToMainActivities = new ArrayList<String>(){{
-		add("StoreActivity");
+		add("CollectionActivity");
 		add("OrderListActivity");
 		add("MoreActivity");
-		add("TodayOrderListActivity");
-		add("HistoryOrderListActivity");
+		add("FinishedOrderListActivity");
+		add("UnFinishedOrderListActivity");
 	}};
 	
 	public static boolean shouldBackToMain(Activity activity){
@@ -142,6 +145,11 @@ public class ActivityTool {
 	
 	public static void startActivity(Activity from, Class<?> cls, Intent intent){
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		boolean toMain = intent.getBooleanExtra("main", false);
+		int tab = intent.getIntExtra("tab", 0);
+		if (toMain && tab != 0){
+			mainActivity.switchTab(tab);
+		}
 		from.startActivity(intent);
 		overridePendingTransition(from, cls);
 	}
@@ -157,16 +165,20 @@ public class ActivityTool {
 		}
 		if (shouldBackToMain(from)){
 			mainActivity.switchTab(0);
-			Log.d("ZZOUR", "back to main by switch: " + from.getClass().getName());
+			Log.e("ZZOUR", "back to main by switch: " + from.getClass().getName());
 			return;
 		}
 		if (intent == null){
 			intent = new Intent(from, mainActivity.getClass());
 		}
-		Log.d("ZZOUR", "back to main by new: " + from.getClass().getName());
+		Log.e("ZZOUR", "back to main by new: " + from.getClass().getName());
 		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 		from.startActivity(intent);
 		from.overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
 		//mainActivity.switchTab(0);
+	}
+	
+	public static MainActivity getMainActivity(){
+		return mainActivity;
 	}
 }

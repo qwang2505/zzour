@@ -192,6 +192,10 @@ public class ShopListApi {
 				shop.setCreditValue(obj.getInt("credit_value"));
 				shop.setGrade((float)obj.getDouble("sgrade"));
 				shop.setOnlineOrder(obj.getInt("onlineOrder") == 1);
+				// TODO for test
+				if (id % 2 == 0){
+					shop.setOnlineOrder(true);
+				}
 				shop.setAlive(obj.getInt("if_live") == 1);
 				shops.add(shop);
 			}

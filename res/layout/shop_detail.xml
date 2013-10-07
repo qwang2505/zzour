@@ -80,7 +80,19 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="15dp"
             android:layout_marginRight="3dp"
+            android:visibility="gone"
             android:background="@drawable/go_to_address"
+            android:includeFontPadding="false"/>
+        
+        <Button android:id="@+id/go_to_dial"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="3dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/go_to_dial"
+            android:visibility="gone"
+            android:textColor="#ffffff"
             android:includeFontPadding="false"/>
         
     </RelativeLayout>

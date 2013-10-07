@@ -50,7 +50,7 @@ public class User extends BaseDataModel{
 	}
 
 	public enum AuthType{
-		NORMAL, QQ, RENREN
+		NORMAL, TENCENT, RENREN
 	}
 
 	@Override

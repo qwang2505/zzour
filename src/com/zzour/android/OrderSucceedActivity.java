@@ -2,6 +2,7 @@ package com.zzour.android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -31,6 +32,7 @@ public class OrderSucceedActivity extends BaseActivity{
 				// to order list activity
 				Intent intent = new Intent(OrderSucceedActivity.this, MainActivity.class);
 				intent.putExtra("tab", 2);
+				intent.putExtra("main", true);
 				ActivityTool.startActivity(OrderSucceedActivity.this, MainActivity.class, intent);
 			}
 		});

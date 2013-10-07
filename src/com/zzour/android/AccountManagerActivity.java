@@ -19,6 +19,7 @@ import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.User;
 import com.zzour.android.models.UserAccount;
 import com.zzour.android.network.api.AcountApi;
+import com.zzour.android.network.api.results.UserAccountResult;
 import com.zzour.android.settings.LocalPreferences;
 
 public class AccountManagerActivity extends BaseActivity{
@@ -45,10 +46,18 @@ public class AccountManagerActivity extends BaseActivity{
 	}
 	
 	public void show(){
+		logout = (Button)findViewById(R.id.logout);
+		// logout
+		logout.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				showLogoutDialog();
+			}
+		});
 		if (this.account == null){
 			mToastHandler.post(new Runnable(){
 	    		   public void run(){
-	    			  Toast.makeText(AccountManagerActivity.this, "获取账号信息失败！", Toast.LENGTH_SHORT).show();
+	    			  Toast.makeText(AccountManagerActivity.this, "获取账号信息失败，请尝试注销后重新登录", Toast.LENGTH_SHORT).show();
 	    		   }
 	    	   });
 			return;
@@ -61,14 +70,6 @@ public class AccountManagerActivity extends BaseActivity{
 		TextView integral = (TextView)findViewById(R.id.account_integral_value);
 		integral.setText(account.getIntegral() + "");
 		// TODO add onclick listener for change password and email
-		logout = (Button)findViewById(R.id.logout);
-		// logout
-		logout.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				showLogoutDialog();
-			}
-		});
 	}
 	
 	public void logout(){
@@ -112,7 +113,18 @@ public class AccountManagerActivity extends BaseActivity{
 		
 		@Override
 		protected Boolean doInBackground(String... arg0) {
-			UserAccount account = AcountApi.getUserAcountDetail(user);
+			UserAccountResult result = AcountApi.getUserAcountDetail(user);
+			UserAccount account = result.getAccount();
+			if (result != null && result.isNeedLogin()){
+				try {
+					Log.e(TAG, "get account detail failed, try login again");
+					AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				result = AcountApi.getUserAcountDetail(user);
+				account = result.getAccount();
+			}
 			this.activity.setAccountResult(account);
 			return true;
 		}

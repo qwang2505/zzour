@@ -120,7 +120,6 @@ public class OrderDAO extends CustomSqliteHelper {
 		while (cursor.moveToNext()){
 			OrderSummary os = new OrderSummary();
 			os.setId(cursor.getString(cursor.getColumnIndex(FIELD_ID)));
-			os.setImage(cursor.getString(cursor.getColumnIndex(FIELD_IMAGE)));
 			os.setPrice(cursor.getFloat(cursor.getColumnIndex(FIELD_TOTAL_PRICE)));
 			os.setShopName(cursor.getString(cursor.getColumnIndex(FIELD_NAMES)));
 			os.setTime(cursor.getString(cursor.getColumnIndex(FIELD_TIME)));
@@ -144,7 +143,6 @@ public class OrderDAO extends CustomSqliteHelper {
 		while (cursor.moveToNext()){
 			OrderSummary os = new OrderSummary();
 			os.setId(cursor.getString(cursor.getColumnIndex(FIELD_ID)));
-			os.setImage(cursor.getString(cursor.getColumnIndex(FIELD_IMAGE)));
 			os.setPrice(cursor.getFloat(cursor.getColumnIndex(FIELD_TOTAL_PRICE)));
 			os.setShopName(cursor.getString(cursor.getColumnIndex(FIELD_NAMES)));
 			os.setTime(cursor.getString(cursor.getColumnIndex(FIELD_TIME)));

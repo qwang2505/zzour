@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.zzour.android.R;
+import com.zzour.android.ShopDetailActivity;
 import com.zzour.android.models.Food;
 
 import android.app.Activity;
@@ -31,15 +32,15 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 	private ArrayList<String> categories = new ArrayList<String>();
 	private ArrayList<ArrayList<Food>> foods = new ArrayList<ArrayList<Food>>();
 	
-	private Activity mContext;
+	private ShopDetailActivity mActivity;
 	
 	private AlertDialog mNumberPicker;
 	
 	private int mCurrentGroup = -1;
 	private int mCurrentPosition = -1;
 	
-	public ShopDetailAdapter(Activity context){
-		mContext = context;
+	public ShopDetailAdapter(ShopDetailActivity context){
+		mActivity = context;
 	}
 	
 	public void setFoods(String category, ArrayList<Food> foodList){
@@ -66,7 +67,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
         AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 64);
 
-        TextView textView = new TextView(mContext);
+        TextView textView = new TextView(mActivity);
         textView.setLayoutParams(lp);
         // Center the text vertically
         textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -110,7 +111,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
             View convertView, ViewGroup parent) {
 		if (convertView == null){
-			convertView = LayoutInflater.from(mContext).inflate(R.layout.food_item, null);
+			convertView = LayoutInflater.from(mActivity).inflate(R.layout.food_item, null);
 			FoodViewCache cache = new FoodViewCache();
 			cache.name = (TextView)convertView.findViewById(R.id.food_name);
 			cache.price = (TextView)convertView.findViewById(R.id.food_price);
@@ -175,7 +176,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
             ViewGroup parent) {
         TextView textView = getGenericView();
         textView.setText(getGroup(groupPosition).toString());
-        textView.setBackgroundColor(mContext.getResources().getColor(R.color.shop_detail_category_background_color));
+        textView.setBackgroundColor(mActivity.getResources().getColor(R.color.shop_detail_category_background_color));
         textView.setTextColor(Color.WHITE);
         //isExpanded = true;
         //ExpandableListView eLV = (ExpandableListView) parent;
@@ -194,7 +195,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 	}
 	
 	public void showNumberPickerDialog(int number){
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		builder.setCancelable(false);
 		builder.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener(){
 			@Override
@@ -221,7 +222,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 				return;
 			}
 		});
-		View view = LayoutInflater.from(mContext).inflate(R.layout.number_picker_main, null);
+		View view = LayoutInflater.from(mActivity).inflate(R.layout.number_picker_main, null);
 		((TextView)view.findViewById(R.id.numpicker_input)).setText("" + number);
 		builder.setView(view);
 		mNumberPicker = builder.create();
@@ -238,6 +239,9 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 	}
 	
 	public void updateTotal(){
+		if (!mActivity.isOnline()){
+			return;
+		}
 		float total = 0f;
 		Iterator<ArrayList<Food>> it1 = foods.iterator();
 		while (it1.hasNext()){
@@ -249,8 +253,8 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 				}
 			}
 		}
-		TextView symbol = (TextView)mContext.findViewById(R.id.money_symbol);
-		TextView number = (TextView)mContext.findViewById(R.id.total_money);
+		TextView symbol = (TextView)mActivity.findViewById(R.id.money_symbol);
+		TextView number = (TextView)mActivity.findViewById(R.id.total_money);
 		if (total > 0){
 			Log.d(TAG, "should show number");
 			symbol.setVisibility(View.VISIBLE);

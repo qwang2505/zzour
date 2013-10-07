@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#efecea"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:id="@+id/top_block"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:background="@drawable/top_bar_background"
+    	android:paddingBottom="3dp"
+    	android:orientation="vertical">
+    	
+    	<Button android:id="@+id/back_btn"
+		    android:layout_width="wrap_content"
+		    android:layout_height="35dp"
+		    android:layout_margin="3dp"
+		    android:textColor="#ffffff"
+		    android:background="@drawable/back_button"
+		    android:layout_centerVertical="true"
+		    android:text="@string/back_button_text" />
+    	
+    	<TextView android:id="@+id/cart_title_text"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_centerHorizontal="true"
+    	    android:layout_centerVertical="true"
+    	    android:textSize="25sp"
+    	    android:paddingTop="3dp"
+    	    android:paddingBottom="3dp"
+    	    android:textColor="#eeeeee"
+    	    android:text="@string/cart_title"/>
+    </RelativeLayout>
+
+	<ScrollView android:layout_below="@id/top_block"
+	    android:layout_width="match_parent"
+	    android:layout_marginBottom="50dp"
+	    android:layout_height="match_parent">
+	
+		<LinearLayout android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical">
+		    
+		    <TextView android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp"
+		        android:id="@+id/shop_name"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:paddingLeft="3dp"
+		        android:textColor="@color/text_color"
+		        android:text="@string/product_info_text" />
+		    <ImageView
+		    	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/seperator3" />
+		    
+		    <LinearLayout android:id="@+id/products"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" 
+		        android:orientation="vertical"/>
+		        
+		    <RelativeLayout android:id="@+id/price_info"
+		        android:layout_width="match_parent"
+		        android:paddingTop="5dp"
+		        android:paddingBottom="5dp"
+		        android:layout_height="wrap_content">
+		        <TextView android:id="@+id/total_price_info_2"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_alignParentRight="true"
+		            android:paddingRight="5dp"
+		            android:textColor="#f48e4c"
+		            android:text="(不含餐盒费)" />
+		        <TextView android:id="@+id/total_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_toLeftOf="@id/total_price_info_2"
+		            android:paddingRight="5dp"
+		            android:textColor="#c51e1e"
+		            android:text="￥0.0" />
+		        <TextView android:id="@+id/total_price_info"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="3dp"
+		            android:layout_toLeftOf="@id/total_price"
+		            android:text="@string/total_price_text" />
+		        
+		    </RelativeLayout>
+		    
+		    <LinearLayout android:id="@+id/tip"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:background="#ffffff"
+		        android:padding="5dp"
+		        android:orientation="vertical">
+		        <TextView android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="温馨提醒："
+		            android:textColor="#f48e4c"/>
+		        <TextView android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:paddingLeft="10dp"
+		            android:text="部分商品需加收餐盒费，请以商家实际收取为准"
+		            android:textColor="#89837f"/>
+		    </LinearLayout>
+		    
+		</LinearLayout>
+		    
+	</ScrollView>
+	
+	<Button android:id="@+id/dial" 
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/go_to_dial"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffffff" />
+
+</RelativeLayout>

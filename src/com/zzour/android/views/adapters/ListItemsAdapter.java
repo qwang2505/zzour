@@ -9,11 +9,15 @@ import com.zzour.android.utils.ImageTool;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -63,13 +67,19 @@ public class ListItemsAdapter extends BaseAdapter{
 		}
 		return shops.get(position);
 	}
+	
+	private String getTitle(ShopSummaryContent shop){
+		String title = shop.getName();
+		String online = shop.isOnlineOrder() ? "<div style='float:right;background-color:#f28a49;color:#ffffff'>在线下单</div>" : "<div style='float:right;background-color:#efecea;color:#f28a49'>电话订餐</div>";
+		return "<div style='float:left'>" + title + "</div>" + online;
+	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// use cache for optimize
 		if(convertView==null){
 			convertView=LayoutInflater.from(mContext).inflate(R.layout.item, null);
 			ItemViewCache viewCache=new ItemViewCache();
-			viewCache.mTitleView=(TextView)convertView.findViewById(R.id.item_title);
+			viewCache.mTitleView=(WebView)convertView.findViewById(R.id.item_title);
 			viewCache.mDescView = (TextView)convertView.findViewById(R.id.item_credit);
 			viewCache.mImageView = (ImageView)convertView.findViewById(R.id.item_image);
 			viewCache.mItemRating = (RatingBar)convertView.findViewById(R.id.item_rating);
@@ -77,7 +87,10 @@ public class ListItemsAdapter extends BaseAdapter{
 		}
 		ItemViewCache cache=(ItemViewCache)convertView.getTag();
 		
-		cache.mTitleView.setText(shops.get(position).getName());
+		//cache.mTitleView.setText(shops.get(position).getName());
+		cache.mTitleView.loadData(this.getTitle(shops.get(position)), "text/html; charset=UTF-8", null);
+		cache.mTitleView.setOnTouchListener(new WebViewClickListener(cache.mTitleView, parent, position));
+		cache.mTitleView.setFocusableInTouchMode(false);
 		cache.mDescView.setText(shops.get(position).getCreditValue() + "人认为该店不错");
 		cache.mItemRating.setRating(shops.get(position).getGrade());
 		Bitmap bmp = shops.get(position).getBitmap();
@@ -92,9 +105,40 @@ public class ListItemsAdapter extends BaseAdapter{
 	}
 
 	private static class ItemViewCache{
-		public TextView mTitleView;
+		public WebView mTitleView;
 		public TextView mDescView;
 		public ImageView mImageView;
 		public RatingBar mItemRating;
+	}
+	
+	private class WebViewClickListener implements View.OnTouchListener {
+	    private int position;
+	    private ViewGroup vg;
+	    private WebView wv;
+	  
+	    public WebViewClickListener(WebView wv, ViewGroup vg, int position) {
+	        this.vg = vg;
+	        this.position = position;
+	        this.wv = wv;
+	    }
+	  
+	    public boolean onTouch(View v, MotionEvent event) {
+	        int action = event.getAction();
+	  
+	        switch (action) {
+	            case MotionEvent.ACTION_CANCEL:
+	                return true;
+	            case MotionEvent.ACTION_UP:
+	                sendClick();
+	                return true;
+	        }
+	  
+	        return false;
+	    }
+	  
+	    public void sendClick() {
+	        ListView lv = (ListView) vg;
+	        lv.performItemClick(wv, position+1, 0);
+	    }
 	}
 }

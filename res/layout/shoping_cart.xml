@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#efecea"
     android:orientation="vertical">
     
     <RelativeLayout
@@ -55,7 +56,7 @@
 		    	android:layout_width="match_parent"
 		    	android:layout_height="wrap_content"
 		    	android:contentDescription="@string/dot_line_desc"
-		    	android:src="@drawable/dotted" />
+		    	android:src="@drawable/seperator3" />
 		    
 		    <LinearLayout android:id="@+id/products"
 		        android:layout_width="match_parent"
@@ -67,27 +68,24 @@
 		        android:paddingTop="5dp"
 		        android:paddingBottom="5dp"
 		        android:layout_height="wrap_content">
-		        <TextView android:id="@+id/box_price_info"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:paddingLeft="3dp"
-		            android:text="@string/box_price_text" />
-		        <TextView android:id="@+id/box_price"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:textSize="15sp"
-		            android:paddingLeft="5dp"
-		            android:layout_toRightOf="@id/box_price_info"
-		            android:text="0" />
-		        <TextView android:id="@+id/total_price"
+		        <TextView android:id="@+id/total_price_info_2"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:textSize="15sp"
 		            android:paddingLeft="5dp"
 		            android:layout_alignParentRight="true"
 		            android:paddingRight="5dp"
-		            android:text="0" />
+		            android:textColor="#f48e4c"
+		            android:text="(不含餐盒费)" />
+		        <TextView android:id="@+id/total_price"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="15sp"
+		            android:paddingLeft="5dp"
+		            android:layout_toLeftOf="@id/total_price_info_2"
+		            android:paddingRight="5dp"
+		            android:textColor="#c51e1e"
+		            android:text="￥10.0" />
 		        <TextView android:id="@+id/total_price_info"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
@@ -97,6 +95,23 @@
 		            android:text="@string/total_price_text" />
 		        
 		    </RelativeLayout>
+		    
+		    <LinearLayout android:id="@+id/tip"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:background="#ffffff"
+		        android:padding="5dp"
+		        android:orientation="vertical">
+		        <TextView android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="温馨提醒："
+		            android:textColor="#f48e4c"/>
+		        <TextView android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:paddingLeft="10dp"
+		            android:text="部分商品需加收餐盒费，请以商家实际收取为准"
+		            android:textColor="#89837f"/>
+		    </LinearLayout>
 		    
 		    <LinearLayout android:id="@+id/address_info"
 		        android:layout_width="match_parent"
@@ -115,7 +130,7 @@
 		    		android:layout_width="match_parent"
 		    		android:layout_height="wrap_content"
 		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
+		    		android:src="@drawable/seperator3" />
 		
 		    	<!-- old address here -->
 		    	<RadioButton
@@ -144,7 +159,7 @@
 		    		android:layout_width="match_parent"
 		    		android:layout_height="wrap_content"
 		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
+		    		android:src="@drawable/seperator3" />
 		        
 		        <Spinner android:id="@+id/time_spinner"   
 		           	android:layout_width="wrap_content"  
@@ -160,6 +175,8 @@
 		    <LinearLayout android:id="@+id/message_info"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true"
 		        android:orientation="vertical">
 		        
 		        <TextView android:layout_width="match_parent"
@@ -175,7 +192,7 @@
 		    		android:layout_width="match_parent"
 		    		android:layout_height="wrap_content"
 		    		android:contentDescription="@string/dot_line_desc"
-		    		android:src="@drawable/dotted" />
+		    		android:src="@drawable/seperator3" />
 		        
 		        <EditText android:id="@+id/message"
 		    		android:layout_width="fill_parent"

@@ -17,10 +17,12 @@ public class BaseActivity extends Activity{
 	public void onBackPressed(){
 		// not all back to main
 		if (!ActivityTool.shouldBackToMain(this) && !backToMain){
+			Log.e(TAG, "on back pressed");
 			super.onBackPressed();
 			overridePendingTransition(R.anim.left_slide_in, R.anim.right_slide_out);
 			return;
 		}
+		Log.e(TAG, "back to main");
 		ActivityTool.backToMain(this, null);
 	}
 	
