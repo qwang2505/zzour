@@ -93,6 +93,7 @@ public class ShopDetailApi {
 		try {
 			//JSONTokener jsonObj = new JSONTokener(data);
 			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
+			Log.e("ZZOUR", "shop deta data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			String error = dataObj.getString("msg");
 			boolean done = dataObj.getBoolean("done");
@@ -127,6 +128,7 @@ public class ShopDetailApi {
 			shop.setSendTime(storeObj.getString("send_time"));
 			shop.setGoodsCount(storeObj.getInt("goods_count"));
 			shop.setPraiseRate((float)storeObj.getDouble("praise_rate"));
+			shop.setCreditValue(storeObj.getInt("credit_value"));
 			shop.setLive(storeObj.getInt("if_live") == 1);
 			shop.setShopHours(storeObj.getString("shop_hours"));
 			shop.setTelephone(storeObj.getString("tel"));

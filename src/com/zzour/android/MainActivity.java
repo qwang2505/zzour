@@ -1,6 +1,9 @@
 package com.zzour.android;
 
 import com.zzour.android.interfaces.OnTabActivityResultListener;
+import com.zzour.android.models.User;
+import com.zzour.android.network.api.AcountApi;
+import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityAnimations;
 import com.zzour.android.utils.ActivityTool;
 
@@ -8,6 +11,7 @@ import android.app.Activity;
 import android.app.LocalActivityManager;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
-import android.widget.TextView;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends TabActivity{
@@ -31,6 +34,9 @@ public class MainActivity extends TabActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_main);
 		ActivityTool.setMainActivity(this);
+		
+		// start background task to login
+		new LoginTask(this).execute();
  
 		mTabHost = getTabHost();
 		mlam = new LocalActivityManager(this, true);
@@ -72,14 +78,6 @@ public class MainActivity extends TabActivity{
 
 	            index = getTabHost().getCurrentTab();
 	            mView = mTabHost.getCurrentView();
-//	            if (tabId.equals("orderList")){
-//	            	try {
-//						mlam.dispatchResume();
-//						Log.e("ZZOUR", "trigger dispatch resume finished for orderList");
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//	            }
 			}
 		});
 	}
@@ -148,4 +146,39 @@ public class MainActivity extends TabActivity{
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+	
+	
+	private class LoginTask extends AsyncTask<String, Void, Boolean> {
+		
+		private MainActivity activity = null;
+
+		public LoginTask(MainActivity activity) {
+	        this.activity = activity;
+	    }
+		
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			boolean authed = LocalPreferences.localAuthed(activity);
+			if (!authed){
+				Log.d("ZZOUR", "not local authed, exit login task");
+				return true;
+			}
+			try {
+				User user = LocalPreferences.getUser(activity);
+				AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+			} catch (Exception e){
+				e.printStackTrace();
+				Log.e("ZZOUR", "background login failed");
+			}
+			return true;
+		}
+		
+		protected void onPreExecute() {
+	    }
+
+	        @Override
+	    protected void onPostExecute(final Boolean success) {
+	        Log.d("ZZOUR", "background login finished, success: " + LocalPreferences.authed(activity));
+	    }
+	}
 }

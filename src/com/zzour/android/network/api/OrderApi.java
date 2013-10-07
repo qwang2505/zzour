@@ -4,10 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -24,29 +22,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
-import com.zzour.android.models.Order;
-import com.zzour.android.models.OrderFormResult;
-import com.zzour.android.models.ApiResult;
 import com.zzour.android.models.ShipMethod;
 import com.zzour.android.models.SimpleOrder;
 import com.zzour.android.models.User;
-import com.zzour.android.models.dao.OrderDAO;
+import com.zzour.android.network.api.results.AddAllResult;
+import com.zzour.android.network.api.results.ApiResult;
+import com.zzour.android.network.api.results.OrderFormResult;
 import com.zzour.android.settings.GlobalSettings;
 
 public class OrderApi {
 	
-	private static String addAllPath = "/index.php?app=cart&act=addAlls&method=ajax";
-	private static String addPath = "/index.php?app=cart&act=add&method=ajax";
-	private static String orderFormPath = "/index.php?app=order&goods=cart&method=ajax";
-	private static String clearCartPath = "/index.php?app=cart&act=clearCart";
-	private static String orderPath = "/index.php?app=order&goods=cart&method=ajax";
-	private static String removeFoodPath = "/index.php?app=cart&act=drop&method=ajax";
-	private static String updateFoodPath = "/index.php?app=cart&act=update";
+	private static String addAllPath = "/index.php?app=cart&act=addAlls&method=ajax&ajax=1";
+	private static String addPath = "/index.php?app=cart&act=add&method=ajax&ajax=1";
+	private static String orderFormPath = "/index.php?app=order&goods=cart&method=ajax&ajax=1";
+	private static String clearCartPath = "/index.php?app=cart&act=clearCart&ajax=1";
+	private static String orderPath = "/index.php?app=order&goods=cart&method=ajax&ajax=1";
+	private static String removeFoodPath = "/index.php?app=cart&act=drop&method=ajax&ajax=1";
+	private static String updateFoodPath = "/index.php?app=cart&act=update&ajax=1";
 	private static final String sessionName = "ECM_ID";
 	
 	private static String buildOrderFormUrl(int shopId){
@@ -85,13 +81,21 @@ public class OrderApi {
 		OrderFormResult result = new OrderFormResult();
 		Log.e("ZZOUR", "order form response data: " + data);
 		try {
-			//JSONTokener jsonObj = new JSONTokener(data);
-			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
 			if (!success){
-				Log.e("ZZOUR", "get order form failed: success is false");
-				return null;
+				String msg = null;
+				try {
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				result.setMsg(msg);
+				if (msg != null && msg.startsWith("您需要先登录")){
+					result.setNeedLogin(true);
+				}
+				return result;
 			}
 			JSONObject retval = dataObj.getJSONObject("retval");
 			JSONObject goodsInfo = retval.getJSONObject("goods_info");
@@ -129,6 +133,7 @@ public class OrderApi {
 				}
 			} catch (Exception e){
 				Log.e("ZZOUR", "get address failed");
+				e.printStackTrace();
 			}
 			JSONObject shipMethodsObj = form.getJSONObject("shipping_methods");
 			JSONArray methodsIds = shipMethodsObj.names();
@@ -146,103 +151,15 @@ public class OrderApi {
 			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
-			return null;
-		}
-	}
-	
-	public static boolean addAll(ArrayList<Food> foods, User user){
-		Iterator<Food> it = foods.iterator();
-		String specIds = "{";
-		String count = "{";
-		boolean first = true;
-		while (it.hasNext()){
-			Food food = it.next();
-			if (first){
-				specIds += food.getSpecId();
-				count += food.getBuyCount();
-				first = false;
-			} else {
-				specIds += "," + food.getSpecId();
-				count += "," + food.getBuyCount();
-			}
-		}
-		specIds += "}";
-		count += "}";
-		//String data = postAddAll(specIds, count, user.getSession());
-		String data = postAddAll2(foods, user.getSession());
-		return parseResult(data);
-	}
-	
-	public static boolean add(ArrayList<Food> foods, User user){
-		Iterator<Food> it = foods.iterator();
-		int specId = 0;
-		int count = 0;
-		while (it.hasNext()){
-			Food food = it.next();
-			specId = food.getSpecId();
-			count = food.getBuyCount();
-			break;
-		}
-		String data = null;
-		if (count != 0){
-			data = postAdd(specId, count, user.getSession());
-		}
-		return parseResult(data);
-	}
-	
-	public static ApiResult add(Food food, User user){
-		int specId = food.getSpecId();
-		int count = food.getBuyCount();
-		String data = null;
-		if (count != 0){
-			data = postAdd(specId, count, user.getSession());
-		}
-		return parseAddResult(data);
-	}
-	
-	private static ApiResult parseAddResult(String data){
-		if (data == null || data.length() == 0){
-			return null;
-		}
-		try {
-			Log.e("ZZOUR", "remove food response data: " + data);
-			JSONObject dataObj = new JSONObject(data);
-			boolean success = dataObj.getBoolean("done");
-			String msg = dataObj.getString("msg");
-			ApiResult result = new ApiResult();
-			result.setMsg(msg);
-			result.setSuccess(success);
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
 			return result;
-		} catch (JSONException ex){
-			Log.e("ZZOUR", "error in parse remove food result:　" + ex);
-			return null;
 		}
 	}
 	
-	private static String buildAddUrl(int specId, int count){
-		return GlobalSettings.getServerAddress() + addPath + "&spec_id=" + specId + "&quantity=" + count;
-	}
-	
-	private static String postAdd(int specId, int count, String session){
-		String src = buildAddUrl(specId, count);
-		Log.e("ZZOUR", "get data from " + src);
-		InputStream content = null;
-		try {
-			DefaultHttpClient httpclient = new DefaultHttpClient();
-		    CookieStore cookieStore = httpclient.getCookieStore();
-		    BasicClientCookie cookie = new BasicClientCookie(sessionName, session);
-		    cookie.setDomain(GlobalSettings.server);
-		    cookie.setPath("/");
-		    cookieStore.addCookie(cookie);
-		    httpclient.setCookieStore(cookieStore);
-		    HttpResponse response = httpclient.execute(new HttpGet(src));
-		    content = response.getEntity().getContent();
-		    byte[] buf = readInputStream(content);
-		    return (new String(buf));
-		} catch (Exception e) {
-		    Log.e("ZZOUR", "Network exception", e);
-		    return null;
-		}
+	public static AddAllResult addAll(ArrayList<Food> foods, User user){
+		String data = postAddAll(foods, user.getSession());
+		return parseResult(data);
 	}
 	
 	private static byte[] readInputStream(InputStream inStream) throws Exception{
@@ -256,21 +173,36 @@ public class OrderApi {
         return outStream.toByteArray();  
     }
 	
-	private static boolean parseResult(String data){
+	private static AddAllResult parseResult(String data){
+		AddAllResult result = new AddAllResult();
 		try {
 			Log.e("ZZOUR", "add response data: " + data);
-			//JSONTokener jsonObj = new JSONTokener(data);
-			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
-			return success;
+			result.setSuccess(success);
+			if (!success){
+				String msg = null;
+				try {
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				if (msg != null && msg.startsWith("您需要先登录")){
+					result.setNeedLogin(true);
+				}
+				result.setMsg(msg);
+			}
+			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
-			return false;
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	
-	private static String postAddAll2(ArrayList<Food> foods, String session){
+	private static String postAddAll(ArrayList<Food> foods, String session){
 	    // Create a new HttpClient and Post Header
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(buildAddAllUrl());
@@ -300,11 +232,11 @@ public class OrderApi {
 	        	return null;
 	        }
 	    } catch (ClientProtocolException e) {
-	        // Auto-generated catch block
+	    	e.printStackTrace();
 	    	Log.e("ZZOUR", "Add to cart failed with exception: " + e);
 	    	return null;
 	    } catch (IOException e) {
-	        // Auto-generated catch block
+	    	e.printStackTrace();
 	    	Log.e("ZZOUR", "Add to cart failed with exception: " + e);
 	    	return null;
 	    }
@@ -315,21 +247,26 @@ public class OrderApi {
 	}
 	
 	private static ApiResult parseClearCartResult(String data){
+		ApiResult result = new ApiResult();
 		if (data == null || data.length() == 0){
-			return null;
+			result.setSuccess(false);
+			result.setMsg("返回结果为空，请检查网络设置");
+			return result;
 		}
 		try {
 			Log.e("ZZOUR", "add response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
 			String msg = dataObj.getString("msg");
-			ApiResult result = new ApiResult();
 			result.setSuccess(success);
 			result.setMsg(msg);
 			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
-			return null;
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	
@@ -352,6 +289,7 @@ public class OrderApi {
 		    data = (new String(buf));
 		} catch (Exception e) {
 		    Log.e("ZZOUR", "Network exception", e);
+		    e.printStackTrace();
 		    data = null;
 		}
 		if (data == null){
@@ -388,8 +326,6 @@ public class OrderApi {
 	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	        CookieStore cookieStore = httpclient.getCookieStore();
 	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
-	        Log.e("ZZOUR", sessionName);
-	        Log.e("ZZOUR", user.getSession());
 		    cookie.setDomain(GlobalSettings.server);
 		    cookie.setPath("/");
 		    cookieStore.addCookie(cookie);
@@ -414,44 +350,57 @@ public class OrderApi {
 	}
 	
 	private static ApiResult parseOrderResult(String data){
+		ApiResult result = new ApiResult();
 		if (data == null || data.length() == 0){
-			return null;
+			result.setSuccess(false);
+			result.setMsg("返回结果为空，请检查网络设置");
+			return result;
 		}
 		try {
 			Log.e("ZZOUR", "order response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
 			String msg = dataObj.getString("msg");
-			ApiResult result = new ApiResult();
+			if (msg != null && msg.startsWith("您需要先登录")){
+				result.setNeedLogin(true);
+			}
 			result.setMsg(msg);
 			result.setSuccess(success);
 			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
-			return null;
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	
 	private static ApiResult parseRemoveResult(String data){
+		ApiResult result = new ApiResult();
 		if (data == null || data.length() == 0){
 			Log.e("ZZOUR", "remove food response is null or empty: " + data);
-			if (data == null){
-				Log.e("ZZOUR", "data is null");
-			}
-			return null;
+			result.setSuccess(false);
+			result.setMsg("返回结果为空，请检查网络设置");
+			return result;
 		}
 		try {
 			Log.e("ZZOUR", "remove food response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
 			String msg = dataObj.getString("msg");
-			ApiResult result = new ApiResult();
+			if (msg != null && msg.startsWith("您需要先登录")){
+				result.setNeedLogin(true);
+			}
 			result.setMsg(msg);
 			result.setSuccess(success);
 			return result;
 		} catch (JSONException ex){
+			ex.printStackTrace();
 			Log.e("ZZOUR", "error in parse remove food result:　" + ex);
-			return null;
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	
@@ -520,25 +469,30 @@ public class OrderApi {
 	}
 	
 	private static ApiResult parseUpdateResult(String data){
+		ApiResult result = new ApiResult();
 		if (data == null || data.length() == 0){
 			Log.e("ZZOUR", "update food response is null or empty: " + data);
-			if (data == null){
-				Log.e("ZZOUR", "data is null");
-			}
-			return null;
+			result.setSuccess(false);
+			result.setMsg("返回结果为空，请检查网络设置");
+			return result;
 		}
 		try {
 			Log.e("ZZOUR", "update food response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
 			String msg = dataObj.getString("msg");
-			ApiResult result = new ApiResult();
+			if (msg != null && msg.startsWith("您需要先登录")){
+				result.setNeedLogin(true);
+			}
 			result.setMsg(msg);
 			result.setSuccess(success);
 			return result;
 		} catch (JSONException ex){
+			ex.printStackTrace();
 			Log.e("ZZOUR", "error in parse remove food result:　" + ex);
-			return null;
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 }

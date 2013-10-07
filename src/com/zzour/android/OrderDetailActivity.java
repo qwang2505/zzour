@@ -17,12 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zzour.android.base.BaseActivity;
-import com.zzour.android.models.ApiResult;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.OrderDetail;
 import com.zzour.android.models.OrderLog;
 import com.zzour.android.models.User;
+import com.zzour.android.network.api.AcountApi;
 import com.zzour.android.network.api.MyOrderApi;
+import com.zzour.android.network.api.results.ApiResult;
+import com.zzour.android.network.api.results.OrderDetailResult;
 import com.zzour.android.settings.GlobalSettings;
 import com.zzour.android.settings.LocalPreferences;
 
@@ -133,7 +135,15 @@ public class OrderDetailActivity extends BaseActivity{
 		protected Boolean doInBackground(String... arg0) {
 			// call api to get order detail
 			User user = LocalPreferences.getUser(activity);
-			OrderDetail order = MyOrderApi.getOrderDetail(orderId, user);
+			OrderDetailResult result = MyOrderApi.getOrderDetail(orderId, user);
+			if (result != null && result.isNeedLogin() && !result.isSuccess()){
+				AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+				result = MyOrderApi.getOrderDetail(orderId, user);
+			}
+			if (result == null){
+				return true;
+			}
+			OrderDetail order = result.getOrder();
 			activity.setOrderDetailResult(order);
 			return true;
 		}
@@ -163,7 +173,7 @@ public class OrderDetailActivity extends BaseActivity{
 			return;
 		} else {
 			Toast.makeText(getApplicationContext(), "确认收货成功", Toast.LENGTH_SHORT).show();
-			// TODO update status text
+			// update status text
 			((TextView)findViewById(R.id.status)).setText("已完成");
 			return;
 		}
@@ -186,6 +196,7 @@ public class OrderDetailActivity extends BaseActivity{
 			// call api to get order detail
 			User user = LocalPreferences.getUser(activity);
 			// call finish order
+			// do not check
 			ApiResult result = MyOrderApi.finishOrder(orderId, user);
 			activity.setFinishOrderResult(result);
 			return true;

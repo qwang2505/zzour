@@ -7,16 +7,14 @@ import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.ShopDetailContent;
 import com.zzour.android.models.ShoppingCart;
-import com.zzour.android.models.User;
+import com.zzour.android.models.dao.CollectionDAO;
 import com.zzour.android.network.api.ShopDetailApi;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
-import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.ShopDetailAdapter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,25 +24,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ShopDetailActivity extends BaseActivity{
 	
-	private static final String TAG = "ZZOUR";
+	private final int LOGIN_REQUEST_CODE = 100;
+	private final int DIAL_LOGIN_REQUEST_CODE = 101;
 	
 	private ShopDetailAdapter mAdapter = null;
 	private View mHeaderView = null;
 	private ShopDetailContent mShop = null;
-	private ImageView mBanner = null;
-	
-	private Handler mLoadImageHandler = new Handler();
 	private Handler mToastHandler = new Handler();
-	private Bitmap mBitmap = null;
 	
 	private int mShopId = -1;
 	
@@ -77,7 +70,29 @@ public class ShopDetailActivity extends BaseActivity{
 				return;
 			}
 		});
-		
+		CollectionDAO dao = new CollectionDAO(this);
+		boolean collected = dao.exists(mShopId);
+		if (!collected) {
+			Button btn = (Button) findViewById(R.id.collect_btn);
+			btn.setVisibility(Button.VISIBLE);
+			btn.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View arg0) {
+							// add to collect
+							if (mShop == null) {
+								Toast.makeText(getApplicationContext(),
+										"请加载完成后再进行收藏", Toast.LENGTH_SHORT)
+										.show();
+								return;
+							}
+							CollectionDAO dao = new CollectionDAO(
+									ShopDetailActivity.this);
+							dao.insert(mShop);
+							Toast.makeText(getApplicationContext(), "收藏成功", Toast.LENGTH_SHORT).show();
+							return;
+						}
+					});
+		}
 		// load data in async task
 		new LoadingTask(this).execute();
 	}
@@ -124,7 +139,7 @@ public class ShopDetailActivity extends BaseActivity{
 				public void onClick(View view) {
 					// if buy any, save into cart
 					ArrayList<Food> foods = mAdapter.getBoughtFoods();
-					/*if (foods.size() == 0){
+					if (foods.size() == 0){
 						// give out toast
 						mToastHandler.post(new Runnable(){
 			 	    		   public void run(){
@@ -132,21 +147,17 @@ public class ShopDetailActivity extends BaseActivity{
 			 	    		   }
 			 	    	   });
 						return;
-					}*/
-					// TODO check if already login. If not, require login first
-					User user = LocalPreferences.getUser(ShopDetailActivity.this);
-					if (user == null){
-						// give out toast
-						mToastHandler.post(new Runnable(){
-			 	    		   public void run(){
-			 	    			  Toast.makeText(ShopDetailActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
-			 	    		   }
-			 	    	   });
+					}
+					// save foods to shopping cart
+					ShoppingCart.saveFoods(mShop, foods);
+					// check if already login. If not, require login first
+					if (!LocalPreferences.authed(ShopDetailActivity.this)){
+						// start activity for result to login
+						Intent intent2 = new Intent(ShopDetailActivity.this, LoginActivity.class);
+						ActivityTool.startActivityForResult(ShopDetailActivity.this, LoginActivity.class, LOGIN_REQUEST_CODE, intent2);
+						Toast.makeText(ShopDetailActivity.this, "请先登陆", Toast.LENGTH_SHORT).show();
 						return;
 					}
-					// go to shopping cart.
-					ShoppingCart.saveFoods(mShop, foods);
-					Log.d(TAG, "save foods");
 					ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
 				}
 			});
@@ -160,19 +171,17 @@ public class ShopDetailActivity extends BaseActivity{
 				public void onClick(View view) {
 					// if buy any, save into cart
 					ArrayList<Food> foods = mAdapter.getBoughtFoods();
+					// save to shopping cart
+					ShoppingCart.saveFoods(mShop, foods);
 					// TODO if dial, need login or not?
-					User user = LocalPreferences.getUser(ShopDetailActivity.this);
-					if (user == null){
-						// give out toast
-						mToastHandler.post(new Runnable(){
-			 	    		   public void run(){
-			 	    			  Toast.makeText(ShopDetailActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
-			 	    		   }
-			 	    	   });
+					if (!LocalPreferences.authed(ShopDetailActivity.this)){
+						// start activity for result to login
+						Intent intent2 = new Intent(ShopDetailActivity.this, LoginActivity.class);
+						ActivityTool.startActivityForResult(ShopDetailActivity.this, LoginActivity.class, DIAL_LOGIN_REQUEST_CODE, intent2);
+						Toast.makeText(ShopDetailActivity.this, "请先登陆", Toast.LENGTH_SHORT).show();
 						return;
 					}
 					// go to shopping cart.
-					ShoppingCart.saveFoods(mShop, foods);
 					Intent intent = new Intent(ShopDetailActivity.this, ShoppingDialActivity.class);
 					intent.putExtra("shop_id", mShop.getId());
 					intent.putExtra("shop_phone", mShop.getTelephone());
@@ -209,29 +218,6 @@ public class ShopDetailActivity extends BaseActivity{
 		//mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
 		DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        final int width = metrics.widthPixels - 20;
-        // get real image in new thread
-        /*
-		Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.logo, getResources().openRawResource(R.drawable.logo), 
-				width, 
-				(int)getResources().getDimension(R.dimen.detail_banner_height));
-		mBanner.setImageBitmap(bmp);
-		new Thread(new Runnable() {
-	 	       @Override
-	 	       public void run() {
-	 	    	   mBitmap = ImageTool.getBitmapByUrl(mShop.getBanner(), width, (int)getResources().getDimension(R.dimen.detail_banner_height), ShopDetailActivity.this);
-	 	    	   mLoadImageHandler.post(new Runnable(){
-	 	    		   public void run(){
-	 	    			   if (mBitmap == null){
-	 	    				   return;
-	 	    			   }
-	 	    			   mBanner.setImageBitmap(mBitmap);
-	 	    		   }
-	 	    	   });
-	 	       }
-	 	    }).start();
-	 	*/
-		// TODO initial recommends foods images
 		list.addHeaderView(mHeaderView);
 	}
 	
@@ -264,5 +250,25 @@ public class ShopDetailActivity extends BaseActivity{
 	        }
 	        this.activity.show();
 	    }
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK){
+	        switch (requestCode) {
+	        case LOGIN_REQUEST_CODE:
+	        	ActivityTool.startActivity(ShopDetailActivity.this, ShoppingCartActivity.class);
+	            break;
+	        case DIAL_LOGIN_REQUEST_CODE:
+				// go to shopping cart.
+				Intent intent = new Intent(ShopDetailActivity.this, ShoppingDialActivity.class);
+				intent.putExtra("shop_id", mShop.getId());
+				intent.putExtra("shop_phone", mShop.getTelephone());
+				ActivityTool.startActivity(ShopDetailActivity.this, ShoppingDialActivity.class, intent);
+	        	break;
+	        default:
+	            break;
+	        }
+		}
 	}
 }

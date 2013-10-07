@@ -16,11 +16,19 @@ public class ShopDetailContent extends BaseDataModel{
 	private String sendTime;
 	private int goodsCount;
 	private float praiseRate;
+	private int creditValue;
 	private boolean live;
 	private String shopHours;
 	private String telephone;
 	private String notice;
 	
+	public int getCreditValue() {
+		return creditValue;
+	}
+	public void setCreditValue(int creditValue) {
+		this.creditValue = creditValue;
+	}
+
 	public String getNotice() {
 		return notice;
 	}

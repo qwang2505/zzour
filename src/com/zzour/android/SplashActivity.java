@@ -1,19 +1,10 @@
 package com.zzour.android;
 
 import com.zzour.android.base.BaseActivity;
-import com.zzour.android.settings.GlobalSettings;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 public class SplashActivity extends BaseActivity{
 	

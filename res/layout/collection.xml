@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="40dp"
     android:orientation="vertical">
     
     <RelativeLayout android:layout_height="wrap_content"
@@ -19,9 +20,36 @@
         
 	</RelativeLayout>
 	
-    <ScrollView android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        
-    </ScrollView>
+    <RelativeLayout android:layout_width="match_parent"
+	    android:layout_height="50dp"
+	    android:background="#efecea">
+	    <TextView android:id="@+id/collection_text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#f48e4d"
+	        android:layout_marginLeft="5dp"
+	        android:layout_centerVertical="true"
+	        android:textSize="18sp"
+	        android:textStyle="bold"
+	        android:text="您收藏了以下商家"/>
+	  	<Button android:id="@+id/cancel_collect"
+	  	    android:layout_width="80dp"
+	  	    android:layout_height="36dp"
+	  	    android:layout_centerVertical="true"
+	  	    android:paddingLeft="3dp"
+	  	    android:paddingRight="3dp"
+	  	    android:textColor="#ffffff"
+	  	    android:layout_marginRight="10dp"
+	  	    android:background="#f48e4d"
+	  	    android:layout_alignParentRight="true"
+	  	    android:text="取消收藏" />
+	</RelativeLayout>
+	
+    <ListView android:id="@+id/list"
+	     android:layout_width="match_parent"
+	     android:layout_height="wrap_content"
+	     android:paddingTop="3dp"
+	     android:orientation="vertical"
+    />
     
 </LinearLayout>

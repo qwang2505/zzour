@@ -19,27 +19,18 @@ import com.zzour.android.views.adapters.ListItemsAdapter;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Toast;
 
 public class HomeActivity extends BaseActivity {
-	
-	Spinner mSearchCategory = null;
-	int mSearchCategoryValue = 0;
 	Timer mScrollTimer = null;
 	TimerTask mScrollScheduler = null;
 	HorizontalImageScrollView mImageScrollView = null;
@@ -51,12 +42,9 @@ public class HomeActivity extends BaseActivity {
 	ListItemsAdapter mAdapterTemp = null;
 	private Handler mHandler = new Handler();
 	private Handler mLoadMoreHandler = new Handler();
-	private Handler mAdapterHandler = new Handler();
 		
 	private View mLoadMoreView = null;
 	private Button mLoadMoreButton = null;
-	
-	private View mContentView = null;
 	
 	private int pageNum = 1;
 	private static final int RESULT_COUNT = 6;
@@ -64,16 +52,6 @@ public class HomeActivity extends BaseActivity {
 	private HashMap<Integer, String> mImages = new HashMap<Integer, String>();
 	
 	private long prevBackTime = 0;
-	
-	// TODO read categories from api, or at least from xml file.
-	final CharSequence[] mSearchCategories = new CharSequence[] {	
-		"…Ãº“",
-		"≤À∆∑",
-	};
-	final int[] mSearchCategoryValues = new int[]{
-		0,
-		1,
-	};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,7 +173,6 @@ public class HomeActivity extends BaseActivity {
     	}
     	pageNum += 1;
 		for (int i=0; i < shopList.size(); i++){
-			Log.e(TAG, "add shop " + i);
     		final ShopSummaryContent shop = shopList.get(i);
     		int p = mAdapterTemp.addItem(shop);
     		mImages.put(p, shop.getLogo());

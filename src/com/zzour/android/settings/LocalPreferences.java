@@ -14,6 +14,8 @@ public class LocalPreferences {
 	
 	private static SharedPreferences prefs = null;
 	
+	private static boolean authed = false;
+	
 	private static void ensurePrefs(Activity activity){
 		if (prefs == null){
 			prefs = activity.getPreferences(Activity.MODE_PRIVATE);
@@ -74,8 +76,12 @@ public class LocalPreferences {
 	}
 	
 	public static boolean authed(Activity activity){
+		return LocalPreferences.authed; 
+	}
+	
+	public static boolean localAuthed(Activity activity){
 		ensurePrefs(activity);
-		return prefs.getBoolean("user_authed", false);
+		return prefs.getBoolean("user_local_authed", false);
 	}
 	
 	public static void setUser(User user, Activity activity){
@@ -85,13 +91,14 @@ public class LocalPreferences {
 		editor.putString("user_pwd", user.getPwd());
 		editor.putString("user_session", user.getSession());
 		editor.putInt("user_auth_type", user.getType().ordinal());
-		editor.putBoolean("user_authed", true);
+		editor.putBoolean("user_local_authed", true);
+		LocalPreferences.authed = true;
 		editor.commit();
 	}
 	
 	public static User getUser(Activity activity){
 		ensurePrefs(activity);
-		if (!prefs.getBoolean("user_authed", false)){
+		if (!prefs.getBoolean("user_local_authed", false)){
 			return null;
 		}
 		String name = prefs.getString("user_name", "");
@@ -109,7 +116,8 @@ public class LocalPreferences {
 		editor.remove("user_pwd");
 		editor.remove("user_session");
 		editor.remove("user_auth_type");
-		editor.remove("user_authed");
+		editor.remove("user_local_authed");
+		LocalPreferences.authed = false;
 		editor.commit();
 	}
 }

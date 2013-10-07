@@ -2,7 +2,7 @@ package com.zzour.android.network.api.results;
 
 import com.zzour.android.models.UserAccount;
 
-public class UserAccountResult extends BaseApiResult {
+public class UserAccountResult extends ApiResult {
 	private UserAccount account = null;
 
 	public UserAccount getAccount() {

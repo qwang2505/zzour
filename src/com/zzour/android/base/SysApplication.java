@@ -2,6 +2,9 @@ package com.zzour.android.base;
 
 import java.util.LinkedList;     
 import java.util.List;     
+
+import com.zzour.android.utils.ActivityTool;
+
 import android.app.Activity;   
 import android.app.Application;
      
@@ -25,18 +28,19 @@ public class SysApplication extends Application {
     }     
      
     public void exit() {    //遍历List，退出每一个Activity     
-        try {     
-            for (Activity activity : mList) {     
-                if (activity != null)     
-                    activity.finish();     
-            }     
-        } catch (Exception e) {     
-            e.printStackTrace();     
-        } finally {     
-            System.exit(0);     
-        }     
-    }     
-     
+        try {
+            for (Activity activity : mList) {
+                if (activity != null && activity != ActivityTool.getMainActivity())
+                    activity.finish();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+            return;
+        }
+        ActivityTool.getMainActivity().finish();
+    }
+    
     @Override     
     public void onLowMemory() {     
         super.onLowMemory();         

@@ -1,9 +1,5 @@
 package com.zzour.android;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +9,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.User;
@@ -22,9 +17,7 @@ import com.zzour.android.utils.ActivityTool;
 
 public class MoreActivity extends BaseActivity 
 {
-	private static final String TAG = "ZZOUR";
 	private final int selectedColor = Color.rgb(243, 174, 27);
-	private final int disableColor = Color.rgb(204, 204, 204);
 	
 	private RelativeLayout login;
 	private RelativeLayout register;

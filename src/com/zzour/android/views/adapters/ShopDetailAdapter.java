@@ -146,6 +146,17 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 				updateTotal();
 			}
 		});
+		cache.checked.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				TextView idView = (TextView)((LinearLayout)v.getParent()).findViewById(R.id.food_id);
+				String text = idView.getText().toString();
+				Food food = getFoodByStringId(text);
+				changeCheckStatus(food);
+				// update total money display
+				updateTotal();
+			}
+		});
 		info.setOnLongClickListener(new OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v) {

@@ -9,25 +9,21 @@ import java.util.Iterator;
 import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.Address;
 import com.zzour.android.models.Food;
-import com.zzour.android.models.Order;
-import com.zzour.android.models.OrderFormResult;
-import com.zzour.android.models.ApiResult;
 import com.zzour.android.models.Region;
-import com.zzour.android.models.School;
-import com.zzour.android.models.SchoolArea;
 import com.zzour.android.models.ShoppingCart;
 import com.zzour.android.models.SimpleOrder;
 import com.zzour.android.models.User;
-import com.zzour.android.models.dao.AddressDAO;
+import com.zzour.android.network.api.AcountApi;
 import com.zzour.android.network.api.OrderApi;
 import com.zzour.android.network.api.RegionApi;
+import com.zzour.android.network.api.results.ApiResult;
+import com.zzour.android.network.api.results.OrderFormResult;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,10 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ShoppingCartActivity extends BaseActivity{
-	
-	private static final String TAG = "ZZOUR";
-	
-	private static final int LOGIN_REQUEST_CODE = 1;
 	
 	private TextView totalPriceView;
 	
@@ -565,11 +557,6 @@ public class ShoppingCartActivity extends BaseActivity{
 					Toast.makeText(getApplicationContext(), "购物车市空的，快去选择吧！", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				// if not login, require login
-				if (!LocalPreferences.authed(ShoppingCartActivity.this)){
-					ActivityTool.startActivityForResult(ShoppingCartActivity.this, LoginActivity.class, LOGIN_REQUEST_CODE);
-					return;
-				}
 				if (mCurrentAddr == null){
 					Toast.makeText(getApplicationContext(), "请选择收货地址！", Toast.LENGTH_LONG).show();
 					return;
@@ -814,22 +801,20 @@ public class ShoppingCartActivity extends BaseActivity{
 			User user = LocalPreferences.getUser(activity);
 			// add foods into shopping cart by calling api
 			if (foods.size() > 0){
-				boolean success = false;
-				try {
-					success = OrderApi.addAll(foods, user);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				ApiResult result = OrderApi.addAll(foods, user);
+				if (result != null && result.isNeedLogin()){
+					AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+					result = OrderApi.addAll(foods, user);
 				}
-				if (!success){
-					// set result
-					Toast.makeText(getApplicationContext(), "添加商品到购物车失败，请重新尝试", Toast.LENGTH_SHORT).show();
+				if (!result.isSuccess()){
+					// TODO make toast
 					return true;
 				}
 			}
 			// reset foods to empty
 			foods = null;
 			// get order form by calling api
+			// do not check this one need login
 			OrderFormResult result = OrderApi.getOrderForm(mCurrentShop, user);
 			// set result to shopping cart activity
 			activity.setOrderFormResult(result);
@@ -849,17 +834,6 @@ public class ShoppingCartActivity extends BaseActivity{
 	        this.activity.finishOrderForm();
 	    }
 	}
-	
-	@Override  
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-        case LOGIN_REQUEST_CODE:
-        	new LoadingTask(ShoppingCartActivity.this).execute();
-            break;
-        default:
-            break;
-        }  
-    }
 	
 	public void setClearCartResult(ApiResult result){
 		this.mClearCartResult = result;

@@ -4,6 +4,15 @@ public class UserAccount extends BaseDataModel{
 	
 	// when use third party account system, user name should be qq number, renren account, etc.
 	private String userName;
+	private String nickName;
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
 	private String email;
 	private int integral;
 	

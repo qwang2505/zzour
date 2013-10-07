@@ -4,21 +4,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,12 +20,14 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.zzour.android.models.Address;
-import com.zzour.android.models.ApiResult;
 import com.zzour.android.models.Food;
 import com.zzour.android.models.OrderDetail;
 import com.zzour.android.models.OrderLog;
 import com.zzour.android.models.OrderSummary;
 import com.zzour.android.models.User;
+import com.zzour.android.network.api.results.ApiResult;
+import com.zzour.android.network.api.results.OrderDetailResult;
+import com.zzour.android.network.api.results.OrderListResult;
 import com.zzour.android.settings.GlobalSettings;
 
 public class MyOrderApi {
@@ -69,11 +64,11 @@ public class MyOrderApi {
 		return baseUrl;
 	}
 	
-	public static ArrayList<OrderSummary> getOrdersByType(String type, int page, int count, User user){
+	public static OrderListResult getOrdersByType(String type, int page, int count, User user){
 		return getOrders(user.getSession(), null, null, type, page, count);
 	}
 	
-	private static ArrayList<OrderSummary> getOrders(String session, String timeFrom, String timeTo, String type, int page, int count){
+	private static OrderListResult getOrders(String session, String timeFrom, String timeTo, String type, int page, int count){
 		String src = buildMyOrdersUrl(timeFrom, timeTo, type, page, count);
 		Log.e("ZZOUR", "get data from " + src);
 		InputStream content = null;
@@ -102,14 +97,26 @@ public class MyOrderApi {
 		return parseMyOrderListResult(data);
 	}
 	
-	private static ArrayList<OrderSummary> parseMyOrderListResult(String data){
+	private static OrderListResult parseMyOrderListResult(String data){
 		ArrayList<OrderSummary> orders = new ArrayList<OrderSummary>();
+		OrderListResult result = new OrderListResult();
 		try {
 			Log.e("ZZOUR", "my order list response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
 			if (!success){
-				return orders;
+				String msg = null;
+				try{
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				if (msg != null && msg.startsWith("您需要先登录")){
+					result.setNeedLogin(true);
+				}
+				result.setOrders(orders);
+				return result;
 			}
 			JSONObject retvalObj = dataObj.getJSONObject("retval");
 			JSONArray orderIds = retvalObj.names();
@@ -123,10 +130,15 @@ public class MyOrderApi {
 				order.setTime(orderObj.getString("add_time"));
 				orders.add(order);
 			}
-			return orders;
+			result.setOrders(orders);
+			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse my order list result:　" + ex);
-			return orders;
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setOrders(orders);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	
@@ -145,7 +157,7 @@ public class MyOrderApi {
 		return GlobalSettings.getServerAddress() + orderDetailPath + "&order_id=" + orderId;
 	}
 	
-	public static OrderDetail getOrderDetail(int orderId, User user){
+	public static OrderDetailResult getOrderDetail(int orderId, User user){
 		String src = buildOrderDetailUrl(orderId);
 		Log.e("ZZOUR", "get data from " + src);
 		InputStream content = null;
@@ -173,13 +185,25 @@ public class MyOrderApi {
 		return parseOrderDetailResult(data);
 	}
 	
-	private static OrderDetail parseOrderDetailResult(String data){
+	private static OrderDetailResult parseOrderDetailResult(String data){
+		OrderDetailResult result = new OrderDetailResult();
 		try {
 			Log.e("ZZOUR", "order detail response data: " + data);
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
 			if (!success){
-				return null;
+				String msg = null;
+				try {
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				if (msg != null && msg.startsWith("您需要先扥股")){
+					result.setMsg(msg);
+					result.setNeedLogin(true);
+				}
+				return result;
 			}
 			OrderDetail order = new OrderDetail();
 			JSONObject retvalObj = dataObj.getJSONObject("retval");
@@ -232,10 +256,14 @@ public class MyOrderApi {
 			}
 			order.setFoods(foods);
 			order.setLogs(logs);
-			return order;
+			result.setOrder(order);
+			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse my order list result:　" + ex);
-			return null;
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 	

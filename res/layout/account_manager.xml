@@ -79,7 +79,8 @@
                     android:textSize="18sp"
                     android:text="@string/more_account_email_welcome_text"/>
                 
-                <TextView android:layout_width="wrap_content"
+                <TextView android:id="@+id/account_email_info"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:textSize="18sp"

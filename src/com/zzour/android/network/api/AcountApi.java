@@ -31,6 +31,8 @@ import com.zzour.android.models.LoginResult;
 import com.zzour.android.models.RegisterResult;
 import com.zzour.android.models.User;
 import com.zzour.android.models.UserAccount;
+import com.zzour.android.network.api.results.AddAllResult;
+import com.zzour.android.network.api.results.ApiResult;
 import com.zzour.android.network.api.results.UserAccountResult;
 import com.zzour.android.settings.GlobalSettings;
 import com.zzour.android.settings.LocalPreferences;
@@ -43,6 +45,9 @@ public class AcountApi {
 	private static final String validUserPath = "/index.php?app=qqlogin&act=user_validate";
 	private static final String thirdPartyLoginPath = "/index.php?app=qqlogin&act=register&method=ajax";
 	
+	private static final String changePwdPath = "/index.php?app=member&act=password&method=ajax&ajax=1";
+	private static final String changeMailPath = "/index.php?app=member&act=email&method=ajax&ajax=1";
+	
 	private static final String sessionName = "ECM_ID";
 	
 	public static LoginResult login(AccountInfo account, Activity activity){
@@ -52,7 +57,7 @@ public class AcountApi {
 	public static LoginResult loginNormal(String user, String pwd, User.AuthType authType, Activity activity){
 		LoginResult result;
 		// call server api to log in
-		ApiResult apiResult = postLogin(user, pwd);
+		ApiSessionResult apiResult = postLogin(user, pwd);
 		if (apiResult == null || apiResult.session.length() == 0){
 			result = new LoginResult();
 			result.setSuccess(false);
@@ -76,7 +81,7 @@ public class AcountApi {
 		RegisterResult result;
 		//pwd = MD5Hash.md5(pwd);
 		// call server api to log in
-		ApiResult apiResult = postRegister(user, pwd, mail);
+		ApiSessionResult apiResult = postRegister(user, pwd, mail);
 		if (apiResult == null || apiResult.session.length() == 0){
 			result = new RegisterResult();
 			result.setSuccess(false);
@@ -121,7 +126,13 @@ public class AcountApi {
 			}
 			JSONObject retObj = dataObj.getJSONObject("retval");
 			UserAccount account = new UserAccount();
-			account.setUserName(retObj.getString("user_name"));
+			String userName = retObj.getString("user_name");
+			account.setUserName(userName);
+			String realName = retObj.getString("real_name");
+			if (realName == null || realName.length() == 0 || realName.equals("null")){
+				realName = userName;
+			}
+			account.setNickName(realName);
 			account.setEmail(retObj.getString("email"));
 			account.setIntegral(retObj.getInt("integral"));
 			result.setAccount(account);
@@ -171,12 +182,8 @@ public class AcountApi {
 	public static LoginResult parseResult(String data){
 		try {
 			Log.e("zzour", "login data: " + data);
-			//JSONTokener jsonObj = new JSONTokener(data);
-			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
-			// TODO add expire
-			//String expire = dataObj.optString("expire", "");
 			int retval = dataObj.getInt("retval");
 			LoginResult result = new LoginResult();
 			result.setMsg(retval);
@@ -208,7 +215,7 @@ public class AcountApi {
 		}
 	}
 	
-	public static ApiResult postRegister(String name, String password, String mail){
+	public static ApiSessionResult postRegister(String name, String password, String mail){
 		// Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(buildRegisterUrl());
@@ -226,7 +233,7 @@ public class AcountApi {
 	        HttpResponse response = httpclient.execute(httppost);
 	        List<Cookie> cookie = ((AbstractHttpClient) httpclient)
 	        		.getCookieStore().getCookies();
-	        ApiResult result = new ApiResult();
+	        ApiSessionResult result = new ApiSessionResult();
 	        if (response != null){
 	        	result.data = EntityUtils.toString(response.getEntity());
 	        } else {
@@ -253,7 +260,7 @@ public class AcountApi {
 	    }
 	}
 	
-	public static ApiResult postLogin(String name, String password) {
+	public static ApiSessionResult postLogin(String name, String password) {
 	    // Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(buildLoginUrl());
@@ -268,7 +275,7 @@ public class AcountApi {
 	        HttpResponse response = httpclient.execute(httppost);
 	        List<Cookie> cookie = ((AbstractHttpClient) httpclient)
 	        		.getCookieStore().getCookies();
-	        ApiResult result = new ApiResult();
+	        ApiSessionResult result = new ApiSessionResult();
 	        if (response != null){
 	        	result.data = EntityUtils.toString(response.getEntity());
 	        } else {
@@ -306,7 +313,7 @@ public class AcountApi {
 		return GlobalSettings.getServerAddress() + accountDetailPath;
 	}
 	
-	private static class ApiResult{
+	private static class ApiSessionResult{
 		public String data;
 		public String session;
 	}
@@ -404,6 +411,138 @@ public class AcountApi {
 		    Log.e("ZZOUR", "Network exception", e);
 		    e.printStackTrace();
 		    return null;
+		}
+	}
+	
+	private static String buildChangePwdUrl(){
+		return GlobalSettings.getServerAddress() + changePwdPath;
+	}
+	
+	public static ApiResult changePwd(String oldPwd, String newPwd, String newPwd2, User user){
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(buildChangePwdUrl());
+	    try {
+	        // Add your data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+		    nameValuePairs.add(new BasicNameValuePair("orig_password", oldPwd));
+		    nameValuePairs.add(new BasicNameValuePair("new_password", newPwd));
+		    nameValuePairs.add(new BasicNameValuePair("confirm_password", newPwd));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	        CookieStore cookieStore = httpclient.getCookieStore();
+	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
+		    cookie.setDomain(GlobalSettings.server);
+		    cookie.setPath("/");
+		    cookieStore.addCookie(cookie);
+		    httpclient.setCookieStore(cookieStore);
+
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        if (response != null){
+	        	return parseChangePwdResult(EntityUtils.toString(response.getEntity()));
+	        } else {
+	        	Log.e("ZZOUR", "response is null");
+	        	return null;
+	        }
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    	Log.e("ZZOUR", "change passowrd failed with exception: " + e);
+	    	return null;
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    	Log.e("ZZOUR", "change password failed with exception: " + e);
+	    	return null;
+	    }
+	}
+	
+	private static ApiResult parseChangePwdResult(String data){
+		ApiResult result = new ApiResult();
+		try {
+			Log.e("ZZOUR", "change password response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
+			if (!success){
+				String msg = null;
+				try {
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				result.setMsg(msg);
+			}
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
+		}
+	}
+	
+	
+	private static String buildChangeMailUrl(){
+		return GlobalSettings.getServerAddress() + changeMailPath;
+	}
+	
+	public static ApiResult changeMail(String pwd, String mail, User user){
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(buildChangeMailUrl());
+	    try {
+	        // Add your data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		    nameValuePairs.add(new BasicNameValuePair("orig_password", pwd));
+		    nameValuePairs.add(new BasicNameValuePair("email", mail));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	        CookieStore cookieStore = httpclient.getCookieStore();
+	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
+		    cookie.setDomain(GlobalSettings.server);
+		    cookie.setPath("/");
+		    cookieStore.addCookie(cookie);
+		    httpclient.setCookieStore(cookieStore);
+
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        if (response != null){
+	        	return parseChangeMailResult(EntityUtils.toString(response.getEntity()));
+	        } else {
+	        	Log.e("ZZOUR", "response is null");
+	        	return null;
+	        }
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    	Log.e("ZZOUR", "change passowrd failed with exception: " + e);
+	    	return null;
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    	Log.e("ZZOUR", "change password failed with exception: " + e);
+	    	return null;
+	    }
+	}
+	
+	private static ApiResult parseChangeMailResult(String data){
+		ApiResult result = new ApiResult();
+		try {
+			Log.e("ZZOUR", "change mail response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			result.setSuccess(success);
+			if (!success){
+				String msg = null;
+				try {
+					msg = dataObj.getString("msg");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				result.setMsg(msg);
+			}
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse add all into cart result:　" + ex);
+			ex.printStackTrace();
+			result.setSuccess(false);
+			result.setMsg("解析返回结果错误");
+			return result;
 		}
 	}
 }

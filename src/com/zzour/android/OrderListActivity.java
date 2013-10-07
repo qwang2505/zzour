@@ -8,7 +8,6 @@ import com.zzour.android.utils.ActivityTool;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
@@ -29,10 +28,8 @@ public class OrderListActivity extends BaseActivity implements OnTabActivityResu
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.order_list);
-		//this.backToMain = true;
 		init(savedInstanceState);
 		if (!LocalPreferences.authed(this)){
-			// TODO manage request code
 			Intent intent2 = new Intent(OrderListActivity.this.getParent(), LoginActivity.class);
 			ActivityTool.startActivityForResult(OrderListActivity.this.getParent(), LoginActivity.class, LOGIN_REQUEST_CODE, intent2);
 			Toast.makeText(this, "ÇëÏÈµÇÂ½", Toast.LENGTH_SHORT).show();
@@ -65,16 +62,11 @@ public class OrderListActivity extends BaseActivity implements OnTabActivityResu
 
 	@Override
 	public void onResume() {
-		Log.e(TAG, "order list on resume");
 		super.onResume();
-		Log.e(TAG, "main tab: " + ActivityTool.getMainActivity().getCurrentTabIndex() + ", current index: " + OrderListActivity.index);
 		if (ActivityTool.getMainActivity().getCurrentTabIndex() != OrderListActivity.index){
 			return;
 		}
 	    if (!LocalPreferences.authed(this)){
-			// TODO manage request code
-//			Intent intent1 = new Intent(OrderListActivity.this, LoginActivity.class);
-//			ActivityTool.startActivityForResult(this, LoginActivity.class, 1, intent1);
 	    	Toast.makeText(this, "ÇëÏÈµÇÂ½", Toast.LENGTH_SHORT).show();
 			return;
 		}

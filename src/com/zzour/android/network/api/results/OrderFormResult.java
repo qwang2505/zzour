@@ -1,8 +1,12 @@
-package com.zzour.android.models;
+package com.zzour.android.network.api.results;
 
 import java.util.ArrayList;
 
-public class OrderFormResult {
+import com.zzour.android.models.Address;
+import com.zzour.android.models.Food;
+import com.zzour.android.models.ShipMethod;
+
+public class OrderFormResult extends ApiResult {
 	private ArrayList<Food> foods = null;
 	private ArrayList<Address> addrs = null;
 	private ArrayList<ShipMethod> shipMethods = null;

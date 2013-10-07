@@ -1,10 +1,8 @@
 package com.zzour.android;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,15 +15,12 @@ import android.widget.ListView;
 
 import com.zzour.android.base.BaseActivity;
 import com.zzour.android.models.OrderSummary;
-import com.zzour.android.models.ShopList;
-import com.zzour.android.models.ShopSummaryContent;
 import com.zzour.android.models.User;
-import com.zzour.android.models.dao.OrderDAO;
+import com.zzour.android.network.api.AcountApi;
 import com.zzour.android.network.api.MyOrderApi;
-import com.zzour.android.network.api.ShopListApi;
+import com.zzour.android.network.api.results.OrderListResult;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
-import com.zzour.android.utils.ImageTool;
 import com.zzour.android.views.adapters.OrderListItemsAdapter;
 
 public class UnFinishedOrderListActivity extends BaseActivity{
@@ -119,8 +114,21 @@ public class UnFinishedOrderListActivity extends BaseActivity{
 	public void loadMoreData(){
 		// get orders from server side
 		User user = LocalPreferences.getUser(this);
-		ArrayList<OrderSummary> orders = MyOrderApi.getOrdersByType("panding", page, count, user);
-    	if (orders.size() == 0){
+		OrderListResult result = MyOrderApi.getOrdersByType("panding", page, count, user);
+		if (result != null && result.isNeedLogin() && !result.isSuccess()){
+			AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), this);
+			result = MyOrderApi.getOrdersByType("panding", page, count, user);
+		}
+		if (result == null){
+			mLoadMoreHandler.post(new Runnable(){
+	     		   public void run(){
+	     			   Toast.makeText(UnFinishedOrderListActivity.this, "加载数据失败，请重新尝试", Toast.LENGTH_SHORT).show();
+	     		   }
+	 	    	});
+	     		return;
+		}
+		ArrayList<OrderSummary> orders = result.getOrders();
+    	if (orders == null || orders.size() == 0){
     		mLoadMoreHandler.post(new Runnable(){
      		   public void run(){
      			   Toast.makeText(UnFinishedOrderListActivity.this, "没有更多数据了", Toast.LENGTH_SHORT).show();

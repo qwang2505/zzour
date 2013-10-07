@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import com.renn.rennsdk.RennClient;
 import com.renn.rennsdk.RennClient.LoginListener;
 import com.renn.rennsdk.RennExecutor.CallBack;
-import com.renn.rennsdk.RennParam;
 import com.renn.rennsdk.RennResponse;
 import com.renn.rennsdk.exception.RennException;
 import com.renn.rennsdk.param.GetUserParam;
@@ -416,8 +415,8 @@ public class LoginActivity extends BaseActivity{
         private Boolean mNeedReAuth = false;
 
         public BaseApiListener(String scope, boolean needReAuth) {
-            mScope = scope;
-            mNeedReAuth = needReAuth;
+            this.mScope = scope;
+            this.mNeedReAuth = needReAuth;
         }
 
         @Override
