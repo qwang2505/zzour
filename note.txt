@@ -1,0 +1,9 @@
+key store password: ruozzdiordnatneilc
+
+TODO list:
+1. list交互优化
+2. 应用中部分流程优化
+3. 修改选择食品部分的UI设计
+4. 分享功能
+5. 找回密码功能
+6. bug fix.
