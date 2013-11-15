@@ -21,6 +21,8 @@ public class ShopSummaryContent extends BaseDataModel{
 	private boolean alive;
 	private boolean onlineOrder;
 	private int creditValue;
+	private float score;
+	private int speed;
 	// optional, default is empty
 	private String description;
 	// optional, default rate is 0
@@ -40,6 +42,18 @@ public class ShopSummaryContent extends BaseDataModel{
 		this.grade = grade;
 	}
 	
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
+	public int getSpeed() {
+		return speed;
+	}
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
 	public String getOwnerName() {
 		return ownerName;
 	}

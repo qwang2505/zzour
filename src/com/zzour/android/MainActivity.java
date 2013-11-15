@@ -165,7 +165,7 @@ public class MainActivity extends TabActivity{
 			}
 			try {
 				User user = LocalPreferences.getUser(activity);
-				AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+				AcountApi.loginNormal(user.getUserName(), user.getNickName(), user.getPwd(), user.getType(), activity);
 			} catch (Exception e){
 				e.printStackTrace();
 				Log.e("ZZOUR", "background login failed");

@@ -6,6 +6,7 @@ import com.zzour.android.models.User;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 public class LocalPreferences {
 	
@@ -88,6 +89,7 @@ public class LocalPreferences {
 		ensurePrefs(activity);
 		Editor editor = prefs.edit();
 		editor.putString("user_name", user.getUserName());
+		editor.putString("user_nickname", user.getNickName());
 		editor.putString("user_pwd", user.getPwd());
 		editor.putString("user_session", user.getSession());
 		editor.putInt("user_auth_type", user.getType().ordinal());
@@ -102,10 +104,12 @@ public class LocalPreferences {
 			return null;
 		}
 		String name = prefs.getString("user_name", "");
+		String nickName = prefs.getString("user_nickname", "");
 		String pwd = prefs.getString("user_pwd", "");
 		String session = prefs.getString("user_session", "");
 		int type = prefs.getInt("user_auth_type", -1);
 		User user = new User(name, pwd, session, User.AuthType.values()[type]);
+		user.setNickName(nickName);
 		return user;
 	}
 	

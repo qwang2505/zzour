@@ -31,6 +31,10 @@ public class OrderListItemsAdapter extends BaseAdapter{
     	this.orders.add(order);
     	return p;
     }
+    
+    public void clearItems(){
+    	this.orders.clear();
+    }
 
 	public int getCount() {
 		if (orders == null){
@@ -66,7 +70,7 @@ public class OrderListItemsAdapter extends BaseAdapter{
 		ItemViewCache cache = (ItemViewCache)convertView.getTag();
 		
 		cache.name.setText(orders.get(position).getShopName());
-		cache.time.setText(orders.get(position).getTime());
+		cache.time.setText(orders.get(position).getStringTime());
 		cache.price.setText(orders.get(position).getPrice() + "");
 		cache.shortDesc.setText(GlobalSettings.getStatusShortDesc(orders.get(position).getStatus()));
 		cache.longDesc.setText(GlobalSettings.getStatusLongDesc(orders.get(position).getStatus()));

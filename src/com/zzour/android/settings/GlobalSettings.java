@@ -36,16 +36,16 @@ public class GlobalSettings {
 	
 	private static HashMap<Integer, String> statusMap = new HashMap<Integer, String>(){{
 		put(0, "已取消|订单状态：订单已取消");
-		put(10, "待确定|订单状态：订单待确定");
-		put(11, "待付款|订单状态：订单待付款");
-		put(20, "待发货|订单状态：商家已确认订单，将及时为您配送");
-		put(30, "已发货|订单状态：商家已发货");
+		put(20, "待确认|订单状态：订单待确认");
+		put(30, "已确认，待发货|订单状态：商家已确认订单，将及时为您配送");
 		put(40, "已完成|订单状态：交易已完成");
+		put(50, "退单中|订单状态：申请退单中");
+		put(51, "待完成|订单状态：商家不确认退单，等待完成订单");
 	}};
 	
 	public static String getStatusShortDesc(int id){
 		if (!statusMap.containsKey(id)){
-			return "";
+			return "未知状态";
 		}
 		String desc = statusMap.get(id);
 		return desc.split("\\|")[0];
@@ -55,9 +55,21 @@ public class GlobalSettings {
 		return status == 30;
 	}
 	
+	public static boolean canPushOrder(int status){
+		return status == 30;
+	}
+	
+	public static boolean canCancelOrder(int status){
+		return status == 30;
+	}
+	
+	public static boolean canForceCancelOrder(int status){
+		return status == 51;
+	}
+	
 	public static String getStatusLongDesc(int id){
 		if (!statusMap.containsKey(id)){
-			return "";
+			return "订单状态：未知";
 		}
 		String desc = statusMap.get(id);
 		return desc.split("\\|")[1];

@@ -2,13 +2,15 @@ package com.zzour.android.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class OrderSummary {
 	private String id;
 	private String shopName;
-	private String time;
+	private Date time;
 	private float price;
 	private int status;
+	private final int EIGHT_HOUR = 8 * 3600 * 1000;
 	
 	public int getStatus() {
 		return status;
@@ -28,13 +30,17 @@ public class OrderSummary {
 	public void setShopName(String shopName) {
 		this.shopName = shopName;
 	}
-	public String getTime() {
+	public Date getTime() {
 		return time;
 	}
-	public void setTime(String time) {
-		Date date = new Date(Long.valueOf(time) * 1000);
+	public String getStringTime(){
 		SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		this.time = sdf.format(date);
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+		return sdf.format(this.time);
+	}
+	public void setTime(String time) {
+		Date date = new Date(Long.valueOf(time) * 1000 + EIGHT_HOUR);
+		this.time = date;
 	}
 	public float getPrice() {
 		return price;

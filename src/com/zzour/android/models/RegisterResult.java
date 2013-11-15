@@ -11,8 +11,8 @@ public class RegisterResult {
 	public RegisterResult() {
 		super();
 		this.msgMap.put(1, "Successful");
-		this.msgMap.put(1, "Username exists");
-		this.msgMap.put(-2, "Unknow error");
+		this.msgMap.put(-1, "用户名已存在");
+		this.msgMap.put(-2, "系统错误，请重新尝试");
 		this.success = false;
 	}
 	public boolean isSuccess() {
@@ -28,6 +28,9 @@ public class RegisterResult {
 		this.msg = msg;
 	}
 	public void setMsg(int m){
+		if (m != 1){
+			this.success = false;
+		}
 		if (!this.msgMap.containsKey(m)){
 			this.msg = this.msgMap.get(-2);
 		}else {

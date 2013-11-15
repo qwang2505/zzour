@@ -125,10 +125,12 @@ public class ShopDetailActivity extends BaseActivity{
 			mAdapter.setFoods(cat, mShop.getFoods().get(cat));
 		}
 		list.setAdapter(mAdapter);
-		for (int i=0; i < mAdapter.getGroupCount(); i++){
-			list.expandGroup(i);
-		}
-		list.setGroupIndicator(null);//除去自带的箭头
+		//for (int i=0; i < mAdapter.getGroupCount(); i++){
+		//	list.expandGroup(i);
+		//}
+		// just expand first
+		list.expandGroup(0);
+		list.setGroupIndicator(null);
 		// for online and not online, show different button
 		if (mShop.isOnlineOrder()){
 			Button btn = (Button)findViewById(R.id.go_to_cart);
@@ -164,28 +166,42 @@ public class ShopDetailActivity extends BaseActivity{
 		} else {
 			Button btn = (Button)findViewById(R.id.go_to_dial);
 			btn.setVisibility(Button.VISIBLE);
-			btn.setText("拨打电话 " + mShop.getTelephone());
+			btn.setText("下一步");
 			btn.setOnClickListener(new OnClickListener(){
 				
 				@Override
 				public void onClick(View view) {
-					// if buy any, save into cart
-					ArrayList<Food> foods = mAdapter.getBoughtFoods();
-					// save to shopping cart
-					ShoppingCart.saveFoods(mShop, foods);
-					// TODO if dial, need login or not?
-					if (!LocalPreferences.authed(ShopDetailActivity.this)){
-						// start activity for result to login
-						Intent intent2 = new Intent(ShopDetailActivity.this, LoginActivity.class);
-						ActivityTool.startActivityForResult(ShopDetailActivity.this, LoginActivity.class, DIAL_LOGIN_REQUEST_CODE, intent2);
-						Toast.makeText(ShopDetailActivity.this, "请先登陆", Toast.LENGTH_SHORT).show();
-						return;
+					try {
+						// if buy any, save into cart
+						ArrayList<Food> foods = mAdapter.getBoughtFoods();
+						if (foods.size() == 0){
+							// give out toast
+							mToastHandler.post(new Runnable(){
+				 	    		   public void run(){
+				 	    			  Toast.makeText(ShopDetailActivity.this, "您没有选择任何商品", Toast.LENGTH_SHORT).show();
+				 	    		   }
+				 	    	   });
+							return;
+						}
+						// save to shopping cart
+						ShoppingCart.saveFoods(mShop, foods);
+						// TODO if dial, need login or not?
+						if (!LocalPreferences.authed(ShopDetailActivity.this)){
+							// start activity for result to login
+							Intent intent2 = new Intent(ShopDetailActivity.this, LoginActivity.class);
+							ActivityTool.startActivityForResult(ShopDetailActivity.this, LoginActivity.class, DIAL_LOGIN_REQUEST_CODE, intent2);
+							Toast.makeText(ShopDetailActivity.this, "请先登陆", Toast.LENGTH_SHORT).show();
+							return;
+						}
+						// go to shopping cart.
+						Intent intent = new Intent(ShopDetailActivity.this, ShoppingDialActivity.class);
+						intent.putExtra("shop_id", mShop.getId());
+						intent.putExtra("shop_phone", mShop.getTelephone());
+						ActivityTool.startActivity(ShopDetailActivity.this, ShoppingDialActivity.class, intent);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					// go to shopping cart.
-					Intent intent = new Intent(ShopDetailActivity.this, ShoppingDialActivity.class);
-					intent.putExtra("shop_id", mShop.getId());
-					intent.putExtra("shop_phone", mShop.getTelephone());
-					ActivityTool.startActivity(ShopDetailActivity.this, ShoppingDialActivity.class, intent);
 				}
 			});
 		}
@@ -194,11 +210,11 @@ public class ShopDetailActivity extends BaseActivity{
 	private void initHeaderView(ShopDetailContent shop, ExpandableListView list){
 		mHeaderView = this.getLayoutInflater().inflate(R.layout.shop_detail_top, null);
 		// initial basic shop information
-		TextView text = (TextView)mHeaderView.findViewById(R.id.send_time);
-		text.setText("平均速度：" + shop.getSendTime());
-		text = (TextView)mHeaderView.findViewById(R.id.praise_count);
+		TextView text = (TextView)mHeaderView.findViewById(R.id.speed);
+		text.setText("" + shop.getSendTime());
+		text = (TextView)mHeaderView.findViewById(R.id.credit);
 		// TODO use correct data
-		text.setText(Float.valueOf(shop.getPraiseRate()).intValue() + "人认为该店不错");
+		text.setText(shop.getCreditValue() + "");
 		text = (TextView)mHeaderView.findViewById(R.id.telephone);
 		text.setText("电话：" + shop.getTelephone());
 		text = (TextView)mHeaderView.findViewById(R.id.shop_hours);
@@ -209,11 +225,33 @@ public class ShopDetailActivity extends BaseActivity{
 		} else {
 			text.setText("本店只支持电话订餐");
 		}
-		RatingBar rate = (RatingBar)mHeaderView.findViewById(R.id.shop_rating);
-		rate.setRating(shop.getGrade());
+		// score
+		text = (TextView)mHeaderView.findViewById(R.id.score);
+		text.setText(shop.getScore() + "分");
+		// credit value
+		text = (TextView)mHeaderView.findViewById(R.id.credit);
+		text.setText(shop.getCreditValue() + "");
+		// deliver speed
+		text = (TextView)mHeaderView.findViewById(R.id.speed);
+		text.setText(shop.getSpeed() + "");
+		// shop status
+		text = (TextView)mHeaderView.findViewById(R.id.status);
+		if (!shop.isLive()){
+			text.setVisibility(TextView.VISIBLE);
+		}
+		// delicious rating
+		RatingBar delicious = (RatingBar)mHeaderView.findViewById(R.id.delicious);
+		delicious.setRating(shop.getDeliciousRate());
+		// service rating
+		RatingBar service = (RatingBar)mHeaderView.findViewById(R.id.service);
+		service.setRating(shop.getServiceRate());
 		WebView notice = (WebView)mHeaderView.findViewById(R.id.notice);
+		notice.getSettings().setDefaultTextEncodingName("utf-8");
 		//notice.loadData("<style type='text/css'>*{font-size: 14px;background-color:#efecea}</style>" + shop.getNotice(), "text/html; charset=UTF-8", null);
-		notice.loadData(shop.getNotice(), "text/html; charset=UTF-8", null);
+		//notice.loadData(shop.getNotice(), "text/html; charset=UTF-8", null);
+		String data = shop.getNotice();
+		data = "<style type='text/css'>*{font-size: 14px;}</style>" + data;
+		notice.loadDataWithBaseURL(null, data, "text/html", "utf-8", null);
 		// initial top banner
 		//mBanner = (ImageView)mHeaderView.findViewById(R.id.shop_banner);
 		DisplayMetrics metrics = new DisplayMetrics();

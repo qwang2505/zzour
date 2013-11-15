@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:minWidth="280dip"
+    android:layout_height="wrap_content">
+
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    
+        <TextView
+            style="@style/DialogText.Title"
+            android:id="@+id/title"
+            android:background="#efecea"
+            android:paddingRight="8dip"
+            android:text="亲，为什么要退单呢？"
+            android:paddingLeft="8dip"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    
+    </LinearLayout>
+    
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:paddingBottom="30dp"
+        android:orientation="vertical">
+        
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <TextView android:id="@+id/reason_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="等太久了，非常饿"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:textSize="16sp"
+                android:textColor="#958e8a" />
+            
+            <CheckBox android:id="@+id/reason1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
+            
+        </RelativeLayout>
+        
+        <ImageView android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:contentDescription="@string/dot_line_desc"
+	    	android:src="@drawable/seperator" />
+        
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <TextView android:id="@+id/reason_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="订单有误，重新下单"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:textSize="16sp"
+                android:textColor="#958e8a" />
+            
+            <CheckBox android:id="@+id/reason2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
+            
+        </RelativeLayout>
+        
+        <ImageView android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:contentDescription="@string/dot_line_desc"
+	    	android:src="@drawable/seperator" />
+        
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <TextView android:id="@+id/reason_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="临时有事出门，不好意思"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:textSize="16sp"
+                android:textColor="#958e8a" />
+            
+            <CheckBox android:id="@+id/reason3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
+            
+        </RelativeLayout>
+        
+        <ImageView android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:contentDescription="@string/dot_line_desc"
+	    	android:src="@drawable/seperator" />
+        
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <TextView android:id="@+id/reason_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="其他"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:textSize="16sp"
+                android:textColor="#958e8a" />
+            
+            <CheckBox android:id="@+id/reason4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
+            
+        </RelativeLayout>
+        
+        <ImageView android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:contentDescription="@string/dot_line_desc"
+	    	android:src="@drawable/seperator" />
+        
+    </LinearLayout>
+
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="#efecea"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_height="wrap_content">
+    
+        <Button 
+            android:id="@+id/positiveButton"
+            android:layout_width="0dip"
+            android:layout_weight="0.2"
+            android:layout_height="30dp"
+            android:text="确定"
+            android:textColor="#000000"
+            android:background="@drawable/button2"
+            android:singleLine="true"/>
+        
+        <TextView android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1" />
+    
+        <Button 
+            android:id="@+id/negativeButton"
+            android:layout_width="0dip"
+            android:layout_weight="0.2"
+            android:layout_height="30dp"
+            android:text="取消"
+            android:textColor="#000000"
+            android:background="@drawable/button2"
+            android:singleLine="true"/>
+    
+    </LinearLayout>
+
+</LinearLayout>

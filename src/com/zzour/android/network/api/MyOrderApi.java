@@ -4,14 +4,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +39,10 @@ public class MyOrderApi {
 	
 	private static String myOrdersPath = "/index.php?app=buyer_order&act=index&method=ajax&ajax=1";
 	private static String orderDetailPath = "/index.php?app=buyer_order&act=view&method=ajax&ajax=1";
-	private static String finishOrderPath = "/index.php?app=buyer_order&act=confirm_order&ajax=1";
+	private static String finishOrderPath = "/index.php?app=buyer_order&act=confirm_order&method=ajax&ajax=1";
+	private static String pushOrderPath = "/index.php?app=order&act=orderway&method=ajax&ajax=1";
+	private static String cancelOrderPath = "/index.php?app=buyer_order&act=cancel_order&method=ajax&ajax=1";
+	private static String wCancelOrderPath = "/index.php?app=buyer_order&act=wcancel_order&method=ajax&ajax=1";
 	
 	private static final String sessionName = "ECM_ID";
 	
@@ -208,8 +216,12 @@ public class MyOrderApi {
 			OrderDetail order = new OrderDetail();
 			JSONObject retvalObj = dataObj.getJSONObject("retval");
 			JSONObject orderObj = retvalObj.getJSONObject("order");
-			String time = orderObj.getString("add_time");
+			String time = orderObj.getString("order_add_time");
 			int status = orderObj.getInt("status");
+			order.setBuyerId(orderObj.getInt("buyer_id"));
+			order.setCd(orderObj.getBoolean("cd"));
+			order.setCdMsg(orderObj.getString("cdmsg"));
+			Log.e("ZZOUR", "push order message: " + order.getCdMsg());
 			order.setTime(time);
 			order.setStatus(status);
 			order.setRemark(orderObj.getString("postscript"));
@@ -313,6 +325,167 @@ public class MyOrderApi {
 			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse finish order result:　" + ex);
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static String buildPushOrderUrl(){
+		return GlobalSettings.getServerAddress() + pushOrderPath;
+	}
+	
+	public static ApiResult pushOrder(int orderId, User user){
+	    // Create a new HttpClient and Post Header
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(buildPushOrderUrl());
+	    try {
+	    	// Add your data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+	        nameValuePairs.add(new BasicNameValuePair("order_id", orderId + ""));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
+	        CookieStore cookieStore = httpclient.getCookieStore();
+	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
+		    cookie.setDomain(GlobalSettings.server);
+		    cookie.setPath("/");
+		    cookieStore.addCookie(cookie);
+		    httpclient.setCookieStore(cookieStore);
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        String data = null;
+	        if (response != null){
+	        	data = EntityUtils.toString(response.getEntity());
+	        } else {
+	        	return null;
+	        }
+	        return parsePushOrderResult(data);
+	    } catch (ClientProtocolException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    } catch (IOException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    }
+	}
+	
+	private static ApiResult parsePushOrderResult(String data){
+		try {
+			Log.e("ZZOUR", "push order response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			ApiResult result = new ApiResult();
+			result.setSuccess(success);
+			result.setMsg(dataObj.getString("msg"));
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse push order result:　" + ex);
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static String buildCancelOrderUrl(int orderId){
+		return GlobalSettings.getServerAddress() + cancelOrderPath + "&order_id=" + orderId;
+	}
+	
+	private static String buildWCancelOrderUrl(int orderId){
+		return GlobalSettings.getServerAddress() + wCancelOrderPath + "&order_id=" + orderId;
+	}
+	
+	public static ApiResult cancelOrder(int orderId, String reason, User user){
+	    // Create a new HttpClient and Post Header
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(buildCancelOrderUrl(orderId));
+	    try {
+	    	// Add your data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+	        nameValuePairs.add(new BasicNameValuePair("cancel_reason", reason));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
+	        CookieStore cookieStore = httpclient.getCookieStore();
+	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
+		    cookie.setDomain(GlobalSettings.server);
+		    cookie.setPath("/");
+		    cookieStore.addCookie(cookie);
+		    httpclient.setCookieStore(cookieStore);
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        String data = null;
+	        if (response != null){
+	        	data = EntityUtils.toString(response.getEntity());
+	        } else {
+	        	return null;
+	        }
+	        return parseCancelOrderResult(data);
+	    } catch (ClientProtocolException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    } catch (IOException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    }
+	}
+	
+	private static ApiResult parseCancelOrderResult(String data){
+		try {
+			Log.e("ZZOUR", "cancel order response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			ApiResult result = new ApiResult();
+			result.setSuccess(success);
+			result.setMsg(dataObj.getString("msg"));
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse cancel order result:　" + ex);
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static ApiResult wCancelOrder(int orderId, User user){
+	    // Create a new HttpClient and Post Header
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = new HttpPost(buildWCancelOrderUrl(orderId));
+	    try {
+	        CookieStore cookieStore = httpclient.getCookieStore();
+	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
+		    cookie.setDomain(GlobalSettings.server);
+		    cookie.setPath("/");
+		    cookieStore.addCookie(cookie);
+		    httpclient.setCookieStore(cookieStore);
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpclient.execute(httppost);
+	        String data = null;
+	        if (response != null){
+	        	data = EntityUtils.toString(response.getEntity());
+	        } else {
+	        	return null;
+	        }
+	        return parseWCancelOrderResult(data);
+	    } catch (ClientProtocolException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    } catch (IOException e) {
+	        // Auto-generated catch block
+	    	e.printStackTrace();
+	    	return null;
+	    }
+	}
+	
+	private static ApiResult parseWCancelOrderResult(String data){
+		try {
+			Log.e("ZZOUR", "wcancel order response data: " + data);
+			JSONObject dataObj = new JSONObject(data);
+			boolean success = dataObj.getBoolean("done");
+			ApiResult result = new ApiResult();
+			result.setSuccess(success);
+			result.setMsg(dataObj.getString("msg"));
+			return result;
+		} catch (JSONException ex){
+			Log.e("ZZOUR", "error in parse wcancel order result:　" + ex);
 			ex.printStackTrace();
 			return null;
 		}

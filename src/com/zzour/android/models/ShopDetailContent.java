@@ -1,7 +1,11 @@
 package com.zzour.android.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class ShopDetailContent extends BaseDataModel{
 	
@@ -21,6 +25,48 @@ public class ShopDetailContent extends BaseDataModel{
 	private String shopHours;
 	private String telephone;
 	private String notice;
+	
+	private float score;
+	private float deliciousRate;
+	private float serviceRate;
+	private int speed;
+	
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
+	public float getDeliciousRate() {
+		return deliciousRate;
+	}
+	public void setDeliciousRate(float deliciousRate) {
+		this.deliciousRate = deliciousRate;
+	}
+	public float getServiceRate() {
+		return serviceRate;
+	}
+	public void setServiceRate(float serviceRate) {
+		this.serviceRate = serviceRate;
+	}
+	public int getSpeed() {
+		return speed;
+	}
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+
+	private Comparator<Food> comparator = new Comparator<Food>(){
+		@Override
+		public int compare(Food f1, Food f2) {
+			if (f1.getSoldCount() != f2.getSoldCount()){
+				return f2.getSoldCount() - f1.getSoldCount();
+			} else {
+				return (int)(f1.getPrice() - f2.getPrice());
+			}
+		}
+	};
 	
 	public int getCreditValue() {
 		return creditValue;
@@ -161,6 +207,14 @@ public class ShopDetailContent extends BaseDataModel{
 	}
 
 	public void setFoods(HashMap<String, ArrayList<Food>> foods) {
+		// sort foods
+		Set<String> cats = foods.keySet();
+		Iterator<String> iter = cats.iterator();
+		while (iter.hasNext()){
+			String cat = iter.next();
+			ArrayList<Food> catFoods = foods.get(cat);
+			Collections.sort(catFoods, comparator);
+		}
 		this.foods = foods;
 	}
 

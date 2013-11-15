@@ -19,6 +19,7 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,7 @@ import com.zzour.android.settings.LocalPreferences;
 public class AcountApi {
 	
 	private static final String loginPath = "/index.php?app=member&act=login&method=ajax";
-	private static final String registerPath = "/index.php?app=member&act=register&method=ajax";
+	private static final String registerPath = "/index.php?app=member&act=register&method=ajax&ajax=1";
 	private static final String accountDetailPath = "/index.php?app=member&act=profile&method=ajax&ajax=1";
 	private static final String validUserPath = "/index.php?app=qqlogin&act=user_validate";
 	private static final String thirdPartyLoginPath = "/index.php?app=qqlogin&act=register&method=ajax";
@@ -51,10 +52,10 @@ public class AcountApi {
 	private static final String sessionName = "ECM_ID";
 	
 	public static LoginResult login(AccountInfo account, Activity activity){
-		return loginNormal(account.getName(), account.getPassword(), account.getType(), activity);
+		return loginNormal(account.getName(), account.getNickName(), account.getPassword(), account.getType(), activity);
 	}
 	
-	public static LoginResult loginNormal(String user, String pwd, User.AuthType authType, Activity activity){
+	public static LoginResult loginNormal(String user, String nickName, String pwd, User.AuthType authType, Activity activity){
 		LoginResult result;
 		// call server api to log in
 		ApiSessionResult apiResult = postLogin(user, pwd);
@@ -72,6 +73,8 @@ public class AcountApi {
 		} else if (result.isSuccess()){
 			// TODO change user structure
 			User u = new User(user, pwd, apiResult.session, authType);
+			Log.e("ZZOUR", "nickname: " + nickName);
+			u.setNickName(nickName);
 			LocalPreferences.setUser(u, activity);
 		}
 		return result;
@@ -185,6 +188,9 @@ public class AcountApi {
 			JSONObject dataObj = new JSONObject(data);
 			boolean success = dataObj.getBoolean("done");
 			int retval = dataObj.getInt("retval");
+			if (retval != 1){
+				success = false;
+			}
 			LoginResult result = new LoginResult();
 			result.setMsg(retval);
 			result.setSuccess(success);
@@ -197,7 +203,7 @@ public class AcountApi {
 	
 	public static RegisterResult parseRegisterResult(String data){
 		try {
-			Log.e("zzour", "data: " + data);
+			Log.e("ZZOUR", "register data: " + data);
 			//JSONTokener jsonObj = new JSONTokener(data);
 			//JSONObject dataObj = (JSONObject)jsonObj.nextValue();
 			JSONObject dataObj = new JSONObject(data);
@@ -206,8 +212,8 @@ public class AcountApi {
 			// TODO add expire
 			//String expire = dataObj.optString("expire", "");
 			RegisterResult result = new RegisterResult();
-			result.setMsg(retval);
 			result.setSuccess(success);
+			result.setMsg(retval);
 			return result;
 		} catch (JSONException ex){
 			Log.e("ZZOUR", "error in parse register result:¡¡" + ex);
@@ -269,7 +275,7 @@ public class AcountApi {
 	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 	        nameValuePairs.add(new BasicNameValuePair("user_name", name));
 	        nameValuePairs.add(new BasicNameValuePair("password", password));
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
 
 	        // Execute HTTP Post Request
 	        HttpResponse response = httpclient.execute(httppost);
@@ -404,6 +410,7 @@ public class AcountApi {
 		    if (result.isSuccess()){
 		    	// login after register success
 				User u = new User(account.getName(), account.getPassword(), session, account.getType());
+				u.setNickName(account.getNickName());
 				LocalPreferences.setUser(u, activity);
 		    }
 		    return result;

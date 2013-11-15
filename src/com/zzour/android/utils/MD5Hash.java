@@ -34,6 +34,9 @@ public class MD5Hash {
 		    digest.update(input.getBytes(), 0, input.length());
 		    //Converts message digest value in base 16 (hex) 
 		    md5 = new BigInteger(1, digest.digest()).toString(16);
+		    while (md5.length() < 32){
+		    	md5 = "0" + md5;
+		    }
 		    md5 = md5.substring(8, 24);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

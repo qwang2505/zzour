@@ -7,16 +7,10 @@
     android:paddingBottom="0dp"
     android:clickable="false">
     
-    <!-- set image of this view in java code with bitmap -->
-    <!-- <ImageView android:id="@+id/shop_banner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10px"/> -->
-    
     <TextView android:id="@+id/online_order"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10px"
+        android:padding="10dp"
         android:textSize="18sp"
         android:textColor="#fe8e4d"
         android:background="#efecea"/>
@@ -31,46 +25,126 @@
         <RelativeLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView android:id="@+id/send_time"
-                android:layout_width="wrap_content"
+            <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="平均速度：40分钟"/>
+                android:textColor="#DA301F"
+                android:textStyle="bold"
+                android:id="@+id/score"
+                android:textSize="24sp"
+                android:layout_centerVertical="true"
+                android:text="4.6分" />
             
-        	<RatingBar android:id="@+id/shop_rating"
+        	<RatingBar android:id="@+id/delicious"
             	style="@style/foodRatingBar"
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
-            	android:layout_marginRight="10px"
+            	android:layout_marginRight="10dp"
             	android:numStars="5"
             	android:rating="3.5"
             	android:isIndicator="false"
+            	android:layout_centerVertical="true"
             	android:layout_alignParentRight="true"/>
+        	
+        	<TextView android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:text="味道："
+        	    android:layout_toLeftOf="@id/delicious"
+        	    android:layout_centerVertical="true"/>
             
         </RelativeLayout>
         
-        <TextView android:id="@+id/praise_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:text="15人认为本店不错，会多次订餐"/>
-        
-        <!-- <RelativeLayout android:layout_width="match_parent"
+        <RelativeLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView android:id="@+id/telephone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10px"
-                android:text="电话：12345678901"/>
+            <TextView android:id="@+id/credit"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="233"
+				android:textColor="#FFCA00"
+				android:textSize="20sp"
+				android:layout_centerVertical="true"/>
             
-        	<TextView android:id="@+id/shop_hours"
+            <TextView android:id="@+id/credit_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/credit"
+				android:paddingLeft="3dp"
+				android:text="次推荐"
+				android:layout_centerVertical="true"/>
+            
+        	<RatingBar android:id="@+id/service"
+            	style="@style/foodRatingBar"
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
             	android:layout_marginRight="10dp"
-            	android:layout_alignParentRight="true"
-            	android:text="营业时间：11:00-14:00,17:00-23:00" />
+            	android:numStars="5"
+            	android:rating="3.5"
+            	android:isIndicator="false"
+            	android:layout_centerVertical="true"
+            	android:layout_alignParentRight="true"/>
+        	
+        	<TextView android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:text="服务："
+        	    android:layout_toLeftOf="@id/service"
+        	    android:layout_centerVertical="true"/>
             
-        </RelativeLayout> -->
+        </RelativeLayout>
+        
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        	
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:id="@+id/speed_text_2"
+                android:text="平均速度" />
+            
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/speed"
+                android:layout_toRightOf="@id/speed_text_2"
+                android:layout_centerVertical="true"
+                android:textColor="#93D858"
+                android:textSize="20sp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="45" />
+        	
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/speed"
+                android:id="@+id/speed_text_1"
+                android:layout_centerVertical="true"
+                android:text="分钟" />
+            
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/status"
+                android:background="#AEAEAE"
+                android:textColor="#ffffff"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:text="暂不接单" />
+            
+       	</RelativeLayout>
+        
+    </LinearLayout>
+    
+    <ImageView android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:contentDescription="@string/dot_line_desc"
+    	android:src="@drawable/dotted" />
+            
+	<LinearLayout android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingBottom="4dp"
+	        android:paddingLeft="8dp"
+	        android:orientation="vertical">
         
            <TextView android:id="@+id/telephone"
                 android:layout_width="wrap_content"
@@ -86,21 +160,14 @@
         
     </LinearLayout>
     
+    <ImageView android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:contentDescription="@string/dot_line_desc"
+		    	android:src="@drawable/dotted" />
+    
     <WebView
 		android:id="@+id/notice"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"/>
-    
-    <!-- <WebView
-		android:id="@+id/notice"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="#efecea"/> -->
-    
-    <!-- TODO add recommends images into this in java code -->
-    <!-- <LinearLayout android:id="@+id/shop_recommends"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"/> -->
 
 </LinearLayout>

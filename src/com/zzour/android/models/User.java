@@ -4,6 +4,7 @@ public class User extends BaseDataModel{
 	
 	// when use third party account system, user name should be qq number, renren account, etc.
 	private String userName;
+	private String nickName;
 	// when use third party account system, pwd should be token, etc.
 	private String pwd;
 	private String session;
@@ -33,6 +34,17 @@ public class User extends BaseDataModel{
 		this.userName = userName;
 	}
 
+	public String getNickName() {
+		if (this.nickName == null || this.nickName.length() == 0){
+			return this.userName;
+		}
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+	
 	public String getPwd() {
 		return pwd;
 	}

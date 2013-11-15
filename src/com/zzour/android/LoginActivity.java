@@ -156,13 +156,14 @@ public class LoginActivity extends BaseActivity{
 						            	// get user info
 						            	Log.e(TAG, "renren account info: " + response.toString());
 						            	try {
-											JSONObject dataObj = response.getResponseObject().getJSONObject("response");
+						            		Log.e(TAG, "renren account info: " + response.getResponseObject().toString());
+											JSONObject dataObj = response.getResponseObject();
 											String name = dataObj.getString("name");
 											JSONArray avatarsObj = dataObj.getJSONArray("avatar");
 											for (int i=0; i < avatarsObj.length(); i++){
 												JSONObject avatarObj = avatarsObj.getJSONObject(i);
 												String size = avatarObj.getString("size");
-												if (size == "MAIN"){
+												if (size.equals("MAIN")){
 													String url = avatarObj.getString("url");
 													mAccount.setNickName(name);
 													mAccount.setProfileUrl(url);

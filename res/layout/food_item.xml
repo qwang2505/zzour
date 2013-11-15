@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
     android:clickable="true"
     android:paddingLeft="8dp" >
-
-    <CheckBox
-        android:id="@+id/food_checked"
+    
+    <TextView android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:layout_gravity="center" />
+        android:background="#FF0000"
+        android:textColor="#ffffff"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:padding="5dp"
+        android:clickable="true"
+        android:visibility="gone"
+        android:text="删减"/>
     
-    <LinearLayout
-    	android:layout_width="match_parent"
+    <LinearLayout android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
     	android:orientation="vertical"
     	android:clickable="true"
     	android:id="@+id/food_info"
+    	android:layout_marginRight="40dp"
     	android:paddingLeft="5dp">
     	
         <TextView android:id="@+id/food_id"
@@ -38,6 +44,11 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="@string/test_food_name"
+		        android:maxWidth="190dp"
+		        android:singleLine="true"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true"
+		        android:ellipsize="marquee"
 		        android:textStyle="bold" />
 		    
 		    <TextView
@@ -51,7 +62,6 @@
 		        android:text="@string/test_food_price" />
 		    
 		</RelativeLayout>
-	    
 	    
 	    <RelativeLayout
 	        android:layout_width="match_parent"
@@ -67,16 +77,30 @@
 		        android:textSize="12sp"
 		        android:text="@string/test_food_sold_count" />
 		    
-		    <TextView
-		        android:id="@+id/food_buy_count"
+		    <TextView android:id="@+id/food_buy_count_text_2"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:singleLine="true"
 		        android:layout_alignParentRight="true"
+		        android:text="份"
 		        android:paddingRight="15dp" />
+		    
+		    <TextView android:id="@+id/food_buy_count"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:singleLine="true"
+		        android:textColor="#FF6666"
+		        android:layout_toLeftOf="@id/food_buy_count_text_2" />
+		    
+		    <TextView android:id="@+id/food_buy_count_text"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:singleLine="true"
+		        android:text="购买"
+		        android:layout_toLeftOf="@id/food_buy_count" />
 	
 		</RelativeLayout>
 		
 	</LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

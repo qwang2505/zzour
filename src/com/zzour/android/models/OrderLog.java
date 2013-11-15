@@ -11,7 +11,9 @@ public class OrderLog {
 	private String orderStatus;
 	private String changedStatus;
 	private String remark;
-	private String time;
+	private Date time;
+	private final int EIGHT_HOUR = 8 * 3600 * 1000;
+	private final SimpleDateFormat sdf= new SimpleDateFormat("HH:mm:ss");
 	public int getId() {
 		return id;
 	}
@@ -55,12 +57,13 @@ public class OrderLog {
 		this.remark = remark;
 	}
 	public String getTime() {
+		return sdf.format(time);
+	}
+	public Date getRealTime(){
 		return time;
 	}
 	public void setTime(String time) {
-		Date date = new Date(Long.valueOf(time) * 1000);
-		SimpleDateFormat sdf= new SimpleDateFormat("HH:mm:ss");
-		this.time = sdf.format(date);
+		this.time = new Date(Long.valueOf(time) * 1000 + EIGHT_HOUR);
 	}
 	
 }

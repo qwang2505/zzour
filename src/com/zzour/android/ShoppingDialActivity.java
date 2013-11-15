@@ -51,6 +51,14 @@ public class ShoppingDialActivity extends BaseActivity{
 		}
 		mPhoneNumber = intent.getStringExtra("shop_phone");
 		
+		((Button)findViewById(R.id.back_btn)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				ShoppingDialActivity.this.onBackPressed();
+				return;
+			}
+		});
+		
 		show();
 	}
 	
@@ -149,8 +157,12 @@ public class ShoppingDialActivity extends BaseActivity{
 			public void onClick(View v) {
 				// TODO for the first time, give out tip
 				// dial number
-                Intent intent=new Intent(Intent.ACTION_CALL,Uri.parse("tel:15927663060"));
-                startActivity(intent);
+				try{
+					Intent intent=new Intent(Intent.ACTION_CALL,Uri.parse("tel:" + mPhoneNumber));
+					startActivity(intent);
+				} catch (Exception e) {
+					Toast.makeText(getApplicationContext(), "启动系统拨号错误，请重新尝试", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 	}

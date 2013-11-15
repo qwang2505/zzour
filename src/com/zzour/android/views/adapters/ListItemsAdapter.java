@@ -8,6 +8,7 @@ import com.zzour.android.utils.ImageTool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,20 +80,38 @@ public class ListItemsAdapter extends BaseAdapter{
 		if(convertView==null){
 			convertView=LayoutInflater.from(mContext).inflate(R.layout.item, null);
 			ItemViewCache viewCache=new ItemViewCache();
-			viewCache.mTitleView=(WebView)convertView.findViewById(R.id.item_title);
+			viewCache.mTitleView=(TextView)convertView.findViewById(R.id.item_title);
+			viewCache.mStatusView = (TextView)convertView.findViewById(R.id.item_status);
 			viewCache.mDescView = (TextView)convertView.findViewById(R.id.item_credit);
+			viewCache.mScoreView = (TextView)convertView.findViewById(R.id.item_score);
+			viewCache.mSpeedView = (TextView)convertView.findViewById(R.id.item_speed);
 			viewCache.mImageView = (ImageView)convertView.findViewById(R.id.item_image);
-			viewCache.mItemRating = (RatingBar)convertView.findViewById(R.id.item_rating);
 			convertView.setTag(viewCache);
 		}
 		ItemViewCache cache=(ItemViewCache)convertView.getTag();
 		
-		//cache.mTitleView.setText(shops.get(position).getName());
-		cache.mTitleView.loadData(this.getTitle(shops.get(position)), "text/html; charset=UTF-8", null);
-		cache.mTitleView.setOnTouchListener(new WebViewClickListener(cache.mTitleView, parent, position));
-		cache.mTitleView.setFocusableInTouchMode(false);
-		cache.mDescView.setText(shops.get(position).getCreditValue() + "人认为该店不错");
-		cache.mItemRating.setRating(shops.get(position).getGrade());
+		cache.mTitleView.setText(shops.get(position).getName());
+		//cache.mTitleView.loadData(this.getTitle(shops.get(position)), "text/html; charset=UTF-8", null);
+		//cache.mTitleView.setOnTouchListener(new WebViewClickListener(cache.mTitleView, parent, position));
+		//cache.mTitleView.setFocusableInTouchMode(false);
+		if (!shops.get(position).isAlive()){
+			cache.mStatusView.setBackgroundColor(Color.parseColor("#AEAEAE"));
+			cache.mStatusView.setTextColor(Color.WHITE);
+			cache.mStatusView.setText("暂不接单");
+		} else {
+			if (shops.get(position).isOnlineOrder()){
+				cache.mStatusView.setBackgroundColor(Color.parseColor("#f28a49"));
+				cache.mStatusView.setTextColor(Color.WHITE);
+				cache.mStatusView.setText("在线订餐");
+			} else {
+				cache.mStatusView.setBackgroundColor(Color.parseColor("#efecea"));
+				cache.mStatusView.setTextColor(Color.parseColor("#f28a49"));
+				cache.mStatusView.setText("电话订餐");
+			}
+		}
+		cache.mDescView.setText(shops.get(position).getCreditValue() + "");
+		cache.mScoreView.setText(shops.get(position).getScore() + "分");
+		cache.mSpeedView.setText(shops.get(position).getSpeed() + "");
 		Bitmap bmp = shops.get(position).getBitmap();
 		if (bmp == null){
 			cache.mImageView.setImageBitmap(ImageTool.getBitmapByStream(mDefaultBitmapId, 
@@ -105,10 +124,12 @@ public class ListItemsAdapter extends BaseAdapter{
 	}
 
 	private static class ItemViewCache{
-		public WebView mTitleView;
+		public TextView mTitleView;
+		public TextView mStatusView;
 		public TextView mDescView;
+		public TextView mScoreView;
+		public TextView mSpeedView;
 		public ImageView mImageView;
-		public RatingBar mItemRating;
 	}
 	
 	private class WebViewClickListener implements View.OnTouchListener {

@@ -23,6 +23,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ShopDetailAdapter extends BaseExpandableListAdapter{
@@ -54,11 +55,11 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 	}
 	
 	public void changeCheckStatus(Food food){
-		if (food.isChecked()){
-			food.setChecked(false);
-		} else {
-			food.setChecked(true);
-		}
+//		if (food.isChecked()){
+//			food.setChecked(false);
+//		} else {
+//			food.setChecked(true);
+//		}
 		this.notifyDataSetChanged();
 	}
 	
@@ -117,65 +118,63 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 			cache.price = (TextView)convertView.findViewById(R.id.food_price);
 			cache.soldCount = (TextView)convertView.findViewById(R.id.food_sold_count);
 			cache.buyCount = (TextView)convertView.findViewById(R.id.food_buy_count);
-			cache.checked = (CheckBox)convertView.findViewById(R.id.food_checked);
 			cache.id = (TextView)convertView.findViewById(R.id.food_id);
 			convertView.setTag(cache);
 		}
 		FoodViewCache cache = (FoodViewCache)convertView.getTag();
 		Food f = this.foods.get(groupPosition).get(childPosition);
 		cache.name.setText(f.getName());
-		cache.price.setText(f.getPrice()+"￥");
+		cache.name.setSelected(true);
+		cache.price.setText("￥"+f.getPrice());
 		cache.soldCount.setText("已售"+f.getSoldCount()+"份");
+		TextView buyCountText1 = (TextView)convertView.findViewById(R.id.food_buy_count_text);
+		TextView buyCountText2 = (TextView)convertView.findViewById(R.id.food_buy_count_text_2);
 		if (f.isChecked()){
-			cache.buyCount.setText("购买" + f.getBuyCount() +"份");
+			cache.buyCount.setText(f.getBuyCount() +"");
+			buyCountText1.setVisibility(TextView.VISIBLE);
+			buyCountText2.setVisibility(TextView.VISIBLE);
 		} else {
 			cache.buyCount.setText("");
+			buyCountText1.setVisibility(TextView.GONE);
+			buyCountText2.setVisibility(TextView.GONE);
 		}
-		cache.checked.setChecked(f.isChecked());
 		cache.id.setText(generateStringId(groupPosition, childPosition));
 		LinearLayout info = (LinearLayout)convertView.findViewById(R.id.food_info);
-		
+		final TextView delete = (TextView)convertView.findViewById(R.id.delete);
 		info.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
 				TextView idView = (TextView)v.findViewById(R.id.food_id);
 				String text = idView.getText().toString();
 				Food food = getFoodByStringId(text);
+				int originalCount = food.getBuyCount();
+				if (!food.isChecked()){
+					food.setChecked(true);
+					delete.setVisibility(TextView.VISIBLE);
+				} else {
+					food.setBuyCount(originalCount + 1);
+				}
 				changeCheckStatus(food);
 				// update total money display
 				updateTotal();
 			}
 		});
-		cache.checked.setOnClickListener(new OnClickListener(){
+		delete.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				TextView idView = (TextView)((LinearLayout)v.getParent()).findViewById(R.id.food_id);
+				TextView idView = (TextView)((RelativeLayout)v.getParent()).findViewById(R.id.food_id);
 				String text = idView.getText().toString();
 				Food food = getFoodByStringId(text);
+				int originalCount = food.getBuyCount();
+				if (originalCount == 1){
+					food.setChecked(false);
+					delete.setVisibility(TextView.GONE);
+				} else {
+					food.setBuyCount(originalCount - 1);
+				}
 				changeCheckStatus(food);
 				// update total money display
 				updateTotal();
-			}
-		});
-		info.setOnLongClickListener(new OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View v) {
-				// get position and save
-				TextView idView = (TextView)v.findViewById(R.id.food_id);
-				String text = idView.getText().toString();
-				String[] ids = text.split(";");
-				if (ids.length != 2){
-					return false;
-				}
-				mCurrentGroup = Integer.valueOf(ids[0]);
-				mCurrentPosition = Integer.valueOf(ids[1]);
-				Food food = getFoodByStringId(text);
-				if (!food.isChecked()){
-					return false;
-				}
-				// get current value
-				showNumberPickerDialog(foods.get(mCurrentGroup).get(mCurrentPosition).getBuyCount());
-				return true;
 			}
 			
 		});
@@ -189,7 +188,7 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
         textView.setText(getGroup(groupPosition).toString());
         textView.setBackgroundColor(mActivity.getResources().getColor(R.color.shop_detail_category_background_color));
         textView.setTextColor(Color.WHITE);
-        //isExpanded = true;
+        //isExpanded = false;
         //ExpandableListView eLV = (ExpandableListView) parent;
         //eLV.expandGroup(groupPosition);
         return textView;
@@ -205,47 +204,11 @@ public class ShopDetailAdapter extends BaseExpandableListAdapter{
 		return true;
 	}
 	
-	public void showNumberPickerDialog(int number){
-		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-		builder.setCancelable(false);
-		builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				if (mCurrentGroup == -1 || mCurrentPosition == -1){
-					Log.d(TAG, "what happended?");
-					return;
-				}
-				String count = ((TextView)mNumberPicker.findViewById(R.id.numpicker_input)).getText().toString();
-				Food f = foods.get(mCurrentGroup).get(mCurrentPosition);
-				f.setBuyCount(Integer.valueOf(count));
-				mCurrentGroup = -1;
-				mCurrentPosition = -1;
-				ShopDetailAdapter.this.notifyDataSetChanged();
-				// update total money display
-				updateTotal();
-			}
-		});
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				mCurrentGroup = -1;
-				mCurrentPosition = -1;
-				return;
-			}
-		});
-		View view = LayoutInflater.from(mActivity).inflate(R.layout.number_picker_main, null);
-		((TextView)view.findViewById(R.id.numpicker_input)).setText("" + number);
-		builder.setView(view);
-		mNumberPicker = builder.create();
-		mNumberPicker.show();
-	}
-	
 	private class FoodViewCache{
 		public TextView name;
 		public TextView price;
 		public TextView soldCount;
 		public TextView buyCount;
-		public CheckBox checked;
 		public TextView id;
 	}
 	

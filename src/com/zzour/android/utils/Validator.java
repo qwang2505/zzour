@@ -1,5 +1,8 @@
 package com.zzour.android.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Validator {
 
 	// TODO validate
@@ -7,6 +10,9 @@ public class Validator {
 		// not empty
 		if (name == null || name.length() == 0){
 			return new ValidateResult(false, "用户名不能为空");
+		}
+		if (name.length() < 3 || name.length() > 15){
+			return new ValidateResult(false, "用户名必须是3到15个字符");
 		}
 		return new ValidateResult(true, "");
 	}
@@ -27,6 +33,13 @@ public class Validator {
 		// not empty
 		if (mail == null || mail.length() == 0){
 			return new ValidateResult(false, "邮箱不能为空");
+		}
+		String check = "^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$";
+		Pattern regex = Pattern.compile(check);
+		Matcher matcher = regex.matcher(mail);
+		boolean valid = matcher.matches();
+		if (!valid){
+			return new ValidateResult(false, "邮箱格式不正确");
 		}
 		return new ValidateResult(true, "");
 	}

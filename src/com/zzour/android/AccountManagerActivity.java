@@ -10,9 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -110,6 +108,13 @@ public class AccountManagerActivity extends BaseActivity{
 	}
 	
 	public void show(){
+		((Button)findViewById(R.id.back_btn)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				AccountManagerActivity.this.onBackPressed();
+				return;
+			}
+		});
 		logout = (Button)findViewById(R.id.logout);
 		// logout
 		logout.setOnClickListener(new OnClickListener(){
@@ -205,7 +210,7 @@ public class AccountManagerActivity extends BaseActivity{
 			}
 			UserAccount account = result.getAccount();
 			if (result != null && result.isNeedLogin() && !result.isSuccess()){
-				AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+				AcountApi.loginNormal(user.getUserName(), user.getUserName(), user.getPwd(), user.getType(), activity);
 				result = AcountApi.getUserAcountDetail(user);
 				account = result.getAccount();
 			}

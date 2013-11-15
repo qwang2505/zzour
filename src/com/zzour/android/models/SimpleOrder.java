@@ -7,10 +7,24 @@ public class SimpleOrder {
 	private String sendTime;
 	private String consignee;
 	private int regionId;
+	private String regionName;
 	private String address;
 	private String phone;
 	private int shipId;
 	private int shopId;
+	private boolean newAddr = false;
+	public boolean isNewAddr() {
+		return newAddr;
+	}
+	public void setNewAddr(boolean newAddr) {
+		this.newAddr = newAddr;
+	}
+	public String getRegionName() {
+		return regionName;
+	}
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
 	public int getShopId() {
 		return shopId;
 	}

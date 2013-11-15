@@ -3,6 +3,8 @@ package com.zzour.android.network.api;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +35,7 @@ import com.zzour.android.models.User;
 import com.zzour.android.network.api.results.AddAllResult;
 import com.zzour.android.network.api.results.ApiResult;
 import com.zzour.android.network.api.results.OrderFormResult;
+import com.zzour.android.network.api.results.OrderResult;
 import com.zzour.android.settings.GlobalSettings;
 
 public class OrderApi {
@@ -41,6 +45,7 @@ public class OrderApi {
 	private static String orderFormPath = "/index.php?app=order&goods=cart&method=ajax&ajax=1";
 	private static String clearCartPath = "/index.php?app=cart&act=clearCart&ajax=1";
 	private static String orderPath = "/index.php?app=order&goods=cart&method=ajax&ajax=1";
+	private static String printOrderPath = "/index.php?app=sendgprstask";
 	private static String removeFoodPath = "/index.php?app=cart&act=drop&method=ajax&ajax=1";
 	private static String updateFoodPath = "/index.php?app=cart&act=update&ajax=1";
 	private static final String sessionName = "ECM_ID";
@@ -306,24 +311,53 @@ public class OrderApi {
 	private static String buildOrderApi(int shopId){
 		return GlobalSettings.getServerAddress() + orderPath + "&store_id=" + shopId;
 	}
+	
+	private static String buildPrintOrderUrl(int orderId){
+		return GlobalSettings.getServerAddress() + printOrderPath + "&order_id=" + orderId;
+	}
+	
+	public static void printOrder(int orderId){
+		String src = buildPrintOrderUrl(orderId);
+		Log.e("ZZOUR", "print order: " + src);
+		try {
+	        URL url = new URL(src);
+	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	        connection.setDoInput(true);
+	        connection.connect();
+	        InputStream inStream = connection.getInputStream();
+	        byte[] buf = readInputStream(inStream);
+	        String ret = (new String(buf));
+	        Log.e("ZZOUR", "print order result: " + ret);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        Log.e("ZZOUR", "print order error: " + e.toString());
+	        return;
+	    }
+	}
 
-	public static ApiResult order(SimpleOrder order, User user){
+	public static OrderResult order(SimpleOrder order, User user){
 	    // Create a new HttpClient and Post Header
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(buildOrderApi(order.getShopId()));
 	    try {
 	        // Add your data
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(8);
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(10);
 	        nameValuePairs.add(new BasicNameValuePair("postscript", order.getMessage()));
 	        nameValuePairs.add(new BasicNameValuePair("send_time", order.getSendTime()));
 	        nameValuePairs.add(new BasicNameValuePair("consignee", order.getConsignee()));
 	        nameValuePairs.add(new BasicNameValuePair("region_id", order.getRegionId() + ""));
+	        nameValuePairs.add(new BasicNameValuePair("region_name", order.getRegionName()));
 	        nameValuePairs.add(new BasicNameValuePair("address", order.getAddress()));
 	        nameValuePairs.add(new BasicNameValuePair("phone_mob", order.getPhone()));
 	        nameValuePairs.add(new BasicNameValuePair("phone_tel", ""));
-	        // TODO get shipping id from order, and selected by user
+	        // get shipping id from order, and selected by user
 	        nameValuePairs.add(new BasicNameValuePair("shipping_id", order.getShipId() + ""));
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	        int saveAddr = 0;
+	        if (order.isNewAddr()){
+	        	saveAddr = 1;
+	        }
+	        nameValuePairs.add(new BasicNameValuePair("save_address", saveAddr + ""));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8));
 	        CookieStore cookieStore = httpclient.getCookieStore();
 	        BasicClientCookie cookie = new BasicClientCookie(sessionName, user.getSession());
 		    cookie.setDomain(GlobalSettings.server);
@@ -349,8 +383,8 @@ public class OrderApi {
 	    }
 	}
 	
-	private static ApiResult parseOrderResult(String data){
-		ApiResult result = new ApiResult();
+	private static OrderResult parseOrderResult(String data){
+		OrderResult result = new OrderResult();
 		if (data == null || data.length() == 0){
 			result.setSuccess(false);
 			result.setMsg("返回结果为空，请检查网络设置");
@@ -365,6 +399,8 @@ public class OrderApi {
 				result.setNeedLogin(true);
 			}
 			result.setMsg(msg);
+			int orderId = dataObj.getInt("retval");
+			result.setOrderId(orderId);
 			result.setSuccess(success);
 			return result;
 		} catch (JSONException ex){

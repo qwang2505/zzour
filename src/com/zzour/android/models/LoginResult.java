@@ -11,8 +11,8 @@ public class LoginResult {
 	public LoginResult() {
 		super();
 		this.msgMap.put(1, "Successful");
-		this.msgMap.put(-1, "Username or password is wrong");
-		this.msgMap.put(-2, "Unknow error");
+		this.msgMap.put(-1, "用户名或密码错误");
+		this.msgMap.put(-2, "登录出错，请重新尝试");
 	}
 	public boolean isSuccess() {
 		return success;
@@ -27,6 +27,9 @@ public class LoginResult {
 		this.msg = msg;
 	}
 	public void setMsg(int m){
+		if (m != 1){
+			this.success = false;
+		}
 		if (!this.msgMap.containsKey(m)){
 			this.msg = this.msgMap.get(-2);
 		}else {

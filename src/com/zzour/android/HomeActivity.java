@@ -68,7 +68,7 @@ public class HomeActivity extends BaseActivity {
         list.addFooterView(mLoadMoreView);
         
         // init adapter and set scroll view to list.
-        mAdapterTemp = new ListItemsAdapter(this, R.drawable.logo);
+        mAdapterTemp = new ListItemsAdapter(this, R.drawable.default_shop_logo);
         list.setAdapter(mAdapterTemp);
         mLoadMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,21 +202,22 @@ public class HomeActivity extends BaseActivity {
         //mImageScrollView = (HorizontalImageScrollView)findViewById(R.id.image_scroll);
     	mImageScrollView = new HorizontalImageScrollView(this.getApplicationContext());
         // get device size, and calculate image size.
-        DisplayMetrics metrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels - 10;
-        int height = 160;
-        
-        ArrayList<Bitmap> items = new ArrayList<Bitmap>();
-        Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_1, 
-        		getResources().openRawResource(R.drawable.scroll_image_1), width, height);
-    	items.add(bmp);
-    	bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_2, 
-    			getResources().openRawResource(R.drawable.scroll_image_2), width, height);
-    	items.add(bmp);
-    	mImageScrollView.setFeatureItems(items);
-    	mScreenWidth = metrics.widthPixels;
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        int width = metrics.widthPixels - 10;
+//        int height = 160;
+//        
+//        ArrayList<Bitmap> items = new ArrayList<Bitmap>();
+//        Bitmap bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_1, 
+//        		getResources().openRawResource(R.drawable.scroll_image_1), width, height);
+//    	items.add(bmp);
+//    	bmp = ImageTool.getBitmapByStream(R.drawable.scroll_image_2, 
+//    			getResources().openRawResource(R.drawable.scroll_image_2), width, height);
+//    	items.add(bmp);
+//    	mImageScrollView.setFeatureItems(items);
+//    	mScreenWidth = metrics.widthPixels;
     	ListView list = (ListView)findViewById(R.id.list);
+    	mImageScrollView.setVisibility(HorizontalImageScrollView.GONE);
     	list.addHeaderView(mImageScrollView);
     	this.startAutoScrolling();
     }
@@ -256,10 +257,14 @@ public class HomeActivity extends BaseActivity {
     Runnable initList = new Runnable(){
 		@Override
 		public void run() {
+			if (mLoadMoreButton != null){
+				mLoadMoreButton.setText("商家信息加载中，请稍候");
+			}
 			loadMoreData();
 			mHandler.post(new Runnable(){
 				public void run(){
 					mAdapterTemp.notifyDataSetChanged();
+					mLoadMoreButton.setText(getString(R.string.load_more_button_text));
 				}
 			});
 		}

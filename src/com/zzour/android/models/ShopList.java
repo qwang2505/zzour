@@ -1,34 +1,37 @@
 package com.zzour.android.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ShopList extends BaseDataModel{
+	
+	private ArrayList<String> mBanners;
+	private ArrayList<ShopSummaryContent> mShops;
+	private String mSearchKeyword;
+	private Comparator<ShopSummaryContent> comparator = new Comparator<ShopSummaryContent>(){
+		@Override
+		public int compare(ShopSummaryContent shop1, ShopSummaryContent shop2) {
+			if (shop1.isAlive() != shop2.isAlive()){
+				if (shop1.isAlive()){
+					return -1;
+				} else {
+					return 1;
+				}
+			} else {
+				return shop1.getOrder() - shop2.getOrder();
+			}
+		}
+	};
+	
 	public ShopList(ArrayList<ShopSummaryContent> mShops){
+		// sort shops
+		Collections.sort(mShops, comparator);
 		this.mShops = mShops;
 		this.mSearchKeyword = "default search keyword";
 		this.mBanners = new ArrayList<String>();
 		this.mBanners.add("http://www.zzour.com/data/files/mall/template/201304231757237155.jpg");
 	}
-	public ShopList(String mSearchKeyword, ArrayList<String> mBanners,
-			ArrayList<ShopSummaryContent> mShops) {
-		super();
-		this.mSearchKeyword = mSearchKeyword;
-		this.mBanners = mBanners;
-		this.mShops = mShops;
-	}
-	public ShopList(String mSearchKeyword, String[] banners,
-			ArrayList<ShopSummaryContent> mShops) {
-		super();
-		this.mSearchKeyword = mSearchKeyword;
-		this.mShops = mShops;
-		if (this.mBanners == null){
-			this.mBanners = new ArrayList<String>();
-		}
-		for (int i=0; i < banners.length; i++){
-			this.mBanners.add(banners[i]);
-		}
-	}
-	private String mSearchKeyword;
 	public String getmSearchKeyword() {
 		return mSearchKeyword;
 	}
@@ -47,7 +50,6 @@ public class ShopList extends BaseDataModel{
 	public void setmShops(ArrayList<ShopSummaryContent> mShops) {
 		this.mShops = mShops;
 	}
-	
 	// shops count
 	public int size(){
 		return mShops.size();
@@ -56,8 +58,6 @@ public class ShopList extends BaseDataModel{
 	public ShopSummaryContent get(int index){
 		return mShops.get(index);
 	}
-	private ArrayList<String> mBanners;
-	private ArrayList<ShopSummaryContent> mShops;
 	@Override
 	public boolean expired() {
 		// TODO Auto-generated method stub

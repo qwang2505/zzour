@@ -24,10 +24,8 @@
             android:background="#efecea"
             android:text="待收货"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="80dp"
-            ></TextView>
+            android:paddingRight="8dp"
+            android:layout_alignParentRight="true"></TextView>
         
     </RelativeLayout>
     
@@ -46,31 +44,32 @@
    	        
    	    </TextView>
    	    
-   	    <TextView android:id="@+id/price_desc"
-   	        android:layout_width="wrap_content"
-   	        android:layout_height="wrap_content"
-   	        android:paddingLeft="10dp"
-   	        android:layout_toRightOf="@id/shop_name"
-   	        android:text="总价：￥" >
-   	        
-   	    </TextView>
-   	    
    	    <TextView android:id="@+id/price"
    	        android:layout_width="wrap_content"
    	        android:layout_height="wrap_content"
    	        android:textColor="#fd0000"
-   	        android:layout_toRightOf="@id/price_desc"
+   	        android:layout_alignParentRight="true"
    	        android:text="30.0">
    	        
    	    </TextView>
    	    
-   	    <ImageView android:layout_width="wrap_content"
+   	    <TextView android:id="@+id/price_desc"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:paddingLeft="10dp"
+   	        android:paddingRight="8dp"
+   	        android:layout_toLeftOf="@id/price"
+   	        android:text="总价：￥" >
+   	        
+   	    </TextView>
+   	    
+   	    <!-- <ImageView android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
 	        android:paddingRight="6dp"
 	        android:layout_centerVertical="true"
 	        android:contentDescription="@string/arrow_desc_text"
-	        android:src="@drawable/arrow" />
+	        android:src="@drawable/arrow" /> -->
         
     </RelativeLayout>
     

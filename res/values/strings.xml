@@ -30,8 +30,8 @@
 	<string name="title_bar_text">商家详情</string>
 	
 	<!-- for test ui -->
-	<string name="test_food_name">这里是个名字</string>
-	<string name="test_food_price">50.5￥</string>
+	<string name="test_food_name">这里是个名字这里是个名字这里是个名字</string>
+	<string name="test_food_price">￥50.5</string>
 	<string name="test_food_sold_count">已售1000000份</string>
 	<string name="test_food_buy_count">购买1份</string>
 	
@@ -52,7 +52,7 @@
 	<!-- for new address dialog -->
 	<string name="default_name_text">请输入收货人姓名</string>
 	<string name="default_phone_text">请输入收货人联系电话</string>
-	<string name="default_address_text">请输入详细地址</string>
+	<string name="default_address_text">请再次输入楼栋号</string>
 	
 	<string name="default_school_text">选择学校</string>
 	<string name="default_school_area_text">选择校区</string>
@@ -60,11 +60,13 @@
 	
 	<!-- for order succeed page -->
 	<string name="order_succeed_title">下单结果</string>
-	<string name="order_succeed_text_1">已成功触发店内打印机</string>
-	<string name="order_succeed_text_2">开始打印您的订单信息</string>
+	<string name="order_succeed_text_1">订单提交成功</string>
+	<string name="order_succeed_text_2">请等待商家配送</string>
 	<string name="order_succeed_text_3">跟踪订单、在线催单、在线退单</string>
 	<string name="order_succeed_text_4">请进入</string>
 	<string name="order_succeed_text_5">我的订单</string>
+	<string name="order_succeed_text_6">提示：手机务必处于非静音状态，以便商家联系</string>
+	<string name="order_succeed_text_7">确认收货后，方可获赠等值积分噢</string>
 	<string name="order_succeed_image_desc"></string>
 	<string name="share_text">分享给好友</string>
 	<string name="order_succeed_back_to_main_text">继续下单</string>

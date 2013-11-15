@@ -18,6 +18,7 @@ import com.zzour.android.network.api.OrderApi;
 import com.zzour.android.network.api.RegionApi;
 import com.zzour.android.network.api.results.ApiResult;
 import com.zzour.android.network.api.results.OrderFormResult;
+import com.zzour.android.network.api.results.OrderResult;
 import com.zzour.android.settings.LocalPreferences;
 import com.zzour.android.utils.ActivityTool;
 
@@ -65,7 +66,7 @@ public class ShoppingCartActivity extends BaseActivity{
 	
 	private Address mCurrentAddr = null;
 	private SimpleOrder mOrder = null;
-	private ApiResult mOrderResult = null;
+	private OrderResult mOrderResult = null;
 	
 	private ArrayList<Food> foods = new ArrayList<Food>();
 	private ArrayList<Address> addrs = null;
@@ -76,6 +77,8 @@ public class ShoppingCartActivity extends BaseActivity{
 	private ApiResult mClearCartResult = null;
 	
 	private HashMap<RadioButton, Address> mAddrMap = new HashMap<RadioButton, Address>();
+	private ArrayList<RadioButton> mNewAddrs = new ArrayList<RadioButton>();
+	private boolean mUseNewAddr = false;
 	
 	// regions
 	private ArrayList<Region> mFirstLevelRegions = null;
@@ -172,15 +175,15 @@ public class ShoppingCartActivity extends BaseActivity{
 	
 	private String[] getRegionNames(ArrayList<Region> regions, int level){
 		int size = regions.size();
-		if (level <= 2){
-			size += 1;
-		}
-		String[] names = new String[size];
+		String[] names = new String[size+1];
 		Iterator<Region> it = regions.iterator();
-		int i = 0;
-		if (level <= 2){
-			i += 1;
-			names[0] = "请选择";
+		int i = 1;
+		if (level == 1){
+			names[0] = "点击选择学校";
+		} else if (level == 2){
+			names[0] = "点击选择校区";
+		} else{
+			names[0] = "点击选择楼栋";
 		}
 		while (it.hasNext()){
 			names[i] = it.next().getName();
@@ -206,15 +209,15 @@ public class ShoppingCartActivity extends BaseActivity{
 					Toast.makeText(getApplicationContext(), "电话不能为空！", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				String addr = "";
+				String regionName = "";
 				Spinner spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school);
 				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
 					Toast.makeText(getApplicationContext(), "请选择学校！", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				if (spiner.getVisibility() == Spinner.VISIBLE && spiner.getSelectedItemPosition() != 0){
-					addr += (String)spiner.getSelectedItem();
-					addr += " ";
+					regionName += (String)spiner.getSelectedItem();
+					regionName += " ";
 				}
 				spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area);
 				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
@@ -222,27 +225,25 @@ public class ShoppingCartActivity extends BaseActivity{
 					return;
 				}
 				if (spiner.getVisibility() == Spinner.VISIBLE && spiner.getSelectedItemPosition() != 0){
-					addr += (String)spiner.getSelectedItem();
-					addr += " ";
+					regionName += (String)spiner.getSelectedItem();
+					regionName += " ";
 				}
 				spiner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area_detail);
 				if (spiner.getVisibility() != Spinner.VISIBLE || spiner.getSelectedItemPosition() == 0){
-					Toast.makeText(getApplicationContext(), "请选择详细区域！", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "请选择楼栋！", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				int regionId = -1;
-				String regionName = "";
 				if (spiner.getVisibility() == Spinner.VISIBLE){
-					addr += (String)spiner.getSelectedItem();
-					addr += " ";
+					regionName += (String)spiner.getSelectedItem();
+					regionName += " ";
 					Region r = mThirdLevelRegions.get(spiner.getSelectedItemPosition() - 1);
 					regionId = r.getId();
-					regionName = r.getName();
 				}
 				TextView address = (TextView)mNewAddressDialog.findViewById(R.id.new_address_detail);
-				addr = address.getText().toString();
+				String addr = address.getText().toString();
 				if (addr.length() <= 0){
-					Toast.makeText(getApplicationContext(), "地址不能为空！", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "请再次输入楼栋号！", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				// construct new address
@@ -268,6 +269,9 @@ public class ShoppingCartActivity extends BaseActivity{
 					Log.d(TAG, "add new address into map: " + address1.getName());
 					mAddrMap.put(rb, address1);
 				}
+				if (!mNewAddrs.contains(rb)){
+					mNewAddrs.add(rb);
+				}
 				mNewAddrBtn.setChecked(false);
 				// add address radio button status change listener
 				rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
@@ -278,14 +282,18 @@ public class ShoppingCartActivity extends BaseActivity{
 							return;
 						}
 						Iterator<RadioButton> it = mAddrMap.keySet().iterator();
+						mUseNewAddr = false;
 						while (it.hasNext()){
 							RadioButton a = it.next();
 							if (a != button){
 								Log.d(TAG, "unset check status of others.");
 								a.setChecked(false);
 							}
+							if (!mUseNewAddr && mNewAddrs.contains(button)){
+								// indicate now use new address
+								mUseNewAddr = true;
+							}
 						}
-						Log.d(TAG, "set current addr and uncheck new addre button.");
 						mCurrentAddr = mAddrMap.get(button);
 						mNewAddrBtn.setChecked(false);
 					}
@@ -293,6 +301,7 @@ public class ShoppingCartActivity extends BaseActivity{
 				// set current checked, and set current address
 				rb.setChecked(true);
 				mCurrentAddr = address1;
+				mUseNewAddr = true;
 				// TODO save new address to cache.
 				//AddressDAO dao = new AddressDAO(ShoppingCartActivity.this);
 				//dao.insert(address1);
@@ -441,11 +450,15 @@ public class ShoppingCartActivity extends BaseActivity{
 						return;
 					}
 					Iterator<RadioButton> it = mAddrMap.keySet().iterator();
+					mUseNewAddr = false;
 					while (it.hasNext()){
 						RadioButton a = it.next();
 						if (a != button){
 							Log.d(TAG, "unset check status of others.");
 							a.setChecked(false);
+						}
+						if (!mUseNewAddr && mNewAddrs.contains(button)){
+							mUseNewAddr = true;
 						}
 					}
 					Log.d(TAG, "set current addr and uncheck new addre button.");
@@ -588,12 +601,15 @@ public class ShoppingCartActivity extends BaseActivity{
 				mOrder.setConsignee(mCurrentAddr.getName());
 				mOrder.setPhone(mCurrentAddr.getPhone());
 				mOrder.setRegionId(mCurrentAddr.getRegionId());
+				// set whole region name here
+				mOrder.setRegionName(mCurrentAddr.getRegionName());
 				Spinner timeInfo = (Spinner)findViewById(R.id.time_spinner);
 				mOrder.setSendTime(timeInfo.getSelectedItem().toString());
 				mOrder.setShipId(shipId);				
 				mOrder.setShopId(mCurrentShop);
 				EditText m = (EditText)findViewById(R.id.message);
 				mOrder.setMessage(m.getText().toString());
+				mOrder.setNewAddr(mUseNewAddr);
 				// all information ok, make the order.
 				// send order request in async task, and show loading dialog while doing it.
 				new OrderTask(ShoppingCartActivity.this, mOrder).execute();
@@ -750,13 +766,13 @@ public class ShoppingCartActivity extends BaseActivity{
 		protected Boolean doInBackground(String... arg0) {
 			// call api to make order
 			User user = LocalPreferences.getUser(activity);
-			ApiResult result = OrderApi.order(order, user);
+			OrderResult result = OrderApi.order(order, user);
 			activity.setOrderResult(result);
 			return true;
 		}
 		
 		protected void onPreExecute() {
-	        this.mDialog.setMessage("处理中，请稍候。。。");
+	        this.mDialog.setMessage("订单提交中，请稍候。。。");
 	        this.mDialog.show();
 	    }
 
@@ -769,7 +785,7 @@ public class ShoppingCartActivity extends BaseActivity{
 	    }
 	}
 	
-	public void setOrderResult(ApiResult result){
+	public void setOrderResult(OrderResult result){
 		mOrderResult = result;
 	}
 	
@@ -782,7 +798,14 @@ public class ShoppingCartActivity extends BaseActivity{
 			Toast.makeText(getApplicationContext(), "订单提交失败，" + mOrderResult.getMsg(), Toast.LENGTH_SHORT).show();
 			return;
 		}
-		// success, to success activity
+		// if success, start new thread to call print api
+		final int orderId = mOrderResult.getOrderId();
+		new Thread(new Runnable() {
+ 	       @Override
+ 	       public void run() {
+ 	    	   OrderApi.printOrder(orderId);
+ 	       }
+ 	    }).start();
 		ActivityTool.startActivity(ShoppingCartActivity.this, OrderSucceedActivity.class);
 	}
 	
@@ -803,7 +826,7 @@ public class ShoppingCartActivity extends BaseActivity{
 			if (foods.size() > 0){
 				ApiResult result = OrderApi.addAll(foods, user);
 				if (result != null && result.isNeedLogin()){
-					AcountApi.loginNormal(user.getUserName(), user.getPwd(), user.getType(), activity);
+					AcountApi.loginNormal(user.getUserName(), user.getNickName(), user.getPwd(), user.getType(), activity);
 					result = OrderApi.addAll(foods, user);
 				}
 				if (!result.isSuccess()){
@@ -939,7 +962,6 @@ public class ShoppingCartActivity extends BaseActivity{
 		if (level == 1){
 			showNewAddressDialog();
 		} else if (level == 2){
-			Log.e("ZZOUR", "update level 2 ui");
 			Spinner areaSpinner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area);
 			String[] areaNames = getRegionNames(mSecondLevelRegions, 2);
 			if (areaNames.length > 0){
@@ -951,7 +973,6 @@ public class ShoppingCartActivity extends BaseActivity{
 				areaSpinner.setVisibility(Spinner.GONE);
 			}
 		} else if (level == 3){
-			Log.e("ZZOUR", "update level 3 ui");
 			Spinner detailSpinner = (Spinner)mNewAddressDialog.findViewById(R.id.new_address_school_area_detail);
 			String[] names = getRegionNames(mThirdLevelRegions, 3);
 			if (names != null && names.length > 0 && names[0].length() > 0){

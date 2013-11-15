@@ -41,8 +41,8 @@ public class AccountInfo {
 	public void setOpenId(String openId) {
 		// construct user name and password
 		this.openId = openId;
-		this.name = "qq" + MD5Hash.md5For8Bit(openId);
-		this.password = "pass" + MD5Hash.md5For8Bit(openId);
+		this.name = MD5Hash.md5For8Bit("qq" + openId);
+		this.password = MD5Hash.md5For8Bit("pass" + openId);
 	}
 	public String getName() {
 		return name;
@@ -80,7 +80,7 @@ public class AccountInfo {
 	public void setUid(String uid) {
 		this.uid = uid;
 		// construct name and password by user id in renren account
-		this.name = "renren" + MD5Hash.md5For8Bit(uid);
-		this.password = "pass" + MD5Hash.md5For8Bit(uid);
+		this.name = MD5Hash.md5For8Bit("renren" + uid);
+		this.password = MD5Hash.md5For8Bit("pass" + uid);
 	}
 }

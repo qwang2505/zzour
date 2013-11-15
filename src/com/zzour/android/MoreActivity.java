@@ -93,7 +93,7 @@ public class MoreActivity extends BaseActivity
 			if (user == null){
 				Log.e("ZZOUR", "authed but no user name? what happened?");
 			}
-			userName.setText(user.getUserName());
+			userName.setText(user.getNickName());
 		} else {
 			userLayout.setVisibility(RelativeLayout.GONE);
 			login.setVisibility(RelativeLayout.VISIBLE);
@@ -177,7 +177,7 @@ public class MoreActivity extends BaseActivity
 			if (user == null){
 				Log.e("ZZOUR", "authed but no user name? what happened?");
 			}
-			userName.setText(user.getUserName());
+			userName.setText(user.getNickName());
 		} else {
 			userLayout.setVisibility(RelativeLayout.GONE);
 			login.setVisibility(RelativeLayout.VISIBLE);

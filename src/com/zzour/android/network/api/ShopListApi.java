@@ -173,6 +173,11 @@ public class ShopListApi {
 			//	banners.add((String)bs.opt(i));
 			//}
 			// get shops
+			String retval = dataObj.getString("retval");
+			if (retval.equals("[]")){
+				mShopList = new ShopList(new ArrayList<ShopSummaryContent>());
+				return mShopList;
+			}
 			JSONObject shopObjs = dataObj.getJSONObject("retval");
 			ArrayList<ShopSummaryContent> shops = new ArrayList<ShopSummaryContent>();
 			JSONArray shopIds = shopObjs.names();
@@ -189,13 +194,16 @@ public class ShopListApi {
 				boolean isNew = obj.optBoolean("new", false);
 				
 				ShopSummaryContent shop = new ShopSummaryContent(id, isNew, image, name, desc, rate);
-				shop.setCreditValue(obj.getInt("credit_value"));
+				shop.setCreditValue(obj.getInt("recommand"));
 				shop.setGrade((float)obj.getDouble("sgrade"));
 				shop.setOnlineOrder(obj.getInt("onlineOrder") == 1);
-				// TODO for test
-				if (id % 2 == 0){
-					shop.setOnlineOrder(true);
+				shop.setOrder(obj.getInt("sort_order"));
+				shop.setScore((float)obj.getDouble("score"));
+				int headcount = obj.getInt("headcount");
+				if (headcount <= 0){
+					headcount = 1;
 				}
+				shop.setSpeed(obj.getInt("speed") / headcount);
 				shop.setAlive(obj.getInt("if_live") == 1);
 				shops.add(shop);
 			}
