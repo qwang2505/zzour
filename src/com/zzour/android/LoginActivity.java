@@ -36,6 +36,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,6 +53,8 @@ public class LoginActivity extends BaseActivity{
 	RennClient mRenren = null;
 	
 	AccountInfo mAccount = null;
+	
+	private Handler mHandler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -348,6 +351,11 @@ public class LoginActivity extends BaseActivity{
 		// login or register in async task
 		Log.e(TAG, "start task to login");
 		new ThirdPartyLoginTask(LoginActivity.this, mAccount).execute();
+		mHandler.post(new Runnable(){
+  		   public void run(){
+  			 Toast.makeText(getApplicationContext(), "µÇÂ¼ÖÐ£¬ÇëÉÔºò...", Toast.LENGTH_SHORT).show();
+  		   }
+	    	});
 	}
 	
 	private class ThirdPartyLoginTask extends AsyncTask<String, Void, Boolean> {

@@ -153,4 +153,11 @@
 	<!-- for store page -->
 	<string name="store_title">便利店</string>
 	
+	<!-- for refresh loading -->
+	<string name="my_order_load_more_text">更多</string>
+	<string name="my_order_load_more_text_2">加载更多...</string>
+	<string name="my_order_pull_tip_1">下拉可以刷新</string>
+	<string name="my_order_pull_tip_2">松开可以刷新</string>
+	<string name="my_order_pull_tip_3">更新于：</string>
+	
 </resources>
